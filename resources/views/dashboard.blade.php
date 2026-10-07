@@ -1,210 +1,71 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
-
-@section('page-heading', 'Reports Dashboard')
+@section('title', 'GradeGenius | Turn Grades Into Greatness')
 
 @section('content')
+<header class="gg-header">
+    <a href="{{ route('dashboard') }}" class="gg-brand">
+        <span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap', 'size' => 20])</span>
+        <span>GradeGenius</span>
+    </a>
+    <nav class="gg-nav" aria-label="Primary navigation">
+        <a href="#features">Features</a>
+        <a href="#perspectives">For Everyone</a>
+        <a href="#stats">Impact</a>
+    </nav>
+    <a href="#reports" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
+</header>
 
-<div class="mx-auto max-w-7xl">
-
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold tracking-tight text-slate-900">
-            Welcome to GradeGenius Reports
-        </h2>
-
-        <p class="mt-1 text-sm text-slate-500">
-            Monitor academic progress, study activity, and performance.
-        </p>
-    </div>
-
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm font-medium text-slate-500">
-                Average Mark
-            </p>
-
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                78%
-            </p>
-
-            <p class="mt-2 text-xs text-emerald-600">
-                +4.2% this term
-            </p>
+<main>
+    <section class="gg-hero">
+        <div class="gg-eyebrow">@include('partials.icon', ['name' => 'star', 'size' => 14]) South Africa's Academic Intelligence Platform</div>
+        <h1>Turn Grades Into <span>Greatness</span></h1>
+        <p>GradeGenius is a comprehensive academic intelligence system that converts your performance data into personalised strategies — with a <strong>guaranteed minimum 10% improvement</strong> target.</p>
+        <div class="gg-actions">
+            <a href="#reports" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
+            <a href="#features" class="gg-button gg-button-surface">Explore Features</a>
         </div>
+    </section>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm font-medium text-slate-500">
-                Topic Mastery
-            </p>
-
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                72%
-            </p>
-
-            <p class="mt-2 text-xs text-slate-500">
-                Across all subjects
-            </p>
+    <section class="gg-dashboard-preview" id="features">
+        <div class="gg-campus-image"></div>
+        <div class="gg-preview-metrics">
+            @foreach ([['+14.2%', 'Avg. Improvement', 'green'], ['1,847', 'Papers Completed', 'blue'], ['2,341', 'Active Learners', 'orange']] as $metric)
+                <div><strong class="gg-value-{{ $metric[2] }}">{{ $metric[0] }}</strong><span>{{ $metric[1] }}</span></div>
+            @endforeach
         </div>
+    </section>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm font-medium text-slate-500">
-                Study Time
-            </p>
-
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                18.4h
-            </p>
-
-            <p class="mt-2 text-xs text-slate-500">
-                This week
-            </p>
-        </div>
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm font-medium text-slate-500">
-                Assessments
-            </p>
-
-            <p class="mt-2 text-3xl font-bold text-slate-900">
-                14
-            </p>
-
-            <p class="mt-2 text-xs text-slate-500">
-                Completed this term
-            </p>
-        </div>
-
-    </div>
-
-    <div class="mt-8 grid gap-6 lg:grid-cols-2">
-
-        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-
-            <div class="mb-6">
-                <h3 class="font-semibold text-slate-900">
-                    Subject Performance
-                </h3>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Current average by subject.
-                </p>
+    <section class="gg-stats" id="stats">
+        @foreach ([['trending-up', '10%+', 'Minimum performance gain'], ['clock', '24', 'Years of past exam papers'], ['users', '4', 'Role-based dashboards'], ['graduation-cap', '100%', 'Curriculum-aligned content']] as $stat)
+            <div class="gg-stat">
+                <span class="gg-stat-icon">@include('partials.icon', ['name' => $stat[0], 'size' => 30])</span>
+                <strong>{{ $stat[1] }}</strong>
+                <span>{{ $stat[2] }}</span>
             </div>
+        @endforeach
+    </section>
 
-            <div class="space-y-5">
+    <section class="gg-banner" id="reports">
+        <h2>Start with Your Academic Report</h2>
+        <p>Every journey on GradeGenius begins with a mandatory report upload. This is how we baseline your performance and build a strategy that actually works for you.</p>
+        <a href="{{ route('student.reports') }}" class="gg-button gg-button-white">@include('partials.icon', ['name' => 'arrow-right', 'size' => 16]) View Reports</a>
+    </section>
 
-                <div>
-                    <div class="mb-2 flex justify-between text-sm">
-                        <span class="font-medium text-slate-700">
-                            Mathematics
-                        </span>
-                        <span class="font-semibold text-slate-900">
-                            82%
-                        </span>
-                    </div>
-
-                    <div class="h-2 rounded-full bg-slate-100">
-                        <div class="h-2 w-[82%] rounded-full bg-indigo-600"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-2 flex justify-between text-sm">
-                        <span class="font-medium text-slate-700">
-                            Physical Sciences
-                        </span>
-                        <span class="font-semibold text-slate-900">
-                            74%
-                        </span>
-                    </div>
-
-                    <div class="h-2 rounded-full bg-slate-100">
-                        <div class="h-2 w-[74%] rounded-full bg-indigo-600"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-2 flex justify-between text-sm">
-                        <span class="font-medium text-slate-700">
-                            English
-                        </span>
-                        <span class="font-semibold text-slate-900">
-                            86%
-                        </span>
-                    </div>
-
-                    <div class="h-2 rounded-full bg-slate-100">
-                        <div class="h-2 w-[86%] rounded-full bg-indigo-600"></div>
-                    </div>
-                </div>
-
-            </div>
-
+    <section class="gg-perspectives" id="perspectives">
+        <div class="gg-section-heading">
+            <div class="gg-eyebrow gg-eyebrow-blue">@include('partials.icon', ['name' => 'users', 'size' => 14]) Built For Everyone</div>
+            <h2>One Platform, Four Perspectives</h2>
+            <p>Tailored dashboards and tools for every role in the educational ecosystem.</p>
         </div>
-
-        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-
-            <div class="mb-6">
-                <h3 class="font-semibold text-slate-900">
-                    Recent Activity
-                </h3>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Latest learning activity.
-                </p>
-            </div>
-
-            <div class="space-y-5">
-
-                <div class="flex gap-4">
-                    <div class="mt-1 h-2.5 w-2.5 rounded-full bg-indigo-600"></div>
-
-                    <div>
-                        <p class="text-sm font-medium text-slate-900">
-                            Mathematics assessment completed
-                        </p>
-
-                        <p class="mt-1 text-xs text-slate-500">
-                            Score: 82% · 2 hours ago
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="mt-1 h-2.5 w-2.5 rounded-full bg-indigo-600"></div>
-
-                    <div>
-                        <p class="text-sm font-medium text-slate-900">
-                            Physical Sciences study session
-                        </p>
-
-                        <p class="mt-1 text-xs text-slate-500">
-                            46 minutes · Yesterday
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="mt-1 h-2.5 w-2.5 rounded-full bg-indigo-600"></div>
-
-                    <div>
-                        <p class="text-sm font-medium text-slate-900">
-                            English topic completed
-                        </p>
-
-                        <p class="mt-1 text-xs text-slate-500">
-                            Comprehension · 2 days ago
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-
+        <div class="gg-role-grid">
+            @foreach ([['Learner', 'graduation-cap', 'blue', route('student.reports')], ['Parent', 'users', 'rust', route('parent.reports')], ['Teacher', 'book-open', 'blue', route('teacher.reports')], ['Admin', 'bar-chart', 'rust', '#']] as $role)
+                <a href="{{ $role[3] }}" class="gg-role-card gg-role-{{ $role[2] }}">
+                    @include('partials.icon', ['name' => $role[1], 'size' => 32])
+                    <span>{{ $role[0] }} @include('partials.icon', ['name' => 'arrow-right', 'size' => 20])</span>
+                </a>
+            @endforeach
         </div>
-
-    </div>
-
-</div>
-
+    </section>
+</main>
 @endsection

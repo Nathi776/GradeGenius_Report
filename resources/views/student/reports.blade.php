@@ -1,59 +1,16 @@
 @extends('layouts.app')
-
-@section('title', 'Student Reports')
-
-@section('page-heading', 'Student Reports')
-
+@section('title', 'Student Report | GradeGenius')
 @section('content')
-
-<div class="mx-auto max-w-7xl">
-
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold text-slate-900">
-            My Academic Report
-        </h2>
-
-        <p class="mt-1 text-sm text-slate-500">
-            Track your academic performance, mastery and study activity.
-        </p>
+<header class="gg-header"><a href="{{ route('dashboard') }}" class="gg-brand"><span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>GradeGenius</a><a href="{{ route('dashboard') }}" class="gg-button gg-button-surface">Back home</a></header>
+<main class="gg-report">
+    <h1>Your Academic Report</h1><p class="gg-report-intro">Track your marks and progress across the year.</p>
+    <div class="gg-metric-grid">
+        @foreach ([['Current Average', '74%', 'Term 4', ''], ['Improvement', '+16%', 'Since Term 1', 'green'], ['Subjects', '5', '', 'orange'], ['Target Gap', 'On track', '10%+ goal met', 'blue']] as $metric)
+            <div class="gg-card"><div class="gg-card-label">{{ $metric[0] }}</div><div class="gg-card-value gg-value-{{ $metric[3] }}">{{ $metric[1] }}</div><div class="gg-card-sub">{{ $metric[2] }}</div></div>
+        @endforeach
     </div>
-
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Overall Average</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">78%</p>
-        </div>
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Topic Mastery</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">72%</p>
-        </div>
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Study Time</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">18.4h</p>
-        </div>
-
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Assessments</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">14</p>
-        </div>
-
-    </div>
-
-    <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h3 class="font-semibold text-slate-900">
-            Your Progress
-        </h3>
-
-        <p class="mt-1 text-sm text-slate-500">
-            Detailed student reporting will be displayed here.
-        </p>
-
-    </div>
-
-</div>
-
+    <div class="gg-panel"><div class="gg-panel-heading">@include('partials.icon', ['name' => 'trending-up', 'size' => 20])<h2>Progress Over Time</h2></div><div class="gg-bars">@foreach ($progress as $item)<div class="gg-bar-row"><span>{{ $item['term'] }}</span><div class="gg-bar"><span style="width: {{ $item['mark'] }}%"></span></div><strong>{{ $item['mark'] }}%</strong></div>@endforeach</div></div>
+    <div class="gg-panel"><div class="gg-panel-heading">@include('partials.icon', ['name' => 'book-open', 'size' => 20])<h2>Subject Breakdown</h2></div><div class="gg-bars">@foreach ($subjects as $subject)<div class="gg-bar-row"><span>{{ $subject['name'] }}<small class="gg-card-sub">Grade {{ $subject['grade'] }}</small></span><div class="gg-bar"><span style="width: {{ $subject['mark'] }}%"></span></div><strong>{{ $subject['mark'] }}%</strong></div>@endforeach</div></div>
+    <div class="gg-note">@include('partials.icon', ['name' => 'trending-up', 'size' => 20])<div><strong>Strategy Recommendation</strong><p>Focus revision on Life Sciences past papers (2018–2024). Projected gain: +8% to reach 82%.</p></div></div>
+</main>
 @endsection
