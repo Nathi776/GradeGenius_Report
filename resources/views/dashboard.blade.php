@@ -4,7 +4,7 @@
 
 @section('content')
 <header class="gg-header">
-    <a href="{{ route('dashboard') }}" class="gg-brand">
+    <a href="{{ route('dashboard.landing') }}" class="gg-brand">
         <span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap', 'size' => 20])</span>
         <span>GradeGenius</span>
     </a>
@@ -13,7 +13,7 @@
         <a href="#perspectives">For Everyone</a>
         <a href="#stats">Impact</a>
     </nav>
-    <a href="#reports" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
+    <a href="{{ route('login') }}" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
 </header>
 
 <main>
@@ -22,7 +22,7 @@
         <h1>Turn Grades Into <span>Greatness</span></h1>
         <p>GradeGenius is a comprehensive academic intelligence system that converts your performance data into personalised strategies — with a <strong>guaranteed minimum 10% improvement</strong> target.</p>
         <div class="gg-actions">
-            <a href="#reports" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
+            <a href="{{ route('login') }}" class="gg-button gg-button-blue">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
             <a href="#features" class="gg-button gg-button-surface">Explore Features</a>
         </div>
     </section>
@@ -59,11 +59,16 @@
             <p>Tailored dashboards and tools for every role in the educational ecosystem.</p>
         </div>
         <div class="gg-role-grid">
-            @foreach ([['Learner', 'graduation-cap', 'blue', route('student.reports')], ['Parent', 'users', 'rust', route('parent.reports')], ['Teacher', 'book-open', 'blue', route('teacher.reports')], ['Admin', 'bar-chart', 'rust', '#']] as $role)
-                <a href="{{ $role[3] }}" class="gg-role-card gg-role-{{ $role[2] }}">
+            @foreach ([['Learner', 'graduation-cap', 'blue', ['Personal performance dashboard', 'Personalised study roadmap', 'Past papers with auto-marking', 'Interactive flashcards & quizzes', 'Digital scientific calculator']], ['Parent', 'users', 'rust', ['Real-time academic monitoring', 'Homework submission alerts', 'Early risk notifications', 'Progress trend reports', 'Engagement indicators']], ['Teacher', 'book-open', 'blue', ['Digital homework assignment', 'Class-wide analytics', 'Topic weakness identification', 'Automated marking support', 'Exportable performance reports']], ['Administrator', 'bar-chart', 'rust', ['School-wide performance insights', 'Benchmarking analytics', 'Dropout risk detection', 'Strategic trend reporting', 'Compliance documentation']]] as $role)
+                <div class="gg-role-card gg-role-{{ $role[2] }}">
                     @include('partials.icon', ['name' => $role[1], 'size' => 32])
-                    <span>{{ $role[0] }} @include('partials.icon', ['name' => 'arrow-right', 'size' => 20])</span>
-                </a>
+                    <span>{{ $role[0] }}</span>
+                    <ul>
+                        @foreach ($role[3] as $feature)
+                            <li>@include('partials.icon', ['name' => 'check-circle', 'size' => 15]) {{ $feature }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endforeach
         </div>
     </section>

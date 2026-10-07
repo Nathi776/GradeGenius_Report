@@ -10,10 +10,11 @@ class ExampleTest extends TestCase
     /**
      * A basic test example.
      */
-    public function test_the_application_redirects_to_the_dashboard(): void
+    public function test_the_application_renders_the_public_landing_page(): void
     {
         $response = $this->get('/');
 
-        $response->assertRedirectToRoute('dashboard');
+        $response->assertOk()
+            ->assertSee('One Platform, Four Perspectives');
     }
 }
