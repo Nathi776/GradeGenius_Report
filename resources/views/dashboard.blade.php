@@ -3,6 +3,7 @@
 @section('title', 'GradeGenius | Turn Grades Into Greatness')
 
 @section('content')
+<div class="gg-landing">
 <header class="gg-header">
     <a href="{{ route('dashboard.landing') }}" class="gg-brand">
         <span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap', 'size' => 20])</span>
@@ -73,4 +74,5 @@
         </div>
     </section>
 </main>
+</div>
 @endsection
