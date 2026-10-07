@@ -15,12 +15,16 @@
         @if ($errors->any())
             <div class="gg-auth-error">{{ $errors->first() }}</div>
         @endif
+        @if (session('status'))
+            <div class="gg-auth-success">{{ session('status') }}</div>
+        @endif
         <form method="POST" action="{{ route('login.store') }}">
             @csrf
             <label for="email">Email address</label>
             <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required autofocus>
             <label for="password">Password</label>
             <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <a class="gg-auth-link" href="{{ route('password.request') }}">Forgot your password?</a>
             <label class="gg-check"><input type="checkbox" name="remember"> Remember me</label>
             <button class="gg-button gg-button-blue" type="submit">Sign In @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</button>
         </form>

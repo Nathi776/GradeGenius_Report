@@ -3,7 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -12,6 +17,8 @@ class AuthenticationTest extends TestCase
 
     public function test_a_user_can_register_and_is_logged_in(): void
     {
+        Notification::fake();
+
         $response = $this->post('/register', [
             'name' => 'Lerato Mokoena',
             'email' => 'lerato@example.com',
@@ -27,6 +34,7 @@ class AuthenticationTest extends TestCase
             'email' => 'lerato@example.com',
             'role' => 'student',
         ]);
+        Notification::assertSentTo(User::where('email', 'lerato@example.com')->first(), VerifyEmail::class);
     }
 
     public function test_registration_cannot_assign_administrator_role(): void
@@ -139,5 +147,36 @@ class AuthenticationTest extends TestCase
             'email' => 'admin@example.com',
             'role' => 'administrator',
         ]);
+    }
+
+    public function test_unverified_users_are_sent_to_email_verification_before_dashboard_access(): void
+    {
+        $user = User::factory()->unverified()->create(['role' => 'student']);
+
+        $this->actingAs($user)
+            ->get('/student/reports')
+            ->assertRedirectToRoute('verification.notice');
+    }
+
+    public function test_users_can_request_and_complete_a_password_reset(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create(['password' => 'old-password']);
+
+        $this->post('/forgot-password', ['email' => $user->email])
+            ->assertSessionHas('status');
+
+        Notification::assertSentTo($user, ResetPassword::class);
+
+        $token = Password::broker()->createToken($user);
+
+        $this->post('/reset-password', [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])->assertRedirectToRoute('login');
+
+        $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
     }
 }

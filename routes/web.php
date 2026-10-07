@@ -18,15 +18,37 @@ Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'storeRegistration'])
     ->middleware('throttle:login')
     ->name('register.store');
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
+    ->middleware('guest')
+    ->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+    ->middleware(['guest', 'throttle:login'])
+    ->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])
+    ->middleware('guest')
+    ->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+    ->middleware(['guest', 'throttle:login'])
+    ->name('password.update');
 Route::post('/logout', [AuthController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('/email/verify', [AuthController::class, 'verificationNotice'])
     ->middleware('auth')
+    ->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
+Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('student')
         ->name('student.')
         ->middleware('role:student')
