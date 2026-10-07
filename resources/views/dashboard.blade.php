@@ -28,11 +28,37 @@
         </div>
     </section>
 
-    <section class="gg-dashboard-preview" id="features">
+    <section class="gg-dashboard-preview">
         <img class="gg-campus-image" src="{{ asset('images/landing_img.jpg') }}" alt="Graduates celebrating with their caps in the air">
         <div class="gg-preview-metrics">
             @foreach ([['+14.2%', 'Avg. Improvement', 'green'], ['1,847', 'Papers Completed', 'blue'], ['2,341', 'Active Learners', 'orange']] as $metric)
                 <div><strong class="gg-value-{{ $metric[2] }}">{{ $metric[0] }}</strong><span>{{ $metric[1] }}</span></div>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="gg-features" id="features">
+        <div class="gg-section-heading">
+            <div class="gg-eyebrow gg-eyebrow-orange">@include('partials.icon', ['name' => 'target', 'size' => 14]) Platform Features</div>
+            <h2>Everything You Need to Excel</h2>
+            <p>A complete academic intelligence ecosystem — from baseline assessment to exam day readiness.</p>
+        </div>
+        <div class="gg-feature-grid">
+            @foreach ([
+                ['file', 'blue', 'Mandatory Assessment Gateway', 'Upload your academic report first. Our engine analyses your baseline and builds a personalised improvement roadmap instantly.'],
+                ['trending-up', 'orange', '10% Performance Target', 'Every learner gets a data-driven strategy engineered to achieve a minimum 10% improvement in academic performance.'],
+                ['book-open', 'blue', 'Grade 12 Revision System', '24 years of past exam papers (2002–2025) with auto-marking, timed simulations, and embedded memorandums.'],
+                ['sparkles', 'orange', 'AI-Powered Recommendations', 'Smart study tips, personalised timetables, and targeted interventions generated from your unique performance gaps.'],
+                ['bar-chart', 'blue', 'Real-Time Dashboards', 'Live analytics for learners, parents, teachers, and administrators. Everyone sees what matters, when it matters.'],
+                ['zap', 'orange', 'Interactive Learning Tools', 'Digital flashcards, auto-generated quizzes, concept simulations, and matching games — active learning, not passive reading.'],
+            ] as $feature)
+                <article class="gg-feature-card">
+                    <span class="gg-feature-icon gg-feature-icon-{{ $feature[1] }}">
+                        @include('partials.icon', ['name' => $feature[0], 'size' => 24])
+                    </span>
+                    <h3>{{ $feature[2] }}</h3>
+                    <p>{{ $feature[3] }}</p>
+                </article>
             @endforeach
         </div>
     </section>
