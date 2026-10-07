@@ -69,6 +69,20 @@ class StudentReportController extends Controller
                 ['name' => 'Physical Sciences Quiz 8', 'score' => '72%', 'date' => '5 Oct'],
                 ['name' => 'Life Sciences Past Paper 2024', 'score' => '68%', 'date' => '3 Oct'],
             ],
+            'quizScores' => [65, 72, 68, 78, 85, 82, 90],
+            'pastPapers' => [
+                ['name' => '2025 NSC Paper 1', 'score' => 78],
+                ['name' => '2024 NSC Paper 1', 'score' => 71],
+                ['name' => '2023 NSC Paper 1', 'score' => 84],
+                ['name' => '2022 NSC Paper 1', 'score' => 68],
+            ],
+            'achievements' => [
+                ['icon' => 'star', 'name' => 'First Past Paper'],
+                ['icon' => 'target', 'name' => '80% Quiz Average'],
+                ['icon' => 'book-open', 'name' => '10 Past Papers'],
+                ['icon' => 'zap', 'name' => '7 Day Streak'],
+                ['icon' => 'trending-up', 'name' => 'Improved by 10%'],
+            ],
         ]);
     }
 }
