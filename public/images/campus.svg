@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+  <title id="title">Abstract school campus illustration</title>
+  <desc id="desc">A dark blue academic campus with warm sunset windows.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#1b3158"/>
+      <stop offset="1" stop-color="#0d1729"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#172a3e"/>
+      <stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="500" fill="url(#sky)"/>
+  <circle cx="930" cy="145" r="82" fill="#ffb27f" opacity=".75"/>
+  <path d="M0 350 160 220l120 86 170-145 170 120 180-170 400 239v150H0Z" fill="#102033"/>
+  <path d="M0 390h1200v110H0Z" fill="url(#ground)"/>
+  <path d="M245 390V220h220v170Zm-30-170 140-95 140 95Z" fill="#203b5c"/>
+  <path d="M315 390V300h80v90Zm-35-135h150v24H280Z" fill="#0b1422"/>
+  <g fill="#ffb27f">
+    <rect x="275" y="245" width="28" height="38"/><rect x="342" y="245" width="28" height="38"/>
+    <rect x="409" y="245" width="28" height="38"/><rect x="275" y="320" width="28" height="38"/>
+    <rect x="409" y="320" width="28" height="38"/>
+  </g>
+  <path d="M0 420c160-50 260-35 390 0 150 40 270 40 420 0 140-40 250-40 390 0v80H0Z" fill="#09131f"/>
+</svg>

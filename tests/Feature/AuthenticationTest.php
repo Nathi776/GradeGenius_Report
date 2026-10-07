@@ -112,4 +112,32 @@ class AuthenticationTest extends TestCase
         $response->assertRedirectToRoute('dashboard.landing');
         $this->assertGuest();
     }
+
+    public function test_users_can_only_access_their_role_dashboard(): void
+    {
+        $user = User::factory()->create(['role' => 'student']);
+
+        $this->actingAs($user)
+            ->get('/student/reports')
+            ->assertOk();
+
+        $this->actingAs($user)
+            ->get('/administrator/reports')
+            ->assertForbidden();
+    }
+
+    public function test_administrator_accounts_can_be_provisioned_from_the_console(): void
+    {
+        $this->artisan('app:create-administrator', [
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            '--password' => 'secret-password',
+        ])->assertExitCode(0);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => 'administrator',
+        ]);
+    }
 }

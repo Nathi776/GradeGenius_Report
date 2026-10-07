@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Student Report | GradeGenius')
 @section('content')
-<header class="gg-header"><a href="{{ route('dashboard') }}" class="gg-brand"><span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>GradeGenius</a><a href="{{ route('dashboard') }}" class="gg-button gg-button-surface">Back home</a></header>
+@include('partials.report-header')
 <main class="gg-report">
     <h1>Your Academic Report</h1><p class="gg-report-intro">Track your marks and progress across the year.</p>
     <div class="gg-metric-grid">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Parent Report | GradeGenius')
 @section('content')
-<header class="gg-header"><a href="{{ route('dashboard') }}" class="gg-brand"><span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>GradeGenius</a><a href="{{ route('dashboard') }}" class="gg-button gg-button-surface">Back home</a></header>
+@include('partials.report-header')
 <main class="gg-report">
     <h1>Your Children's Reports</h1><p class="gg-report-intro">Monitor marks and progress for each child.</p>
     <div class="gg-tabs">@foreach ($children as $name => $child)<button class="gg-tab {{ $loop->first ? 'active' : '' }}" type="button" data-child-tab="{{ $loop->index }}">@include('partials.icon', ['name' => 'users', 'size' => 16]) {{ $name }}</button>@endforeach</div>

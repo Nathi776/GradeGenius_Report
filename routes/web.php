@@ -29,6 +29,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::middleware('auth')->group(function (): void {
     Route::prefix('student')
         ->name('student.')
+        ->middleware('role:student')
         ->group(function (): void {
             Route::get('/reports', [StudentReportController::class, 'index'])
                 ->name('reports');
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('parent')
         ->name('parent.')
+        ->middleware('role:parent')
         ->group(function (): void {
             Route::get('/reports', [ParentReportController::class, 'index'])
                 ->name('reports');
@@ -43,6 +45,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('teacher')
         ->name('teacher.')
+        ->middleware('role:teacher')
         ->group(function (): void {
             Route::get('/reports', [TeacherReportController::class, 'index'])
                 ->name('reports');
@@ -50,6 +53,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('administrator')
         ->name('administrator.')
+        ->middleware('role:administrator')
         ->group(function (): void {
             Route::get('/reports', [AdministratorReportController::class, 'index'])
                 ->name('reports');

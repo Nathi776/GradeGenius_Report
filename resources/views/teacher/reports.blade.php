@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Teacher Report | GradeGenius')
 @section('content')
-<header class="gg-header"><a href="{{ route('dashboard') }}" class="gg-brand"><span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>GradeGenius</a><a href="{{ route('dashboard') }}" class="gg-button gg-button-surface">Back home</a></header>
+@include('partials.report-header')
 <main class="gg-report">
     <h1>Class Performance Report</h1><p class="gg-report-intro">Grade 11 Physical Sciences — 2026</p>
     <div class="gg-metric-grid">@foreach ([['Class Average', '71%', 'Term 4', ''], ['Improvement', '+15%', 'Since Term 1', 'green'], ['Students', '32', '', 'orange'], ['Top Performer', '84%', 'Lerato N.', 'blue']] as $metric)<div class="gg-card"><div class="gg-card-label">{{ $metric[0] }}</div><div class="gg-card-value gg-value-{{ $metric[3] }}">{{ $metric[1] }}</div><div class="gg-card-sub">{{ $metric[2] }}</div></div>@endforeach</div>
