@@ -28,7 +28,7 @@
     </section>
 
     <section class="gg-dashboard-preview" id="features">
-        <div class="gg-campus-image"></div>
+        <img class="gg-campus-image" src="{{ asset('images/landing_img.jpg') }}" alt="Graduates celebrating with their caps in the air">
         <div class="gg-preview-metrics">
             @foreach ([['+14.2%', 'Avg. Improvement', 'green'], ['1,847', 'Papers Completed', 'blue'], ['2,341', 'Active Learners', 'orange']] as $metric)
                 <div><strong class="gg-value-{{ $metric[2] }}">{{ $metric[0] }}</strong><span>{{ $metric[1] }}</span></div>
