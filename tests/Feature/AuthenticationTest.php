@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'secret-password',
         ]);
 
-        $response->assertRedirectToRoute('student.reports');
+        $response->assertRedirectToRoute('student.report');
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'name' => 'Lerato Mokoena',
@@ -73,7 +73,7 @@ class AuthenticationTest extends TestCase
     public function test_each_supported_role_has_a_dashboard_destination(): void
     {
         foreach ([
-            'student' => 'student.reports',
+            'student' => 'student.report',
             'parent' => 'parent.reports',
             'teacher' => 'teacher.reports',
             'administrator' => 'administrator.reports',
@@ -126,7 +126,7 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create(['role' => 'student']);
 
         $this->actingAs($user)
-            ->get('/student/reports')
+            ->get('/student/report')
             ->assertOk();
 
         $this->actingAs($user)
@@ -154,7 +154,7 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->unverified()->create(['role' => 'student']);
 
         $this->actingAs($user)
-            ->get('/student/reports')
+            ->get('/student/report')
             ->assertRedirectToRoute('verification.notice');
     }
 
