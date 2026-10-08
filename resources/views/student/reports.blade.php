@@ -54,11 +54,33 @@
             @endforeach
             <text x="38" y="30" text-anchor="end">100</text><text x="38" y="80" text-anchor="end">85</text><text x="38" y="130" text-anchor="end">70</text><text x="38" y="180" text-anchor="end">40</text>
         </svg>
+        <details class="gg-quiz-performance">
+            <summary>Check quiz performance</summary>
+            <div class="gg-quiz-performance-list">
+                @foreach ($quizPerformanceBySubject as $performance)
+                    <div class="gg-quiz-performance-row">
+                        <strong>{{ $performance['subject'] }}</strong>
+                        <span>Lowest <b class="gg-value-red">{{ $performance['lowest'] }}%</b></span>
+                        <span>Highest <b class="gg-value-green">{{ $performance['highest'] }}%</b></span>
+                    </div>
+                @endforeach
+            </div>
+        </details>
     </section>
 
     <section class="gg-panel">
-        <div class="gg-panel-heading">@include('partials.icon', ['name' => 'file', 'size' => 20])<h2>Past Paper Performance — Mathematics</h2></div>
-        <div class="gg-past-paper-grid"><div class="gg-bars">@foreach ($pastPapers as $paper)<div class="gg-bar-row"><span>{{ $paper['name'] }}</span><div class="gg-bar"><span style="width: {{ $paper['score'] }}%"></span></div><strong>{{ $paper['score'] }}%</strong></div>@endforeach<div class="gg-paper-average"><strong>Average</strong><b>75%</b></div></div><div class="gg-paper-analysis"><span>Questions attempted: <strong>150</strong></span><div class="gg-correct-grid"><div><strong>112</strong><small>Correct (75%)</small></div><div><strong>38</strong><small>Incorrect (25%)</small></div></div><h4>Strongest</h4><p class="gg-success-text">✓ Algebra<br>✓ Functions<br>✓ Financial Mathematics</p><h4>Needs attention</h4><p class="gg-warning-text">⚠ Probability<br>⚠ Euclidean Geometry<br>⚠ Trigonometry</p></div></div>
+        <div class="gg-panel-heading">@include('partials.icon', ['name' => 'file', 'size' => 20])<h2>Past Paper Performance</h2></div>
+        <div class="gg-subject-switcher" role="tablist" aria-label="Past paper subjects">
+            @foreach ($pastPaperPerformance as $subject => $performance)
+                <button class="gg-subject-tab{{ $loop->first ? ' active' : '' }}" type="button" role="tab" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-subject-tab="{{ $loop->index }}">{{ $subject }}</button>
+            @endforeach
+        </div>
+        @foreach ($pastPaperPerformance as $subject => $performance)
+            <div class="gg-past-paper-content{{ $loop->first ? ' active' : '' }}" data-subject-panel="{{ $loop->index }}" role="tabpanel">
+                <h3 class="gg-subheading">{{ $subject }}</h3>
+                <div class="gg-past-paper-grid"><div class="gg-bars">@foreach ($performance['papers'] as $paper)<div class="gg-bar-row"><span>{{ $paper['name'] }}</span><div class="gg-bar"><span style="width: {{ $paper['score'] }}%"></span></div><strong>{{ $paper['score'] }}%</strong></div>@endforeach<div class="gg-paper-average"><strong>Average</strong><b>{{ $performance['average'] }}%</b></div></div><div class="gg-paper-analysis"><span>Questions attempted: <strong>{{ $performance['attempted'] }}</strong></span><div class="gg-correct-grid"><div><strong>{{ $performance['correct'] }}</strong><small>Correct ({{ round(($performance['correct'] / $performance['attempted']) * 100) }}%)</small></div><div><strong>{{ $performance['incorrect'] }}</strong><small>Incorrect ({{ round(($performance['incorrect'] / $performance['attempted']) * 100) }}%)</small></div></div><h4>Strongest</h4><p class="gg-success-text">@foreach ($performance['strongest'] as $topic)✓ {{ $topic }}<br>@endforeach</p><h4>Needs attention</h4><p class="gg-warning-text">@foreach ($performance['attention'] as $topic)⚠ {{ $topic }}<br>@endforeach</p></div></div>
+            </div>
+        @endforeach
     </section>
 
     <section class="gg-panel">
@@ -78,12 +100,27 @@
 
     <section class="gg-panel"><div class="gg-panel-heading">@include('partials.icon', ['name' => 'target', 'size' => 20])<h2>Exam Readiness</h2></div><div class="gg-bars">@foreach ($readiness as $item)<div class="gg-bar-row"><span>{{ $item['name'] }}</span><div class="gg-bar gg-bar-blue"><span style="width: {{ $item['mark'] }}%"></span></div><strong>{{ $item['mark'] }}%</strong></div>@endforeach</div><hr class="gg-divider"><div class="gg-readiness-title"><h3>Overall Readiness</h3><b>78%</b></div><div class="gg-factor-list">@foreach ([['78%', 'Subject Mastery'], ['74%', 'Past Paper Performance'], ['81%', 'Quiz Performance'], ['+9%', 'Recent Improvement'], ['83%', 'Topic Coverage']] as $factor)<div><strong>{{ $factor[0] }}</strong><span>{{ $factor[1] }}</span></div>@endforeach</div><div class="gg-readiness-banner">Estimated readiness: On track</div></section>
 
-    <section class="gg-panel"><div class="gg-panel-heading">@include('partials.icon', ['name' => 'target', 'size' => 20])<h2>My Goals</h2></div><div class="gg-goal-list">@foreach ($goals as $goal)<div class="gg-goal"><div><strong>{{ $goal['name'] }}</strong><span>Current: <b>{{ $goal['current'] }}</b> / Target: <b>{{ $goal['target'] }}</b></span></div><div class="gg-bar"><span style="width: {{ $goal['progress'] }}%"></span></div><small>{{ $goal['detail'] }}</small><b>{{ $goal['progress'] }}% completed</b></div>@endforeach</div></section>
+    {{-- <section class="gg-panel"><div class="gg-panel-heading">@include('partials.icon', ['name' => 'target', 'size' => 20])<h2>My Goals</h2></div><div class="gg-goal-list">@foreach ($goals as $goal)<div class="gg-goal"><div><strong>{{ $goal['name'] }}</strong><span>Current: <b>{{ $goal['current'] }}</b> / Target: <b>{{ $goal['target'] }}</b></span></div><div class="gg-bar"><span style="width: {{ $goal['progress'] }}%"></span></div><small>{{ $goal['detail'] }}</small><b>{{ $goal['progress'] }}% completed</b></div>@endforeach</div></section> --}}
 
-    <section class="gg-panel gg-recommendations"><div class="gg-panel-heading"><h2>Recommended Next Steps</h2></div>@foreach ([['Revise Probability', 'Your average on Probability questions is 51%.', 'Start Revision'], ['Complete 2024 Mathematics Paper 1', 'Your recent Mathematics average is 76%.', 'Start Paper'], ['Practice Chemical Reactions', "You've answered 42 questions with 64% accuracy.", 'Practice Topic']] as $index => $recommendation)<div class="gg-recommendation"><span>{{ $index + 1 }}</span><div><strong>{{ $recommendation[0] }}</strong><small>{{ $recommendation[1] }}</small></div><a class="gg-button gg-button-blue" href="#">{{ $recommendation[2] }} @include('partials.icon', ['name' => 'arrow-right', 'size' => 15])</a></div>@endforeach</section>
+    {{-- <section class="gg-panel gg-recommendations"><div class="gg-panel-heading"><h2>Recommended Next Steps</h2></div>@foreach ([['Revise Probability', 'Your average on Probability questions is 51%.', 'Start Revision'], ['Complete 2024 Mathematics Paper 1', 'Your recent Mathematics average is 76%.', 'Start Paper'], ['Practice Chemical Reactions', "You've answered 42 questions with 64% accuracy.", 'Practice Topic']] as $index => $recommendation)<div class="gg-recommendation"><span>{{ $index + 1 }}</span><div><strong>{{ $recommendation[0] }}</strong><small>{{ $recommendation[1] }}</small></div><a class="gg-button gg-button-blue" href="#">{{ $recommendation[2] }} @include('partials.icon', ['name' => 'arrow-right', 'size' => 15])</a></div>@endforeach</section> --}}
 
-    <section class="gg-panel"><div class="gg-panel-heading"><h2>Achievements</h2></div><div class="gg-achievements">@foreach ($achievements as $achievement)<div>@include('partials.icon', ['name' => $achievement['icon'], 'size' => 28])<span>{{ $achievement['name'] }}</span><small>✓ Achieved</small></div>@endforeach</div></section>
+    {{-- <section class="gg-panel"><div class="gg-panel-heading"><h2>Achievements</h2></div><div class="gg-achievements">@foreach ($achievements as $achievement)<div>@include('partials.icon', ['name' => $achievement['icon'], 'size' => 28])<span>{{ $achievement['name'] }}</span><small>✓ Achieved</small></div>@endforeach</div></section> --}}
 
     <section class="gg-panel"><div class="gg-panel-heading"><h2>Assessment Results</h2></div><div class="gg-results">@foreach ($results as $result)<details class="gg-result-row"><summary><span><strong>{{ $result['name'] }}</strong><small>{{ $result['date'] }}</small></span><b>{{ $result['score'] }}</b><i>›</i></summary><div class="gg-result-detail"><p><strong>Result breakdown</strong></p><span>Correct: 42</span><span>Incorrect: 8</span><span>Accuracy: {{ $result['score'] }}</span><span>Time: 24 min</span></div></details>@endforeach</div></section>
 </main>
+<script>
+    document.querySelectorAll('[data-subject-tab]').forEach((tab) => {
+        tab.addEventListener('click', () => {
+            const subjectIndex = tab.dataset.subjectTab;
+
+            document.querySelectorAll('[data-subject-tab]').forEach((item) => {
+                item.classList.toggle('active', item === tab);
+                item.setAttribute('aria-selected', item === tab ? 'true' : 'false');
+            });
+            document.querySelectorAll('[data-subject-panel]').forEach((panel) => {
+                panel.classList.toggle('active', panel.dataset.subjectPanel === subjectIndex);
+            });
+        });
+    });
+</script>
 @endsection
