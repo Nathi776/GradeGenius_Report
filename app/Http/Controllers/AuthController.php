@@ -160,7 +160,7 @@ class AuthController extends Controller
             'parent' => 'parent.reports',
             'teacher' => 'teacher.reports',
             'administrator' => 'administrator.reports',
-            default => 'student.reports',
+            default => 'student.report',
         };
     }
 }

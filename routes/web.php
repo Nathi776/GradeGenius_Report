@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\ParentReportController;
-use App\Http\Controllers\Reports\StudentReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,7 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('student.')
         ->middleware('role:student')
         ->group(function (): void {
-            Route::get('/reports', [StudentReportController::class, 'index'])
+            Route::get('/report', StudentReportController::class)
+                ->name('report');
+            Route::redirect('/reports', '/student/report')
                 ->name('reports');
         });
 

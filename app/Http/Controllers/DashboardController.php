@@ -13,7 +13,7 @@ class DashboardController extends Controller
             'parent' => redirect()->route('parent.reports'),
             'teacher' => redirect()->route('teacher.reports'),
             'administrator' => redirect()->route('administrator.reports'),
-            default => redirect()->route('student.reports'),
+            default => redirect()->route('student.report'),
         };
     }
 }

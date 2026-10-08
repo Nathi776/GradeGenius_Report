@@ -76,7 +76,7 @@
     <section class="gg-banner" id="reports">
         <h2>Start with Your Academic Report</h2>
         <p>Every journey on GradeGenius begins with a mandatory report upload. This is how we baseline your performance and build a strategy that actually works for you.</p>
-        <a href="{{ route('student.reports') }}" class="gg-button gg-button-white">@include('partials.icon', ['name' => 'arrow-right', 'size' => 16]) View Reports</a>
+        <a href="{{ route('student.report') }}" class="gg-button gg-button-white">@include('partials.icon', ['name' => 'arrow-right', 'size' => 16]) View Reports</a>
     </section>
 
     <section class="gg-perspectives" id="perspectives">
