@@ -10,6 +10,8 @@
 @endphp
 
 @section('content')
+    @include('partials.report-header')
+
     <div class="mx-auto w-full max-w-4xl">
         <header>
         <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">Your Academic Report</h1>
