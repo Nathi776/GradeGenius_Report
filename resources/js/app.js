@@ -68,3 +68,11 @@ if (table) {
     });
     render();
 }
+
+// 4. Links like "See details" (#subject-accounting) open the subject they point to.
+$$('a[href^="#subject-"]').forEach((link) =>
+    link.addEventListener('click', () => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target && 'open' in target) target.open = true;
+    }),
+);

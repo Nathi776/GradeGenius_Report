@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\StudentReportController;
+use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
-use App\Http\Controllers\Reports\ParentReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
+use App\Http\Controllers\StudentReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'dashboard')->name('dashboard.landing');
@@ -48,6 +48,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('/parent/report/{child?}', ParentReportController::class)->name('parent.report');
+
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('student')
         ->name('student.')
@@ -63,7 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('parent.')
         ->middleware('role:parent')
         ->group(function (): void {
-            Route::get('/reports', [ParentReportController::class, 'index'])
+            Route::get('/reports', ParentReportController::class)
                 ->name('reports');
         });
 
