@@ -4,9 +4,12 @@
 
 @section('content')
 <main class="gg-auth">
-    <a href="{{ route('dashboard.landing') }}" class="gg-brand">
-        <span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>
-        GradeGenius
+    <a href="{{ route('dashboard.landing') }}" class="gg-brand brand-wrapper">
+        <div class="app-icon-badge">
+            <img src="{{ asset('images/gradegenius_logo.png') }}" alt="GradeGenius Logo" class="logo-icon">
+        </div>
+        <div class="logo-text">Grade<span>Genius</span></div>
+        <span class="logo-reports-badge">Reports</span>
     </a>
     <div class="gg-auth-card">
         <div class="gg-auth-icon">@include('partials.icon', ['name' => 'mail', 'size' => 28])</div>
@@ -17,7 +20,7 @@
         @endif
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button class="gg-button gg-button-blue" type="submit">Resend verification email</button>
+            <button class="gg-button gg-button-primary" type="submit">Resend verification email</button>
         </form>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
