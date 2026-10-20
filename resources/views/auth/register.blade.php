@@ -4,14 +4,20 @@
 
 @section('content')
 <main class="gg-auth">
-    <a href="{{ route('dashboard.landing') }}" class="gg-brand">
-        <span class="gg-brand-mark">@include('partials.icon', ['name' => 'graduation-cap'])</span>
-        GradeGenius
+    <a href="{{ route('dashboard.landing') }}" class="gg-brand brand-wrapper">
+        <div class="app-icon-badge">
+            <img src="{{ asset('images/gradegenius_logo.png') }}" alt="GradeGenius Logo" class="logo-icon">
+        </div>
+        <div class="logo-text">Grade<span>Genius</span></div>
+        <span class="logo-reports-badge">Reports</span>
     </a>
+    <div class="gg-auth-corner-toggle">
+        @include('partials.theme-toggle')
+    </div>
     <div class="gg-auth-card">
         <div class="gg-auth-icon">@include('partials.icon', ['name' => 'users', 'size' => 28])</div>
         <h1>Create your account</h1>
-        <p>Choose your role and start using GradeGenius.</p>
+        <p>Choose your role and start using GradeGenius Reports.</p>
         @if ($errors->any())
             <div class="gg-auth-error">{{ $errors->first() }}</div>
         @endif
@@ -32,7 +38,7 @@
             <input id="password" name="password" type="password" autocomplete="new-password" required>
             <label for="password_confirmation">Confirm password</label>
             <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required>
-            <button class="gg-button gg-button-blue" type="submit">Create account @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</button>
+            <button class="gg-button gg-button-primary" type="submit">Create account @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</button>
         </form>
         <p class="gg-auth-footer">Already have an account? <a href="{{ route('login') }}">Sign in</a></p>
     </div>

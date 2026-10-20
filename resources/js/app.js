@@ -76,3 +76,22 @@ $$('a[href^="#subject-"]').forEach((link) =>
         if (target && 'open' in target) target.open = true;
     }),
 );
+
+// 5. Theme toggle: switch between GradeGenius Dark and Light themes.
+const initThemeToggle = () => {
+    const toggles = document.querySelectorAll('#theme-toggle, [data-theme-toggle]');
+    toggles.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('grade_genius_theme', next);
+        });
+    });
+};
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeToggle);
+} else {
+    initThemeToggle();
+}
+

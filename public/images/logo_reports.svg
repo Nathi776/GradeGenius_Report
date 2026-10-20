@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 70" width="340" height="70" fill="none">
+    <defs>
+        <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+            <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="#171321" />
+        </filter>
+        <linearGradient id="reportsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8ee8f4" />
+            <stop offset="100%" stop-color="#20a9bb" />
+        </linearGradient>
+    </defs>
+
+    <!-- App Icon Badge -->
+    <g transform="translate(6, 8)">
+        <!-- Badge Background -->
+        <rect x="0" y="0" width="54" height="54" rx="14" fill="#fff0f7" stroke="#171321" stroke-width="3" filter="url(#shadow)" />
+        
+        <!-- 3D Chromatic Letter G -->
+        <!-- Magenta offset shadow layer -->
+        <path d="M37 20 H22 C16.5 20 12 24.5 12 30 V32 C12 37.5 16.5 42 22 42 H34 C36.2 42 38 40.2 38 38 V32 H25 V36 H33 V38 H22 C18.7 38 16 35.3 16 32 V30 C16 26.7 18.7 24 22 24 H37 V20 Z" 
+              fill="#f23d99" transform="translate(-2, 1)" />
+        
+        <!-- Cyan front layer -->
+        <path d="M37 20 H22 C16.5 20 12 24.5 12 30 V32 C12 37.5 16.5 42 22 42 H34 C36.2 42 38 40.2 38 38 V32 H25 V36 H33 V38 H22 C18.7 38 16 35.3 16 32 V30 C16 26.7 18.7 24 22 24 H37 V20 Z" 
+              fill="#8ee8f4" stroke="#171321" stroke-width="1.2" stroke-linejoin="round" />
+    </g>
+
+    <!-- Brand Typography -->
+    <!-- "Grade" -->
+    <text x="74" y="44" font-family="'Poppins', 'Inter', system-ui, sans-serif" font-size="28" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Grade</text>
+    
+    <!-- "Genius" in Vibrant Pink -->
+    <text x="162" y="44" font-family="'Poppins', 'Inter', system-ui, sans-serif" font-size="28" font-weight="900" fill="#ff6b8b" letter-spacing="-0.5">Genius</text>
+
+    <!-- "REPORTS" Badge -->
+    <g transform="translate(262, 22)">
+        <rect x="0" y="0" width="70" height="23" rx="6" fill="url(#reportsGrad)" stroke="#171321" stroke-width="2" filter="url(#shadow)" />
+        <text x="35" y="15.5" font-family="'Poppins', 'Inter', system-ui, sans-serif" font-size="10.5" font-weight="900" fill="#07191c" text-anchor="middle" letter-spacing="0.8">REPORTS</text>
+    </g>
+</svg>

@@ -16,7 +16,7 @@ namespace App\Services;
 final class StudentReportService
 {
     /** Distinct on a dark background; wraps if a learner has more subjects than colours. */
-    private const PALETTE = ['#5b7cfa', '#4ade80', '#fdba74', '#a78bfa', '#2dd4bf', '#f472b6', '#facc15'];
+    private const PALETTE = ['#8ee8f4', '#f23d99', '#4ade80', '#c084fc', '#20a9bb', '#ff69bd', '#38bdf8'];
 
     public function build(array $raw): array
     {
