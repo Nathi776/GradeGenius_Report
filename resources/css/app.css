@@ -14,6 +14,16 @@
     --color-sky: #8ee8f4;
 }
 
+/* Surface tokens used by the report views (bg-card, bg-card-2, border-line, text-muted).
+   `inline` makes each utility read the --glass-* variable directly, so the values below
+   switch with [data-theme] instead of being frozen at build time. */
+@theme inline {
+    --color-card: var(--glass-bg);
+    --color-card-2: var(--glass-bg-2);
+    --color-line: var(--glass-edge);
+    --color-muted: var(--glass-muted);
+}
+
 /* ================================================================================
    GRADEGENIUS DYNAMIC THEME SYSTEM (LIGHT & DARK TOKENS)
    Matched to https://www.gradegenius.org/
@@ -46,6 +56,12 @@
     --gg-muted: #514a5e;
     --gg-card-shadow: 4px 4px 0 #171321;
 
+    /* Report surfaces (light keeps the solid comic cards; the rules near the end add their ink border and shadow) */
+    --glass-bg: #ffffff;
+    --glass-bg-2: #fff5f8;
+    --glass-edge: #171321;
+    --glass-muted: #514a5e;
+
     --gg-nav-bg: #fffdf9;
     --gg-nav-border: #171321;
     --gg-nav-shadow: 4px 4px 0 #171321;
@@ -73,6 +89,14 @@
     --gg-text-sub: #b9b0c9;
     --gg-muted: #b3a8c7;
     --gg-card-shadow: 4px 4px 0 rgba(0, 0, 0, 0.55);
+
+    /* Frosted-glass report surfaces: a faint white tint, a light edge, and the blur added below */
+    --glass-bg: rgba(255, 255, 255, 0.07);
+    --glass-bg-2: rgba(255, 255, 255, 0.05);
+    --glass-edge: rgba(255, 255, 255, 0.16);
+    --glass-muted: rgba(241, 245, 249, 0.66);
+    --glass-solid: #1f1a35;
+    --glass-solid-2: #272140;
 
     --gg-nav-bg: #1c1830;
     --gg-nav-border: #342c4a;
@@ -114,6 +138,20 @@ html { scroll-behavior: smooth; }
 [data-theme="dark"] .gg-page::before {
     opacity: 0.15;
     background-image: radial-gradient(rgba(142, 232, 244, 0.35) 1.2px, transparent 1.4px);
+}
+
+/* Dark mode: soft pink / cyan / violet glows. Glass only looks like glass over colour,
+   so these give the blur something to frost. Plain gradients, no blur filter, so they stay cheap. */
+[data-theme="dark"] .gg-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    background:
+        radial-gradient(42rem circle at 92% -6%, rgba(242, 61, 153, 0.42), transparent 62%),
+        radial-gradient(44rem circle at -8% 104%, rgba(32, 169, 187, 0.38), transparent 62%),
+        radial-gradient(30rem circle at 48% 42%, rgba(112, 66, 200, 0.30), transparent 64%);
 }
 
 .gg-page {
@@ -1408,6 +1446,55 @@ html { scroll-behavior: smooth; }
 
 [data-theme="light"] .stroke-line {
     stroke: rgba(23, 19, 33, 0.2);
+}
+
+/* --glass-edge is solid ink in light mode (right for borders); as a bar track it must be a light tint. */
+[data-theme="light"] .bg-line {
+    background-color: rgba(23, 19, 33, 0.12);
+}
+
+/* ================================================================================
+   DARK MODE: FROSTED GLASS CARDS
+   Applies to every bg-card / bg-card-2 surface in the student and parent reports, plus the
+   gg-card / gg-panel blocks on the teacher and administrator pages.
+   ================================================================================ */
+[data-theme="dark"] .bg-card,
+[data-theme="dark"] .gg-panel,
+[data-theme="dark"] .gg-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-edge);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="dark"] .bg-card-2 {
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Browsers without backdrop-filter, or people who ask for less transparency, get solid cards. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-theme="dark"] .bg-card,
+    [data-theme="dark"] .gg-panel,
+    [data-theme="dark"] .gg-card { background: var(--glass-solid); }
+    [data-theme="dark"] .bg-card-2 { background-color: var(--glass-solid-2); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    [data-theme="dark"] .bg-card,
+    [data-theme="dark"] .gg-panel,
+    [data-theme="dark"] .gg-card {
+        background: var(--glass-solid);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+    [data-theme="dark"] .bg-card-2 {
+        background-color: var(--glass-solid-2);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
 }
 
 /* Responsive adjustments */
