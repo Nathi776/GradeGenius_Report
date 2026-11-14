@@ -77,6 +77,25 @@ $$('a[href^="#subject-"]').forEach((link) =>
     }),
 );
 
+// 4b. Arriving from another page (e.g. the dashboard) with #subject-accounting opens that subject too.
+if (location.hash.startsWith('#subject-')) {
+    const target = document.getElementById(location.hash.slice(1));
+    if (target && 'open' in target) {
+        target.open = true;
+        target.scrollIntoView();
+    }
+}
+
+// 4c. Student sidebar: below the lg breakpoint the menu button shows and hides the navigation.
+$$('[data-nav-toggle]').forEach((button) =>
+    button.addEventListener('click', () => {
+        const nav = document.getElementById(button.getAttribute('aria-controls'));
+        if (!nav) return;
+        const hidden = nav.classList.toggle('max-lg:hidden');
+        button.setAttribute('aria-expanded', String(!hidden));
+    }),
+);
+
 // 5. Theme toggle: switch between GradeGenius Dark and Light themes.
 const initThemeToggle = () => {
     const toggles = document.querySelectorAll('#theme-toggle, [data-theme-toggle]');

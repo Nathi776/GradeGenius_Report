@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'secret-password',
         ]);
 
-        $response->assertRedirectToRoute('student.report');
+        $response->assertRedirectToRoute('student.home');
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'name' => 'Lerato Mokoena',
@@ -73,7 +73,7 @@ class AuthenticationTest extends TestCase
     public function test_each_supported_role_has_a_dashboard_destination(): void
     {
         foreach ([
-            'student' => 'student.report',
+            'student' => 'student.home',
             'parent' => 'parent.reports',
             'teacher' => 'teacher.reports',
             'administrator' => 'administrator.reports',

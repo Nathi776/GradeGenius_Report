@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
+use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('student.')
         ->middleware('role:student')
         ->group(function (): void {
+            Route::get('/', StudentDashboardController::class)
+                ->name('home');
             Route::get('/report', StudentReportController::class)
                 ->name('report');
             Route::redirect('/reports', '/student/report')

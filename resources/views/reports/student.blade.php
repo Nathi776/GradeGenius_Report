@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Your Academic Report'])
+@extends('layouts.student', ['title' => 'Academic Performance', 'active' => 'performance'])
 
 @php
     $overall = $report['overall'];
@@ -9,9 +9,7 @@
     $changeClass = fn ($n) => $n > 0 ? 'text-good' : ($n < 0 ? 'text-bad' : 'text-muted');
 @endphp
 
-@section('content')
-    @include('partials.report-header')
-
+@section('student-content')
     <div class="mx-auto w-full max-w-4xl">
         <header>
         <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">Your Academic Report</h1>
