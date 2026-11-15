@@ -29,29 +29,6 @@
             </div>
         </header>
 
-        {{-- Parent Action / Report Sign-Off Banner --}}
-        <div class="no-print flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-good/40 bg-good/10 p-4">
-            <div class="flex items-center gap-3">
-                <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-good/20 text-good">
-                    @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
-                </span>
-                <div>
-                    <p class="font-semibold text-ink text-sm">Official Term 4 Report Card Published</p>
-                    <p class="text-xs text-muted">Reviewed and endorsed by school academic committee.</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="this.innerText='✓ Acknowledged'; this.classList.remove('bg-good'); this.classList.add('bg-good/20', 'text-good')"
-                    class="rounded-xl bg-good px-3.5 py-1.5 text-xs font-semibold text-white transition hover:opacity-90">
-                    Acknowledge Report
-                </button>
-                <a href="mailto:educators@gradegenius.org?subject=Parent%20Inquiry%20regarding%20{{ $child['first_name'] }}"
-                    class="rounded-xl border border-line bg-card px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-brand/40">
-                    Message Educator
-                </a>
-            </div>
-        </div>
-
         <div class="grid gap-5 lg:grid-cols-12">
             {{-- 1. The answer first --}}
             <section aria-labelledby="summary-heading" class="relative overflow-hidden {{ $card }} lg:col-span-12">

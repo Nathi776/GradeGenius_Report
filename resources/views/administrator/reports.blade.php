@@ -20,6 +20,7 @@
                 <p class="mt-2 text-muted">School-wide academic performance, NSC matric projections, and departmental intelligence.</p>
             </div>
             <div class="flex items-center gap-2">
+                <span class="shrink-0 whitespace-nowrap rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">Demo data</span>
                 <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-ink">
                     <span class="text-muted">Total Learners</span>
                     <strong class="font-semibold text-ink">{{ number_format($snap['total_learners']) }}</strong>
