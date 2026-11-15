@@ -145,6 +145,44 @@ final class DemoReportData
         return ['nathi' => $nathi, 'sipho' => $sipho];
     }
 
+    /**
+     * Demo classes for the teacher dashboard, in the raw shape TeacherDashboardService expects.
+     * Replace with the signed-in teacher's assigned classes and enrolled learners.
+     *
+     * @return array<string, mixed>
+     */
+    public static function classesForTeacher(): array
+    {
+        $roster = fn (string $prefix, array $rows): array => array_map(
+            fn (array $row, int $i): array => ['id' => $prefix.($i + 1), 'name' => $row[0], 'term_averages' => $row[1]],
+            $rows,
+            array_keys($rows),
+        );
+
+        return [
+            'teacher' => ['name' => 'Mrs Naidoo'],
+            'terms' => ['Term 1', 'Term 2', 'Term 3', 'Term 4'],
+            'classes' => [
+                ['key' => 'maths-12a', 'name' => 'Grade 12A', 'subject' => 'Mathematics', 'grade' => 12, 'target' => 75, 'learners' => $roster('m', [
+                    ['Thabo M.', [66, 70, 74, 78]], ['Lerato N.', [72, 78, 84, 90]], ['Sipho K.', [52, 55, 58, 63]], ['Aisha P.', [60, 64, 68, 71]],
+                    ['Johan D.', [58, 56, 52, 47]], ['Naledi S.', [70, 76, 80, 86]], ['Kabelo R.', [64, 66, 70, 74]], ['Zanele T.', [55, 54, 57, 56]],
+                ])],
+                ['key' => 'sci-12a', 'name' => 'Grade 12A', 'subject' => 'Physical Sciences', 'grade' => 12, 'target' => 70, 'learners' => $roster('s', [
+                    ['Thabo M.', [60, 64, 66, 70]], ['Lerato N.', [68, 72, 77, 82]], ['Sipho K.', [48, 50, 52, 55]], ['Aisha P.', [62, 64, 68, 72]],
+                    ['Johan D.', [54, 52, 50, 46]], ['Naledi S.', [66, 70, 74, 79]], ['Kabelo R.', [58, 61, 64, 68]], ['Zanele T.', [50, 53, 56, 60]],
+                ])],
+                ['key' => 'life-12b', 'name' => 'Grade 12B', 'subject' => 'Life Sciences', 'grade' => 12, 'target' => 75, 'learners' => $roster('l', [
+                    ['Mandla G.', [70, 74, 78, 82]], ['Nomsa V.', [74, 78, 82, 86]], ['Pieter B.', [62, 66, 70, 74]], ['Fatima A.', [66, 70, 74, 78]],
+                    ['Siya Q.', [58, 62, 66, 70]], ['Lindiwe H.', [72, 76, 79, 84]], ['Ruan W.', [60, 62, 64, 66]], ['Busi L.', [68, 72, 76, 80]],
+                ])],
+                ['key' => 'acc-12b', 'name' => 'Grade 12B', 'subject' => 'Accounting', 'grade' => 12, 'target' => 70, 'learners' => $roster('a', [
+                    ['Mandla G.', [56, 60, 62, 64]], ['Nomsa V.', [64, 66, 70, 72]], ['Pieter B.', [48, 49, 47, 46]], ['Fatima A.', [58, 62, 64, 68]],
+                    ['Siya Q.', [52, 55, 57, 60]], ['Lindiwe H.', [66, 68, 72, 75]], ['Ruan W.', [50, 52, 51, 53]], ['Busi L.', [60, 63, 65, 69]],
+                ])],
+            ],
+        ];
+    }
+
     private static function quiz(string $title, int $score, int $attempts, string $date): array
     {
         return compact('title', 'score', 'attempts', 'date');

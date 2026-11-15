@@ -10,10 +10,10 @@ class DashboardController extends Controller
     public function index(): RedirectResponse
     {
         return match (Auth::user()->role) {
-            'parent' => redirect()->route('parent.reports'),
-            'teacher' => redirect()->route('teacher.reports'),
+            'parent' => redirect()->route('parent.home'),
+            'teacher' => redirect()->route('teacher.home'),
             'administrator' => redirect()->route('administrator.reports'),
-            default => redirect()->route('student.report'),
+            default => redirect()->route('student.home'),
         };
     }
 }

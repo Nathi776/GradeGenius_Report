@@ -15,6 +15,9 @@
 
     <div class="mx-auto w-full max-w-4xl px-4 pb-12 pt-6">
         <header>
+            @if (auth()->user()?->role === 'parent')
+                <a href="{{ route('parent.home', ['child' => $activeChild]) }}" class="mb-3 inline-block text-sm text-sky underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-blue">← Back to parent dashboard</a>
+            @endif
             <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">{{ $report['student']['name'] }}'s progress</h1>
             <p class="mt-2 text-muted">Grade {{ $report['student']['grade'] }} · {{ $o['current_term'] }}</p>
 

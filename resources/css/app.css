@@ -1436,6 +1436,12 @@ html { scroll-behavior: smooth; }
     color: #514a5e;
 }
 
+/* Labels written for the dark theme in report components (bar-row, details) must stay readable on white cards. */
+[data-theme="light"] .text-slate-100,
+[data-theme="light"] .text-slate-200 {
+    color: #171321;
+}
+
 [data-theme="light"] .text-white:not(.gg-button):not(.gg-button *):not(.gg-banner *):not(.gg-role-card *):not(.app-icon-badge *):not(.gg-feature-icon-pink *) {
     color: #171321;
 }
