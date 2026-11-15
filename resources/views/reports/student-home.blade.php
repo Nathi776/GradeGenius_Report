@@ -85,23 +85,11 @@
                 <p class="mt-1 text-sm text-muted">Chosen from your lowest topic mastery across all subjects.</p>
 
                 @if (count($dashboard['actions']) > 0)
-                    <ul class="mt-4 space-y-3">
+                    <div class="mt-4 space-y-3">
                         @foreach ($dashboard['actions'] as $action)
-                            <li class="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-line bg-card-2 p-4 transition hover:border-brand/30">
-                                <span class="size-2.5 shrink-0 rounded-full" style="background: {{ $action['color'] }}"></span>
-                                <div class="min-w-48 flex-1">
-                                    <p class="font-medium text-ink">Revise {{ $action['topic'] }}</p>
-                                    <p class="mt-0.5 text-xs text-muted">{{ $action['subject'] }} · topic mastery {{ $action['mastery'] }}%</p>
-                                </div>
-                                <span class="rounded-full border border-line px-2.5 py-0.5 text-xs font-semibold {{ $text[$action['tone']] }}">{{ $action['priority'] }} priority</span>
-                                <a href="{{ $reportUrl }}#subject-{{ $action['subject_key'] }}" class="{{ $link }}">
-                                    <span>View detail</span>
-                                    <span class="sr-only"> for {{ $action['topic'] }} in {{ $action['subject'] }}</span>
-                                    @include('partials.icon', ['name' => 'arrow-right', 'size' => 14])
-                                </a>
-                            </li>
+                            <x-action-card :title="'Revise '.$action['topic']" :subject="$action['subject']" :mastery="$action['mastery']" :priority="$action['priority']" :tone="$action['tone']" :color="$action['color']" :href="$reportUrl.'#subject-'.$action['subject_key']" actionText="View detail" />
                         @endforeach
-                    </ul>
+                    </div>
                 @else
                     <p class="mt-4 rounded-xl border border-dashed border-line p-4 text-sm text-muted">No weak topics right now. Keep practising to stay on track.</p>
                 @endif
@@ -128,20 +116,8 @@
                 </ul>
             </section>
 
-            {{-- 5. Study planner --}}
-            <section aria-labelledby="planner-heading" class="{{ $card }} lg:col-span-4">
-                <div class="flex items-center justify-between gap-2">
-                    <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                        @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
-                        Study planner
-                    </h2>
-                    <span class="{{ $soon }}">Coming soon</span>
-                </div>
-                <p class="mt-4 text-sm text-muted">Plan revision sessions and tick them off here. Nothing is scheduled yet because the planner isn't set up.</p>
-            </section>
-
-            {{-- 6. Recent activity: latest quizzes and past papers --}}
-            <section aria-labelledby="activity-heading" class="{{ $card }} lg:col-span-4">
+            {{-- 5. Recent activity: latest quizzes and past papers --}}
+            <section aria-labelledby="activity-heading" class="{{ $card }} lg:col-span-7">
                 <div class="flex items-center justify-between gap-2">
                     <h2 id="activity-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'zap', 'size' => 20])
@@ -166,16 +142,30 @@
                 @endif
             </section>
 
-            {{-- 7. Upcoming exams --}}
-            <section aria-labelledby="exams-heading" class="{{ $card }} lg:col-span-4">
-                <div class="flex items-center justify-between gap-2">
-                    <h2 id="exams-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                        @include('partials.icon', ['name' => 'calendar', 'size' => 20])
-                        Upcoming exams
-                    </h2>
-                    <span class="{{ $soon }}">Coming soon</span>
-                </div>
-                <p class="mt-4 text-sm text-muted">No exams scheduled yet. Dates and a countdown will appear here once an exam schedule is added.</p>
+            {{-- 6. Not built yet: one compact card instead of two mostly empty ones --}}
+            <section aria-label="Coming soon" class="{{ $card }} lg:col-span-5">
+                <ul class="space-y-5">
+                    <li>
+                        <div class="flex items-center justify-between gap-2">
+                            <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
+                                @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
+                                Study planner
+                            </h2>
+                            <span class="{{ $soon }}">Coming soon</span>
+                        </div>
+                        <p class="mt-2 text-sm text-muted">Plan revision sessions and tick them off here. Nothing is scheduled yet because the planner isn't set up.</p>
+                    </li>
+                    <li class="border-t border-line pt-5">
+                        <div class="flex items-center justify-between gap-2">
+                            <h2 id="exams-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
+                                @include('partials.icon', ['name' => 'calendar', 'size' => 20])
+                                Upcoming exams
+                            </h2>
+                            <span class="{{ $soon }}">Coming soon</span>
+                        </div>
+                        <p class="mt-2 text-sm text-muted">No exams scheduled yet. Dates and a countdown will appear here once an exam schedule is added.</p>
+                    </li>
+                </ul>
             </section>
         </div>
     </div>
