@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ParentDashboardController;
 use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
@@ -68,6 +69,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('parent.')
         ->middleware('role:parent')
         ->group(function (): void {
+            Route::get('/', ParentDashboardController::class)
+                ->name('home');
             Route::get('/reports', ParentReportController::class)
                 ->name('reports');
         });

@@ -74,7 +74,7 @@ class AuthenticationTest extends TestCase
     {
         foreach ([
             'student' => 'student.home',
-            'parent' => 'parent.reports',
+            'parent' => 'parent.home',
             'teacher' => 'teacher.reports',
             'administrator' => 'administrator.reports',
         ] as $role => $route) {

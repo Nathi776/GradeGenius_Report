@@ -157,7 +157,7 @@ class AuthController extends Controller
     private function dashboardRouteFor(string $role): string
     {
         return match ($role) {
-            'parent' => 'parent.reports',
+            'parent' => 'parent.home',
             'teacher' => 'teacher.reports',
             'administrator' => 'administrator.reports',
             default => 'student.home',

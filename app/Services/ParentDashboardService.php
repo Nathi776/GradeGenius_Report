@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Services;
+
+/**
+ * Parent home dashboard for one child.
+ *
+ * Built from ParentReportService::build() output so a parent sees exactly the figures in the detailed
+ * report. It only selects and arranges: how many subjects need support, what is going well, the
+ * progress line and recent activity. Nothing here measures anything the report does not.
+ */
+final class ParentDashboardService
+{
+    private const LIST_LIMIT = 3;
+
+    /**
+     * @param  array<string, mixed>  $report  Output of ParentReportService::build()
+     * @param  array<string, string>  $children  Child key => display name (linked children only)
+     * @return array<string, mixed>
+     */
+    public function build(array $report, array $children, string $activeChild): array
+    {
+        $overall = $report['overall'];
+        $subjects = $report['subjects'];
+        $goal = $subjects === [] ? null : (int) round(array_sum(array_column($subjects, 'target')) / count($subjects));
+
+        return [
+            'children' => $children,
+            'active_child' => $activeChild,
+            'child' => ['name' => $report['student']['name'], 'first_name' => $report['first_name'], 'grade' => $report['student']['grade']],
+            'summary' => $report['summary'],
+            'next_step' => $report['next_step'],
+            'snapshot' => [
+                'average' => $overall['current'],
+                'level' => $overall['level'],
+                'change' => $overall['change'],
+                'term' => $overall['current_term'],
+                'first_term' => $overall['first_term'],
+                'at_target' => $overall['at_target'],
+                'subject_count' => $overall['subject_count'],
+                'goal' => $goal,
+            ],
+            'progress' => [
+                'labels' => $report['terms'],
+                'series' => [$report['chart']['series'][0]],
+            ],
+            'support' => array_slice($report['needs_support'], 0, self::LIST_LIMIT),
+            'support_total' => count($report['needs_support']),
+            'wins' => array_slice($report['going_well'], 0, self::LIST_LIMIT),
+            'activity' => $report['activity'],
+            'recent' => array_slice($report['assessments'], 0, 4),
+        ];
+    }
+}
