@@ -158,7 +158,7 @@ class AuthController extends Controller
     {
         return match ($role) {
             'parent' => 'parent.home',
-            'teacher' => 'teacher.reports',
+            'teacher' => 'teacher.home',
             'administrator' => 'administrator.reports',
             default => 'student.home',
         };

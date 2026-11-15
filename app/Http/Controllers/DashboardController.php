@@ -11,7 +11,7 @@ class DashboardController extends Controller
     {
         return match (Auth::user()->role) {
             'parent' => redirect()->route('parent.home'),
-            'teacher' => redirect()->route('teacher.reports'),
+            'teacher' => redirect()->route('teacher.home'),
             'administrator' => redirect()->route('administrator.reports'),
             default => redirect()->route('student.home'),
         };

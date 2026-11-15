@@ -66,7 +66,7 @@ class AuthenticationTest extends TestCase
             'password' => 'secret-password',
         ]);
 
-        $response->assertRedirectToRoute('teacher.reports');
+        $response->assertRedirectToRoute('teacher.home');
         $this->assertAuthenticatedAs($user);
     }
 
@@ -75,7 +75,7 @@ class AuthenticationTest extends TestCase
         foreach ([
             'student' => 'student.home',
             'parent' => 'parent.home',
-            'teacher' => 'teacher.reports',
+            'teacher' => 'teacher.home',
             'administrator' => 'administrator.reports',
         ] as $role => $route) {
             $user = User::factory()->create([
