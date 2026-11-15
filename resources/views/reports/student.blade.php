@@ -11,9 +11,20 @@
 
 @section('student-content')
     <div class="mx-auto w-full max-w-4xl">
-        <header>
-        <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">Your Academic Report</h1>
-        <p class="mt-2 text-muted">Track your marks, assessments, and learning progress across all {{ $overall['subject_count'] }} subjects.</p>
+        @include('partials.print-header', ['title' => 'Official Learner Academic Performance Report', 'student' => ['name' => auth()->user()->name, 'grade' => 12]])
+
+        <header class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">Your Academic Report</h1>
+                <p class="mt-2 text-muted">Track your marks, assessments, and learning progress across all {{ $overall['subject_count'] }} subjects.</p>
+            </div>
+            <div class="no-print flex items-center gap-2">
+                <button type="button" onclick="window.print()"
+                    class="inline-flex items-center gap-2 rounded-xl border border-line bg-card px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-brand/40">
+                    @include('partials.icon', ['name' => 'printer', 'size' => 15])
+                    <span>Print Report Card</span>
+                </button>
+            </div>
         </header>
 
     {{-- 1. Headline numbers (all derived from the subject list below) --}}
@@ -61,10 +72,10 @@
                     <summary class="flex cursor-pointer list-none flex-wrap items-center gap-x-5 gap-y-3 rounded-xl p-4 focus-visible:outline-2 focus-visible:outline-blue [&::-webkit-details-marker]:hidden">
                         <span class="flex min-w-44 flex-1 items-center gap-3">
                             <span class="size-2.5 shrink-0 rounded-full" style="background: {{ $s['color'] }}"></span>
-                            <span class="font-medium text-white">{{ $s['name'] }}</span>
+                            <span class="font-medium text-ink">{{ $s['name'] }}</span>
                         </span>
                         <span class="flex items-baseline gap-2">
-                            <span class="text-2xl font-semibold tabular-nums text-white">{{ $s['current'] }}%</span>
+                            <span class="text-2xl font-semibold tabular-nums text-ink">{{ $s['current'] }}%</span>
                             <span class="text-sm font-medium {{ $changeClass($s['change']) }}">{{ $changeText($s['change']) }}<span class="sr-only"> since {{ $overall['first_term'] }}</span></span>
                         </span>
                         <x-sparkline :points="$s['series']" :color="$s['color']" class="hidden sm:block" />
@@ -82,7 +93,7 @@
                         {{-- left: topics and past papers --}}
                         <div class="space-y-7">
                             <div>
-                                <h3 class="text-sm font-semibold text-white">Topic mastery</h3>
+                                <h3 class="text-sm font-semibold text-ink">Topic mastery</h3>
                                 <div class="mt-3 space-y-3">
                                     @foreach ($s['topics'] as $t)
                                         <x-bar-row :label="$t['name']" :value="$t['mastery']" :tone="$t['tone']" />
@@ -90,14 +101,14 @@
                                 </div>
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-white">Past papers</h3>
+                                <h3 class="text-sm font-semibold text-ink">Past papers</h3>
                                 <div class="mt-3 space-y-3">
                                     @foreach ($s['past_papers'] as $p)
                                         <x-bar-row :label="$p['title']" :value="$p['score']" variant="paper" />
                                     @endforeach
                                 </div>
                                 <div class="mt-4 flex items-center justify-between border-t border-line pt-3 text-sm">
-                                    <span class="font-semibold text-white">Average</span>
+                                    <span class="font-semibold text-ink">Average</span>
                                     <span class="font-semibold text-blue">{{ $s['past_paper_average'] }}%</span>
                                 </div>
                             </div>
@@ -106,7 +117,7 @@
                         {{-- right: quizzes, questions, strengths --}}
                         <div class="space-y-6">
                             <div>
-                                <h3 class="text-sm font-semibold text-white">Quiz analytics</h3>
+                                <h3 class="text-sm font-semibold text-ink">Quiz analytics</h3>
                                 <div class="mt-3 grid grid-cols-3 gap-2">
                                     <x-stat-tile :compact="true" label="Completed" :value="$s['quiz_stats']['completed']" tone="peach" />
                                     <x-stat-tile :compact="true" label="Average" :value="$s['quiz_stats']['average'] . '%'" />
@@ -127,7 +138,7 @@
                             </div>
 
                             <div>
-                                <p class="text-sm text-white">Questions attempted: <strong>{{ $s['questions']['attempted'] }}</strong></p>
+                                <p class="text-sm text-ink">Questions attempted: <strong>{{ $s['questions']['attempted'] }}</strong></p>
                                 <div class="mt-2 grid grid-cols-2 gap-2">
                                     <div class="rounded-xl bg-good/10 p-3 text-center">
                                         <p class="text-2xl font-semibold text-good">{{ $s['questions']['correct'] }}</p>
@@ -185,11 +196,11 @@
         </div>
 
         <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <h3 class="text-base text-white">Recent assessments</h3>
+            <h3 class="text-base text-ink font-medium">Recent assessments</h3>
             <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by subject">
-                <button type="button" data-filter="all" aria-pressed="true" class="rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-muted aria-pressed:border-white/60 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-blue">All subjects</button>
+                <button type="button" data-filter="all" aria-pressed="true" class="rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-muted aria-pressed:border-brand/60 aria-pressed:text-ink focus-visible:outline-2 focus-visible:outline-blue">All subjects</button>
                 @foreach ($report['subjects'] as $s)
-                    <button type="button" data-filter="{{ $s['key'] }}" aria-pressed="false" class="rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-muted aria-pressed:border-white/60 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-blue">{{ $s['name'] }}</button>
+                    <button type="button" data-filter="{{ $s['key'] }}" aria-pressed="false" class="rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-muted aria-pressed:border-brand/60 aria-pressed:text-ink focus-visible:outline-2 focus-visible:outline-blue">{{ $s['name'] }}</button>
                 @endforeach
             </div>
         </div>
@@ -209,13 +220,13 @@
                 <tbody>
                     @foreach ($report['assessments'] as $a)
                         <tr data-subject="{{ str()->slug($a['subject']) }}" class="border-b border-line/70">
-                            <td class="py-3 pr-4 text-white">{{ $a['title'] }}</td>
+                            <td class="py-3 pr-4 text-ink font-medium">{{ $a['title'] }}</td>
                             <td class="py-3 pr-4">
                                 <span class="rounded-full px-2.5 py-0.5 text-xs {{ $a['type'] === 'quiz' ? 'bg-blue/15 text-sky' : 'bg-brand/15 text-brand' }}">{{ $a['type_label'] }}</span>
                             </td>
-                            <td class="py-3 pr-4 text-slate-200">{{ $a['subject'] }}</td>
+                            <td class="py-3 pr-4 text-ink-sub">{{ $a['subject'] }}</td>
                             <td class="py-3 pr-4 font-semibold tabular-nums {{ $text[$a['tone']] }}">{{ $a['score'] }}%</td>
-                            <td class="py-3 text-slate-200">{{ $a['date_label'] }}</td>
+                            <td class="py-3 text-ink-sub">{{ $a['date_label'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -226,13 +237,13 @@
     </section>
 
         <details class="mt-6 rounded-2xl border border-line bg-card p-5 text-sm text-muted">
-        <summary class="cursor-pointer text-slate-200">How these numbers are calculated</summary>
-        <ul class="mt-3 list-disc space-y-1 pl-5">
-            <li><strong class="text-slate-200">Subject average:</strong> the learner's average for that subject in the latest term.</li>
-            <li><strong class="text-slate-200">Current average:</strong> the mean of all subject averages. The chart's last point is this same number.</li>
-            <li><strong class="text-slate-200">Improvement:</strong> change in percentage points between {{ $overall['first_term'] }} and {{ $overall['current_term'] }}.</li>
-            <li><strong class="text-slate-200">Average score:</strong> mean of every quiz and past paper score.</li>
-            <li><strong class="text-slate-200">Question accuracy:</strong> correct answers divided by questions answered, across all subjects.</li>
+        <summary class="cursor-pointer text-ink font-medium">How these numbers are calculated</summary>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-ink-sub">
+            <li><strong class="text-ink">Subject average:</strong> the learner's average for that subject in the latest term.</li>
+            <li><strong class="text-ink">Current average:</strong> the mean of all subject averages. The chart's last point is this same number.</li>
+            <li><strong class="text-ink">Improvement:</strong> change in percentage points between {{ $overall['first_term'] }} and {{ $overall['current_term'] }}.</li>
+            <li><strong class="text-ink">Average score:</strong> mean of every quiz and past paper score.</li>
+            <li><strong class="text-ink">Question accuracy:</strong> correct answers divided by questions answered, across all subjects.</li>
         </ul>
         </details>
     </div>

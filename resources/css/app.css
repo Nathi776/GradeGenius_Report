@@ -22,6 +22,8 @@
     --color-card-2: var(--glass-bg-2);
     --color-line: var(--glass-edge);
     --color-muted: var(--glass-muted);
+    --color-ink: var(--gg-text);
+    --color-ink-sub: var(--gg-text-sub);
 }
 
 /* ================================================================================
@@ -1539,4 +1541,77 @@ html { scroll-behavior: smooth; }
     .logo-text { font-size: 1.3rem; }
     .app-icon-badge { width: 38px; height: 38px; }
     .logo-reports-badge { font-size: 0.65rem; padding: 2px 7px; }
+}
+
+/* ================================================================================
+   PRINT AND PDF REPORT EXPORT STYLING
+   ================================================================================ */
+.print-only {
+    display: none !important;
+}
+
+@media print {
+    .no-print,
+    aside,
+    [data-nav-toggle],
+    .gg-header,
+    .gg-header-actions,
+    nav,
+    form[action*="logout"],
+    .theme-toggle,
+    button:not(.print-include) {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    body, .gg-page {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    main {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .rounded-2xl, .rounded-xl, .rounded-lg {
+        border-radius: 6px !important;
+    }
+
+    .border-line, [class*="border-line"] {
+        border-color: #cbd5e1 !important;
+    }
+
+    .bg-card, .bg-card-2, [class*="bg-card"] {
+        background: #ffffff !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+
+    .text-muted {
+        color: #64748b !important;
+    }
+
+    .text-white, .text-ink {
+        color: #0f172a !important;
+    }
+
+    section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .print-break-before {
+        break-before: page;
+        page-break-before: always;
+    }
 }

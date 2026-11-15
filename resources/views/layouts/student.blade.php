@@ -32,7 +32,7 @@
     @endphp
 
     <div class="mx-auto flex w-full max-w-360 flex-col gap-4 p-4 lg:flex-row lg:items-start lg:gap-6 lg:p-6">
-        <aside class="lg:sticky lg:top-6 lg:w-72 lg:shrink-0" aria-label="Student workspace">
+        <aside class="no-print lg:sticky lg:top-6 lg:w-72 lg:shrink-0" aria-label="Student workspace">
             <div class="flex flex-col rounded-2xl border border-line bg-card p-4 lg:max-h-[calc(100vh-3rem)]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="min-w-0">
@@ -60,7 +60,7 @@
                                         <li>
                                             @if ($item['href'])
                                                 <a href="{{ $item['href'] }}" @if ($item['key'] === $active) aria-current="page" @endif
-                                                    class="{{ $itemBase }} focus-visible:outline-2 focus-visible:outline-blue {{ $item['key'] === $active ? 'border-brand/40 bg-brand/15 text-white' : 'border-transparent text-muted hover:bg-card-2' }}">
+                                                    class="{{ $itemBase }} focus-visible:outline-2 focus-visible:outline-blue {{ $item['key'] === $active ? 'border-brand/40 bg-brand/15 text-ink' : 'border-transparent text-muted hover:bg-card-2 hover:text-ink' }}">
                                                     @include('partials.icon', ['name' => $item['icon'], 'size' => 18])
                                                     <span class="min-w-0 flex-1 leading-snug">{{ $item['label'] }}</span>
                                                 </a>
@@ -90,6 +90,7 @@
         </aside>
 
         <main class="min-w-0 flex-1">
+            @include('partials.workspace-header')
             @yield('student-content')
         </main>
     </div>

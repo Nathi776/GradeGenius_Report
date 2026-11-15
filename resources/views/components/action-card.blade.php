@@ -17,8 +17,8 @@
                     {{ $subject }}
                 </span>
             </div>
-            <h3 class="text-lg font-semibold text-white">{{ $title }}</h3>
-            <p class="mt-1 text-sm text-muted">Topic mastery: <span class="font-semibold tabular-nums text-white">{{ $mastery }}%</span></p>
+            <h3 class="text-lg font-semibold text-ink">{{ $title }}</h3>
+            <p class="mt-1 text-sm text-muted">Topic mastery: <span class="font-semibold tabular-nums text-ink">{{ $mastery }}%</span></p>
         </div>
         <a href="{{ $href }}" class="gg-button gg-button-primary shrink-0 whitespace-nowrap text-xs">{{ $actionText }}<span class="sr-only"> for {{ $title }} in {{ $subject }}</span> →</a>
     </div>

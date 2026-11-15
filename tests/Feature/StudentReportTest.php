@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Support\DemoReportData;
 use App\Models\User;
+use App\Support\DemoReportData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

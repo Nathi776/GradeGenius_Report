@@ -67,7 +67,7 @@
                     <title>{{ $s['name'] }}, {{ $labels[$i] }}: {{ $v }}%</title>
                 </circle>
                 @if ($s['labels'] ?? false)
-                    <text x="{{ round($x($i), 1) }}" y="{{ round($y($v), 1) - 12 }}" text-anchor="middle" font-size="12" font-weight="600" class="fill-current text-white">{{ $v }}%</text>
+                    <text x="{{ round($x($i), 1) }}" y="{{ round($y($v), 1) - 12 }}" text-anchor="middle" font-size="12" font-weight="600" class="fill-current text-ink">{{ $v }}%</text>
                 @endif
             @endforeach
         </g>
