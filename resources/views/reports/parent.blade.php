@@ -14,12 +14,23 @@
     @include('partials.report-header')
 
     <div class="mx-auto w-full max-w-4xl px-4 pb-12 pt-6">
-        <header>
-            @if (auth()->user()?->role === 'parent')
-                <a href="{{ route('parent.home', ['child' => $activeChild]) }}" class="mb-3 inline-block text-sm text-sky underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-blue">← Back to parent dashboard</a>
-            @endif
-            <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">{{ $report['student']['name'] }}'s progress</h1>
-            <p class="mt-2 text-muted">Grade {{ $report['student']['grade'] }} · {{ $o['current_term'] }}</p>
+        @include('partials.print-header', ['title' => 'Parent Progress Report', 'student' => $report['student']])
+
+        <header class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                @if (auth()->user()?->role === 'parent')
+                    <a href="{{ route('parent.home', ['child' => $activeChild]) }}" class="no-print mb-3 inline-block text-sm text-sky underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-blue">← Back to parent dashboard</a>
+                @endif
+                <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">{{ $report['student']['name'] }}'s progress</h1>
+                <p class="mt-2 text-muted">Grade {{ $report['student']['grade'] }} · {{ $o['current_term'] }} Report Card</p>
+            </div>
+            <div class="no-print flex items-center gap-2">
+                <button type="button" onclick="window.print()"
+                    class="inline-flex items-center gap-2 rounded-xl border border-line bg-card px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-brand/40">
+                    @include('partials.icon', ['name' => 'printer', 'size' => 15])
+                    <span>Print Report Card</span>
+                </button>
+            </div>
 
             @if (count($children) > 1)
                 <nav aria-label="Choose a child" class="mt-4 flex flex-wrap gap-2">
@@ -34,12 +45,12 @@
         {{-- 1. The answer first: one sentence, one suggested step --}}
         <section aria-labelledby="summary-heading" class="mt-6 {{ $card }}">
             <h2 id="summary-heading" class="sr-only">Summary</h2>
-            <p class="text-xl leading-snug text-white sm:text-2xl">{{ $report['summary'] }}</p>
+            <p class="text-xl leading-snug text-ink sm:text-2xl">{{ $report['summary'] }}</p>
 
             @if ($report['next_step'])
                 <div class="mt-4 rounded-xl border border-brand/30 bg-brand/10 p-4">
                     <p class="text-xs font-semibold uppercase tracking-wider text-brand">Suggested next step</p>
-                    <p class="mt-1 text-slate-100">{{ $report['next_step'] }}</p>
+                    <p class="mt-1 text-ink font-medium">{{ $report['next_step'] }}</p>
                 </div>
             @endif
 
@@ -59,8 +70,8 @@
                     @forelse ($report['needs_support'] as $s)
                         <li>
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="font-medium text-white">{{ $s['name'] }}</span>
-                                <span class="tabular-nums text-white">{{ $s['current'] }}%</span>
+                                <span class="font-medium text-ink">{{ $s['name'] }}</span>
+                                <span class="tabular-nums text-ink font-semibold">{{ $s['current'] }}%</span>
                                 <x-level-chip :level="$s['level']" />
                             </div>
                             <p class="mt-1 text-sm {{ $text[$s['target_status']['tone']] }}">
@@ -83,8 +94,8 @@
                     @forelse ($report['going_well'] as $s)
                         <li>
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="font-medium text-white">{{ $s['name'] }}</span>
-                                <span class="tabular-nums text-white">{{ $s['current'] }}%</span>
+                                <span class="font-medium text-ink">{{ $s['name'] }}</span>
+                                <span class="tabular-nums text-ink font-semibold">{{ $s['current'] }}%</span>
                                 <x-level-chip :level="$s['level']" />
                             </div>
                             <p class="mt-1 text-sm text-muted">
@@ -124,10 +135,10 @@
                         <summary class="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 rounded-xl p-4 focus-visible:outline-2 focus-visible:outline-blue [&::-webkit-details-marker]:hidden">
                             <span class="flex min-w-40 flex-1 items-center gap-3">
                                 <span class="size-2.5 shrink-0 rounded-full" style="background: {{ $s['color'] }}"></span>
-                                <span class="font-medium text-white">{{ $s['name'] }}</span>
+                                <span class="font-medium text-ink">{{ $s['name'] }}</span>
                             </span>
                             <span class="flex items-center gap-2">
-                                <span class="text-xl font-semibold tabular-nums text-white">{{ $s['current'] }}%</span>
+                                <span class="text-xl font-semibold tabular-nums text-ink">{{ $s['current'] }}%</span>
                                 <x-level-chip :level="$s['level']" />
                                 <span class="text-sm font-medium {{ $changeClass($s['change']) }}">{{ $pts($s['change']) }}<span class="sr-only"> since {{ $o['first_term'] }}</span></span>
                             </span>
@@ -140,7 +151,7 @@
                         <div class="grid gap-6 border-t border-line p-4 sm:p-5 lg:grid-cols-2">
                             <div class="space-y-6">
                                 <div>
-                                    <h3 class="text-sm font-semibold text-white">Topics to work on</h3>
+                                    <h3 class="text-sm font-semibold text-ink">Topics to work on</h3>
                                     @if ($s['attention'])
                                         <div class="mt-3 space-y-3">
                                             @foreach ($s['attention'] as $t)
@@ -156,8 +167,8 @@
                                 </div>
 
                                 <div>
-                                    <h3 class="text-sm font-semibold text-white">Ideas for home</h3>
-                                    <ul class="mt-2 list-disc space-y-1.5 pl-5 text-sm text-slate-200">
+                                    <h3 class="text-sm font-semibold text-ink">Ideas for home</h3>
+                                    <ul class="mt-2 list-disc space-y-1.5 pl-5 text-sm text-ink-sub">
                                         @foreach ($s['home_steps'] as $step)
                                             <li>{{ $step }}</li>
                                         @endforeach
@@ -167,12 +178,12 @@
 
                             <div class="space-y-5">
                                 <div>
-                                    <h3 class="text-sm font-semibold text-white">Latest results</h3>
+                                    <h3 class="text-sm font-semibold text-ink">Latest results</h3>
                                     <ul class="mt-2 divide-y divide-line/70 text-sm">
                                         @foreach ($s['recent'] as $r)
                                             <li class="flex items-center justify-between gap-3 py-2">
                                                 <span class="min-w-0">
-                                                    <span class="block truncate text-white">{{ $r['title'] }}</span>
+                                                    <span class="block truncate text-ink font-medium">{{ $r['title'] }}</span>
                                                     <span class="text-xs text-muted">{{ $r['type_label'] }} · {{ $r['date_label'] }}</span>
                                                 </span>
                                                 <span class="font-semibold tabular-nums {{ $text[$r['tone']] }}">{{ $r['score'] }}%</span>

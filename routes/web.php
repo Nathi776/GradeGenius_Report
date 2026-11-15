@@ -90,6 +90,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('administrator.')
         ->middleware('role:administrator')
         ->group(function (): void {
+            Route::get('/', [AdministratorReportController::class, 'index'])
+                ->name('home');
             Route::get('/reports', [AdministratorReportController::class, 'index'])
                 ->name('reports');
         });

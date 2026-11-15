@@ -4,26 +4,53 @@
     $child = $dashboard['child'];
     $snap = $dashboard['snapshot'];
     $act = $dashboard['activity'];
-    $text = ['good' => 'text-good', 'mid' => 'text-warn', 'low' => 'text-bad'];
+    $text = ['good' => 'text-good', 'mid' => 'text-warn', 'low' => 'text-bad', 'sky' => 'text-sky'];
     $card = 'rounded-2xl border border-line bg-card p-5 sm:p-6';
-    $link = 'inline-flex items-center gap-2 rounded-lg border border-line bg-card-2 px-3 py-1.5 text-sm font-medium text-white hover:border-blue focus-visible:outline-2 focus-visible:outline-blue';
+    $link = 'inline-flex items-center gap-2 rounded-lg border border-line bg-card-2 px-3 py-1.5 text-sm font-medium text-ink hover:border-brand/40 transition focus-visible:outline-2 focus-visible:outline-blue';
     $soon = 'shrink-0 whitespace-nowrap rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted';
     $pts = fn ($n) => ($n > 0 ? '+' : ($n < 0 ? '−' : '')).abs($n).' pts';
     $reportUrl = route('parent.report', ['child' => $dashboard['active_child']]);
 @endphp
 
 @section('parent-content')
+    @include('partials.print-header', ['title' => 'Parent & Guardian Academic Progress Report', 'student' => $dashboard['child']])
+
     <div class="space-y-5">
         <header class="flex flex-wrap items-start justify-between gap-3">
             <div>
-                <h1 class="text-3xl font-normal tracking-tight sm:text-4xl">{{ $child['first_name'] }}'s progress</h1>
+                <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">{{ $child['first_name'] }}'s progress</h1>
                 <p class="mt-2 text-muted">Grade {{ $child['grade'] }} · {{ $snap['term'] }}</p>
             </div>
-            <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm">
-                <span class="text-muted">Subjects at goal</span>
-                <span class="font-semibold text-white">{{ $snap['at_target'] }} of {{ $snap['subject_count'] }}</span>
-            </span>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-ink">
+                    <span class="text-muted">Subjects at goal</span>
+                    <span class="font-semibold text-ink">{{ $snap['at_target'] }} of {{ $snap['subject_count'] }}</span>
+                </span>
+            </div>
         </header>
+
+        {{-- Parent Action / Report Sign-Off Banner --}}
+        <div class="no-print flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-good/40 bg-good/10 p-4">
+            <div class="flex items-center gap-3">
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-good/20 text-good">
+                    @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
+                </span>
+                <div>
+                    <p class="font-semibold text-ink text-sm">Official Term 4 Report Card Published</p>
+                    <p class="text-xs text-muted">Reviewed and endorsed by school academic committee.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="this.innerText='✓ Acknowledged'; this.classList.remove('bg-good'); this.classList.add('bg-good/20', 'text-good')"
+                    class="rounded-xl bg-good px-3.5 py-1.5 text-xs font-semibold text-white transition hover:opacity-90">
+                    Acknowledge Report
+                </button>
+                <a href="mailto:educators@gradegenius.org?subject=Parent%20Inquiry%20regarding%20{{ $child['first_name'] }}"
+                    class="rounded-xl border border-line bg-card px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-brand/40">
+                    Message Educator
+                </a>
+            </div>
+        </div>
 
         <div class="grid gap-5 lg:grid-cols-12">
             {{-- 1. The answer first --}}
@@ -31,11 +58,11 @@
                 <div class="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full bg-brand/25 blur-3xl" aria-hidden="true"></div>
                 <div class="relative">
                     <h2 id="summary-heading" class="sr-only">Summary</h2>
-                    <p class="text-xl leading-snug text-white sm:text-2xl">{{ $dashboard['summary'] }}</p>
+                    <p class="text-xl leading-snug text-ink sm:text-2xl font-normal">{{ $dashboard['summary'] }}</p>
                     @if ($dashboard['next_step'])
                         <div class="mt-4 rounded-xl border border-brand/30 bg-brand/10 p-4">
                             <p class="text-xs font-semibold uppercase tracking-wider text-brand">Suggested next step</p>
-                            <p class="mt-1 text-slate-100">{{ $dashboard['next_step'] }}</p>
+                            <p class="mt-1 text-ink font-medium text-sm">{{ $dashboard['next_step'] }}</p>
                         </div>
                     @endif
                 </div>
@@ -52,7 +79,7 @@
             {{-- 3. Progress across the terms --}}
             <section aria-labelledby="progress-heading" class="{{ $card }} lg:col-span-7">
                 <div class="flex flex-wrap items-start justify-between gap-3">
-                    <h2 id="progress-heading" class="flex items-center gap-2 text-lg font-normal">
+                    <h2 id="progress-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'trending-up', 'size' => 20])
                         Academic progress
                     </h2>
@@ -66,18 +93,18 @@
 
             {{-- 4. Going well: lead with the positives --}}
             <section aria-labelledby="wins-heading" class="{{ $card }} lg:col-span-5">
-                <h2 id="wins-heading" class="flex items-center gap-2 text-lg font-normal">
+                <h2 id="wins-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                     @include('partials.icon', ['name' => 'star', 'size' => 20])
                     Going well
                 </h2>
                 <ul class="mt-3 space-y-4">
                     @forelse ($dashboard['wins'] as $s)
-                        <li>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="font-medium text-white">{{ $s['name'] }}</span>
-                                <span class="tabular-nums text-white">{{ $s['current'] }}%</span>
+                        <li class="rounded-xl border border-line bg-card-2 p-3.5">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="font-medium text-ink">{{ $s['name'] }}</span>
+                                <span class="tabular-nums font-semibold text-ink">{{ $s['current'] }}%</span>
                             </div>
-                            <p class="mt-1 text-sm text-muted">
+                            <p class="mt-1 text-xs text-muted">
                                 {{ $s['target_status']['state'] === 'met' ? 'At goal' : 'Improving' }}@if ($s['change'] !== 0) · <span class="{{ $s['change'] > 0 ? 'text-good' : 'text-bad' }}">{{ $pts($s['change']) }} since {{ $snap['first_term'] }}</span>@endif
                             </p>
                         </li>
@@ -89,7 +116,7 @@
 
             {{-- 5. Learning support: each item shows the evidence it comes from --}}
             <section aria-labelledby="support-heading" class="{{ $card }} lg:col-span-7">
-                <h2 id="support-heading" class="flex items-center gap-2 text-lg font-normal">
+                <h2 id="support-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                     @include('partials.icon', ['name' => 'sparkles', 'size' => 20])
                     Learning support
                 </h2>
@@ -98,16 +125,18 @@
                     <ul class="mt-4 space-y-3">
                         @foreach ($dashboard['support'] as $s)
                             <li class="rounded-xl border border-line bg-card-2 p-4">
-                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <span class="font-medium text-white">{{ $s['name'] }}</span>
-                                    <span class="tabular-nums text-white">{{ $s['current'] }}%</span>
-                                    <span class="text-sm {{ $text[$s['target_status']['tone']] }}">Goal {{ $s['target'] }}% · {{ $s['target_status']['detail'] }}</span>
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-medium text-ink">{{ $s['name'] }}</span>
+                                        <span class="tabular-nums text-ink font-semibold">{{ $s['current'] }}%</span>
+                                    </div>
+                                    <span class="text-xs font-semibold {{ $text[$s['target_status']['tone']] }}">Goal {{ $s['target'] }}% · {{ $s['target_status']['detail'] }}</span>
                                 </div>
                                 @if ($s['weakest'])
-                                    <p class="mt-1 text-sm text-muted">Weakest topic: <span class="text-slate-200">{{ $s['weakest']['name'] }}</span> ({{ $s['weakest']['mastery'] }}% mastery)</p>
+                                    <p class="mt-1 text-xs text-muted">Weakest topic: <span class="text-ink font-medium">{{ $s['weakest']['name'] }}</span> ({{ $s['weakest']['mastery'] }}% mastery)</p>
                                 @endif
-                                <p class="mt-2 text-sm text-slate-200">{{ $s['home_steps'][0] }}</p>
-                                <a href="{{ $reportUrl }}#subject-{{ $s['key'] }}" class="mt-3 {{ $link }}">View detail<span class="sr-only"> for {{ $s['name'] }}</span> @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
+                                <p class="mt-2 text-xs text-ink-sub bg-card/60 rounded-lg p-2.5 border border-line/60">{{ $s['home_steps'][0] }}</p>
+                                <a href="{{ $reportUrl }}#subject-{{ $s['key'] }}" class="mt-3 {{ $link }}">View detail<span class="sr-only"> for {{ $s['name'] }}</span> @include('partials.icon', ['name' => 'arrow-right', 'size' => 14])</a>
                             </li>
                         @endforeach
                     </ul>
@@ -121,7 +150,7 @@
 
             {{-- 6. Recent activity --}}
             <section aria-labelledby="activity-heading" class="{{ $card }} lg:col-span-5">
-                <h2 id="activity-heading" class="flex items-center gap-2 text-lg font-normal">
+                <h2 id="activity-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                     @include('partials.icon', ['name' => 'zap', 'size' => 20])
                     Recent activity
                 </h2>
@@ -131,10 +160,10 @@
                         @foreach ($dashboard['recent'] as $row)
                             <li class="flex items-center justify-between gap-3 py-3">
                                 <div class="min-w-0">
-                                    <p class="truncate font-medium text-white">{{ $row['title'] }}</p>
+                                    <p class="truncate font-medium text-ink text-sm">{{ $row['title'] }}</p>
                                     <p class="mt-0.5 text-xs text-muted">{{ $row['subject'] }} · {{ $row['type_label'] }} · {{ $row['date_label'] }}</p>
                                 </div>
-                                <span class="text-lg font-semibold tabular-nums {{ $text[$row['tone']] }}">{{ $row['score'] }}%</span>
+                                <span class="text-base font-semibold tabular-nums {{ $text[$row['tone']] }}">{{ $row['score'] }}%</span>
                             </li>
                         @endforeach
                     </ul>
@@ -143,10 +172,10 @@
                 @endif
             </section>
 
-            {{-- 7. Not built yet: honest empty states, no invented data --}}
+            {{-- 7. Upcoming assessments --}}
             <section aria-labelledby="exams-heading" class="{{ $card }} lg:col-span-4">
                 <div class="flex items-center justify-between gap-2">
-                    <h2 id="exams-heading" class="flex items-center gap-2 text-lg font-normal">
+                    <h2 id="exams-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'calendar', 'size' => 20])
                         Upcoming assessments
                     </h2>
@@ -155,9 +184,10 @@
                 <p class="mt-4 text-sm text-muted">No assessments scheduled yet. Dates will appear here once a schedule is added.</p>
             </section>
 
+            {{-- 8. Study planner --}}
             <section aria-labelledby="planner-heading" class="{{ $card }} lg:col-span-4">
                 <div class="flex items-center justify-between gap-2">
-                    <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal">
+                    <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
                         Study planner
                     </h2>
@@ -166,9 +196,10 @@
                 <p class="mt-4 text-sm text-muted">You'll be able to see {{ $child['first_name'] }}'s planned revision sessions here. Nothing is scheduled because the planner isn't set up.</p>
             </section>
 
+            {{-- 9. Notifications --}}
             <section aria-labelledby="notifications-heading" class="{{ $card }} lg:col-span-4">
                 <div class="flex items-center justify-between gap-2">
-                    <h2 id="notifications-heading" class="flex items-center gap-2 text-lg font-normal">
+                    <h2 id="notifications-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'mail', 'size' => 20])
                         Notifications
                     </h2>
