@@ -16,15 +16,16 @@ class StudentDashboardTest extends TestCase
         return User::factory()->create($attributes + ['role' => 'student']);
     }
 
-    public function test_student_home_greets_the_learner_and_shows_every_subject(): void
+    public function test_student_home_shows_the_learner_profile_and_every_subject(): void
     {
         $this->withoutVite();
 
         $response = $this->actingAs($this->student(['name' => 'Lerato Mokoena']))->get('/student');
 
         $response->assertOk();
-        $response->assertSee('Welcome back, Lerato');
-        $response->assertDontSee('Mokoena');
+        $response->assertSee('Lerato Mokoena');
+        $response->assertSee('Student portal');
+        $response->assertSee('Sample academic profile');
         foreach (DemoReportData::forStudent()['subjects'] as $subject) {
             $response->assertSee($subject['name']);
         }
@@ -36,14 +37,52 @@ class StudentDashboardTest extends TestCase
 
         $response = $this->actingAs($this->student())->get('/student');
 
-        $response->assertSee('Your focus');
         $response->assertSee('Your next learning actions');
-        $response->assertSee('Subject overview');
-        $response->assertSee('Recent activity');
+        $response->assertSee('My enrolled subjects');
+        $response->assertSee('Recent assessment activity');
         $response->assertSee('Study planner');
         $response->assertSee('Upcoming exams');
         $response->assertSee('Coming soon');
-        $response->assertSee('No exams scheduled yet');
+        $response->assertSee('No exam schedule is available yet');
+        $response->assertSee('Study streak');
+        $response->assertSee('Current login session');
+        $response->assertSee('Weekly study goal');
+        $response->assertSee('Practice exams taken');
+        $response->assertSee('Study notes read');
+        $response->assertSee('data-session-timer', false);
+        $response->assertSee('not study time');
+        $response->assertSee('Parent account connection');
+        $response->assertSee('Study-note reads are not recorded');
+        $response->assertDontSee('Unread Note');
+        $response->assertDontSee('Pending Quiz');
+    }
+
+    public function test_student_can_link_a_verified_parent_from_the_dashboard(): void
+    {
+        $parent = User::factory()->create(['role' => 'parent', 'email' => 'guardian@example.com']);
+        $student = $this->student();
+
+        $this->actingAs($student)->post('/student/guardians', ['parent_email' => $parent->email])
+            ->assertRedirect();
+
+        $this->assertTrue($student->parents()->whereKey($parent->id)->exists());
+        $this->actingAs($parent)->get('/parent')
+            ->assertOk()
+            ->assertSee($student->email);
+    }
+
+    public function test_subject_cards_show_report_metrics_and_link_to_the_existing_detail_table(): void
+    {
+        $this->withoutVite();
+
+        $response = $this->actingAs($this->student())->get('/student');
+
+        $response->assertSee('Quizzes');
+        $response->assertSee('Past papers');
+        $response->assertSee('Topic to practise');
+        $response->assertSee('View subject report');
+        $response->assertSee(route('student.report').'#subject-accounting', false);
+        $response->assertSee('Open assessment table');
     }
 
     public function test_learning_actions_and_subject_links_point_at_the_academic_performance_page(): void

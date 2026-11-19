@@ -80,7 +80,7 @@
                                                     <span class="min-w-0 flex-1 leading-snug">{{ $item['label'] }}</span>
                                                 </a>
                                             @else
-                                                <span aria-disabled="true" class="{{ $itemBase }} cursor-not-allowed border-transparent text-muted/60">
+                                                <span aria-disabled="true" class="{{ $itemBase }} cursor-not-allowed border-transparent text-muted">
                                                     @include('partials.icon', ['name' => $item['icon'], 'size' => 18])
                                                     <span class="min-w-0 flex-1 leading-snug">{{ $item['label'] }}</span>
                                                     <span class="shrink-0 rounded-full border border-line px-2 py-0.5 text-[10px] uppercase tracking-wider">Roadmap</span>

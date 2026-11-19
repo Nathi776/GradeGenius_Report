@@ -18,17 +18,15 @@ final class ParentReportService
 
     public function __construct(private StudentReportService $students) {}
 
-    public function build(array $raw, ?string $today = null): array
+    public function build(array $raw, ?string $today = null, ?int $termIndex = null): array
     {
         $today ??= date('Y-m-d');
-        $report = $this->students->build($raw);
+        $report = $this->students->build($raw, $termIndex);
         $first = explode(' ', trim($report['student']['name']))[0];
 
         $subjects = array_map(fn ($s) => $this->decorate($s, $report['assessments'], $first), $report['subjects']);
 
         $needsSupport = array_values(array_filter($subjects, fn ($s) => $s['target_status']['state'] !== 'met'));
-        usort($needsSupport, fn ($a, $b) => ($b['target'] - $b['target_status']['state'] === 'met' ? 0 : $b['current']) <=> ($a['target'] - $a['target_status']['state'] === 'met' ? 0 : $a['current']));
-        // In the user's code: usort($needsSupport, fn ($a, $b) => ($b['target'] - $b['current']) <=> ($a['target'] - $a['current']));
         usort($needsSupport, fn ($a, $b) => ($b['target'] - $b['current']) <=> ($a['target'] - $a['current']));
 
         $supportKeys = array_column($needsSupport, 'key');

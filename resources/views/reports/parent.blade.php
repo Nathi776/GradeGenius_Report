@@ -14,12 +14,12 @@
     @include('partials.report-header')
 
     <div class="mx-auto w-full max-w-4xl px-4 pb-12 pt-6">
-        @include('partials.print-header', ['title' => 'Parent Progress Report', 'student' => $report['student']])
+        @include('partials.print-header', ['title' => 'Parent Progress Report', 'student' => $report['student'], 'term' => $report['selected_term']])
 
         <header class="flex flex-wrap items-start justify-between gap-3">
             <div>
                 @if (auth()->user()?->role === 'parent')
-                    <a href="{{ route('parent.home', ['child' => $activeChild]) }}" class="no-print mb-3 inline-block text-sm text-sky underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-blue">← Back to parent dashboard</a>
+                    <a href="{{ route('parent.home', ['child' => $activeChild, 'term' => $selectedTerm]) }}" class="no-print mb-3 inline-block text-sm text-sky underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-blue">← Back to parent dashboard</a>
                 @endif
                 <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">{{ $report['student']['name'] }}'s progress</h1>
                 <p class="mt-2 text-muted">Grade {{ $report['student']['grade'] }} · {{ $o['current_term'] }} Report Card</p>
@@ -35,12 +35,13 @@
             @if (count($children) > 1)
                 <nav aria-label="Choose a child" class="mt-4 flex flex-wrap gap-2">
                     @foreach ($children as $key => $name)
-                        <a href="{{ route('parent.report', ['child' => $key]) }}" @if ($key === $activeChild) aria-current="page" @endif
+                        <a href="{{ route('parent.report', ['child' => $key, 'term' => $selectedTerm]) }}" @if ($key === $activeChild) aria-current="page" @endif
                             class="rounded-full border border-line bg-card-2 px-4 py-1.5 text-sm text-muted hover:text-white aria-[current=page]:border-white/60 aria-[current=page]:text-white focus-visible:outline-2 focus-visible:outline-blue">{{ $name }}</a>
                     @endforeach
                 </nav>
             @endif
         </header>
+        <p class="no-print mt-4 rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">The term selector updates marks and averages. Assessment activity and topic mastery are not available by term in this sample; the progress chart continues to show every term.</p>
 
         {{-- 1. The answer first: one sentence, one suggested step --}}
         <section aria-labelledby="summary-heading" class="mt-6 {{ $card }}">

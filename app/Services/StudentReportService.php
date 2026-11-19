@@ -18,21 +18,29 @@ final class StudentReportService
     /** Distinct on a dark background; wraps if a learner has more subjects than colours. */
     private const PALETTE = ['#8ee8f4', '#f23d99', '#4ade80', '#c084fc', '#20a9bb', '#ff69bd', '#38bdf8'];
 
-    public function build(array $raw): array
+    public function build(array $raw, ?int $termIndex = null): array
     {
         $terms = $raw['terms'];
+        $allTermsSelected = $termIndex === null;
+        $termIndex ??= count($terms) - 1;
+        if (! array_key_exists($termIndex, $terms)) {
+            throw new \InvalidArgumentException('The selected academic term does not exist.');
+        }
         $defaultTarget = (int) ($raw['target'] ?? 75);
 
         $subjects = [];
         foreach (array_values($raw['subjects']) as $i => $subject) {
-            $subjects[] = $this->subject($subject, $i, $defaultTarget);
+            $subjects[] = $this->subject($subject, $i, $defaultTarget, $termIndex, $allTermsSelected);
         }
 
-        $overall = $this->overall($subjects, $terms, $defaultTarget);
+        $overall = $this->overall($subjects, $terms, $defaultTarget, $termIndex, $allTermsSelected);
 
         return [
             'student' => $raw['student'],
             'terms' => $terms,
+            'selected_term_index' => $termIndex,
+            'selected_term' => $terms[$termIndex],
+            'all_terms_selected' => $allTermsSelected,
             'overall' => $overall,
             'subjects' => $subjects,
             'focus_key' => $this->focusKey($subjects),
@@ -60,11 +68,12 @@ final class StudentReportService
     }
 
     // ------------------------------------------------------------------ subject
-    private function subject(array $s, int $index, int $defaultTarget): array
+    private function subject(array $s, int $index, int $defaultTarget, int $termIndex, bool $allTermsSelected): array
     {
         $series = array_map('floatval', $s['term_averages']);
-        $current = (int) round(end($series));
-        $first = (int) round($series[0]);
+        $current = (int) round($series[$termIndex]);
+        $comparisonTermIndex = $allTermsSelected ? 0 : max(0, $termIndex - 1);
+        $previous = (int) round($series[$comparisonTermIndex]);
         $target = (int) ($s['target'] ?? $defaultTarget);
 
         $topics = [];
@@ -89,7 +98,7 @@ final class StudentReportService
             'series' => array_map(fn ($v) => (int) round($v), $series),
             'current' => $current,
             'level' => self::level($current),
-            'change' => $current - $first,
+            'change' => $current - $previous,
             'target' => $target,
             'target_status' => $this->targetStatus($current, $target),
             'topics' => $topics,
@@ -129,7 +138,7 @@ final class StudentReportService
     }
 
     // ------------------------------------------------------------------ overall
-    private function overall(array $subjects, array $terms, int $target): array
+    private function overall(array $subjects, array $terms, int $target, int $termIndex, bool $allTermsSelected): array
     {
         $current = $this->mean(array_column($subjects, 'current'));
         $termAverages = [];
@@ -139,13 +148,15 @@ final class StudentReportService
         // Use the rounded figure the learner sees, so "74%" never comes with the wrong "pts to go".
         $status = $this->targetStatus(round($current), $target);
 
+        $previousTermIndex = $allTermsSelected ? 0 : max(0, $termIndex - 1);
+
         return [
             'current' => (int) round($current),
             'level' => self::level(round($current)),
-            'change' => $termAverages[count($termAverages) - 1] - $termAverages[0],
+            'change' => $termAverages[$termIndex] - $termAverages[$previousTermIndex],
             'term_averages' => $termAverages,
-            'current_term' => end($terms),
-            'first_term' => $terms[0],
+            'current_term' => $terms[$termIndex],
+            'first_term' => $terms[$previousTermIndex],
             'subject_count' => count($subjects),
             'at_target' => count(array_filter($subjects, fn ($s) => $s['target_status']['state'] === 'met')),
             'target' => $target,

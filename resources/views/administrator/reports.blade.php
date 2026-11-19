@@ -11,7 +11,10 @@
 @endphp
 
 @section('admin-content')
-    @include('partials.print-header', ['title' => 'School-wide Academic Intelligence & Leadership Report'])
+    @include('partials.print-header', [
+        'title' => 'School-wide Academic Intelligence & Leadership Report',
+        'term' => $selectedTerm === 'all' ? 'All Terms' : $terms[(int) $selectedTerm],
+    ])
 
     <div class="space-y-5">
         <header class="flex flex-wrap items-start justify-between gap-3">
@@ -27,6 +30,7 @@
                 </span>
             </div>
         </header>
+        <p class="rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">The school-average trend is available by term. Cohort, pass-rate, achievement-level, and department figures are the latest available sample and are not broken down by term.</p>
 
         {{-- 1. High-Level School KPIs --}}
         <section aria-label="Executive snapshot" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -47,7 +51,7 @@
                         </h2>
                         <p class="mt-1 text-sm text-muted">Composite term average across all enrolled learners and grades.</p>
                     </div>
-                    <span class="rounded-full border border-line bg-card-2 px-2.5 py-1 text-xs font-semibold text-good">+{{ $snap['change'] }}% Year-to-Date</span>
+                    <span class="rounded-full border border-line bg-card-2 px-2.5 py-1 text-xs font-semibold text-good">{{ $pts($snap['change']) }} since {{ $snap['first_term'] }}</span>
                 </div>
                 <div class="mt-4">
                     <x-line-chart :series="$trendSeries" :labels="$dashboard['trend']['labels']" id="admin-school-trend" :height="220" />

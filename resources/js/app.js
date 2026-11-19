@@ -1,7 +1,24 @@
+import './teacher-dashboard.js';
+
 // Progressive enhancement for the student report. The page is fully readable without this file:
 // every subject, every row and every topic is already in the HTML.
 
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+// Show elapsed login-session time without treating it as study time.
+$$('[data-session-timer]').forEach((timer) => {
+    const startedAt = Number(timer.dataset.startedAt);
+    if (!Number.isFinite(startedAt)) return;
+
+    const update = () => {
+        const seconds = Math.max(0, Math.floor(Date.now() / 1000 - startedAt));
+        const pad = (value) => String(value).padStart(2, '0');
+        timer.textContent = `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor((seconds % 3600) / 60))}:${pad(seconds % 60)}`;
+    };
+
+    update();
+    window.setInterval(update, 1000);
+});
 
 // 1. Chart legend: show / hide a subject's line.
 $$('[data-chart]').forEach((chart) => {
@@ -98,7 +115,7 @@ $$('[data-nav-toggle]').forEach((button) =>
 
 // 5. Theme toggle: switch between GradeGenius Dark and Light themes.
 const initThemeToggle = () => {
-    const toggles = document.querySelectorAll('#theme-toggle, [data-theme-toggle]');
+    const toggles = document.querySelectorAll('[data-theme-toggle]');
     toggles.forEach((btn) => {
         btn.addEventListener('click', () => {
             const current = document.documentElement.getAttribute('data-theme') || 'dark';

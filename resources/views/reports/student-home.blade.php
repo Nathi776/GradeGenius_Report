@@ -3,87 +3,173 @@
 @php
     $focus = $dashboard['focus'];
     $snapshot = $dashboard['snapshot'];
-    $text = ['good' => 'text-good', 'mid' => 'text-warn', 'low' => 'text-bad', 'sky' => 'text-sky'];
-    $bg = ['good' => 'bg-good', 'mid' => 'bg-warn', 'low' => 'bg-bad', 'sky' => 'bg-sky'];
-    $card = 'rounded-2xl border border-line bg-card p-5 sm:p-6';
+    $assessments = $dashboard['assessment_snapshot'];
+    $telemetry = $dashboard['telemetry'];
+    $student = $dashboard['student'];
+    $text = ['good' => 'text-good', 'mid' => 'text-warn', 'low' => 'text-bad'];
+    $bg = ['good' => 'bg-good', 'mid' => 'bg-warn', 'low' => 'bg-bad'];
+    $card = 'gg-brutal-card rounded-3xl p-5 sm:p-6';
     $link = 'inline-flex items-center gap-2 rounded-lg border border-line bg-card-2 px-3 py-1.5 text-sm font-medium text-ink hover:border-brand/40 transition focus-visible:outline-2 focus-visible:outline-blue';
     $soon = 'shrink-0 whitespace-nowrap rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted';
-    $changeText = fn ($n) => ($n > 0 ? '+' : ($n < 0 ? '−' : '')).abs($n).' pts';
-    $reportUrl = route('student.report');
+    $termLabel = $selectedTerm === 'all' ? 'All Terms' : ($terms[(int) $selectedTerm] ?? 'Selected Term');
+    $reportUrl = $selectedTerm === 'all' ? route('student.report') : route('student.report', ['term' => $selectedTerm]);
+    $weeklyGoalSub = $telemetry['sessions_this_week'].' portal sessions in the last 7 days · task goals unavailable';
+    $quizAverageSub = $assessments['quiz_average'] === null ? 'No sample quiz scores' : 'Sample report avg: '.$assessments['quiz_average'].'%';
+    $pastPaperAverageSub = $assessments['past_paper_average'] === null ? 'No sample paper scores' : 'Sample report avg: '.$assessments['past_paper_average'].'%';
 @endphp
 
 @section('student-content')
-    @include('partials.print-header', ['title' => 'Learner Academic Performance Overview', 'student' => $dashboard['student']])
+    @include('partials.print-header', ['title' => 'Learner Academic Performance Overview', 'student' => $student, 'term' => $termLabel])
 
-    <div class="space-y-5">
-        <header class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-                <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">Welcome back, {{ \Illuminate\Support\Str::before($dashboard['student']['name'], ' ') }}</h1>
-                <p class="mt-2 text-muted">Grade {{ $dashboard['student']['grade'] }} · Your learning overview</p>
+    <div class="gg-portal-dashboard space-y-5">
+        <header class="{{ $card }} flex flex-col gap-5 bg-card p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex min-w-0 items-start gap-4 sm:items-center">
+                <span class="flex size-14 shrink-0 items-center justify-center rounded-2xl border-2 border-black bg-sky font-semibold text-2xl text-black">{{ strtoupper(substr(trim($student['name']), 0, 1)) }}</span>
+                <div class="min-w-0">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-muted">Student portal · Learner view</p>
+                    <h1 class="mt-1 truncate text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{{ $student['name'] }}</h1>
+                    <p class="mt-1 text-sm text-muted">Grade {{ $student['grade'] }} · {{ $termLabel }} · Sample academic profile</p>
+                    <p class="mt-2 text-sm font-medium text-ink">Current average {{ $snapshot['average'] }}% · {{ number_format($snapshot['questions_answered']) }} questions · {{ $snapshot['accuracy'] === null ? 'accuracy unavailable' : $snapshot['accuracy'].'% accuracy' }}</p>
+                </div>
             </div>
-            <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-ink">
-                <span class="text-muted">Overall goal</span>
-                <span class="font-semibold {{ $text[$dashboard['status']['tone']] }}">{{ $dashboard['status']['label'] }}</span>
-            </span>
+            <div class="grid shrink-0 gap-3 sm:grid-cols-2 lg:max-w-[34rem]">
+                <section aria-label="Study streak" class="gg-brutal-card flex min-w-48 items-center gap-3 rounded-2xl border-2 border-black bg-butter p-3.5">
+                    <span aria-hidden="true" class="text-2xl">🔥</span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-ink">Study streak</p>
+                        <p class="mt-1 font-semibold text-ink">Not tracked</p>
+                        <p class="text-[11px] text-ink">Study days are not recorded</p>
+                    </div>
+                </section>
+                <section aria-label="Current login session" class="gg-brutal-card min-w-56 rounded-2xl border-2 border-black bg-card-2 p-3.5">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-muted">Current login session</p>
+                    @if ($telemetry['current_session'])
+                        <p data-session-timer data-started-at="{{ $telemetry['current_session']['started_at'] }}" class="mt-1 font-mono text-2xl font-semibold tabular-nums text-ink">{{ $telemetry['current_session']['elapsed'] }}</p>
+                        <p class="mt-1 truncate text-xs font-medium text-ink">{{ $telemetry['current_session']['browser'] }} · {{ $telemetry['current_session']['platform'] }}</p>
+                        <p class="mt-1 text-[11px] text-muted">{{ $dashboard['linked_parents'] === [] ? 'Not shared with a parent' : 'Visible to linked parent account' }}</p>
+                    @else
+                        <p class="mt-2 text-sm font-medium text-muted">Session data unavailable</p>
+                    @endif
+                </section>
+                <div class="flex flex-wrap items-center gap-2 sm:col-span-2 sm:justify-end">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-ink">
+                        <span class="text-muted">Overall goal</span>
+                        <span class="font-semibold {{ $text[$dashboard['status']['tone']] }}">{{ $dashboard['status']['label'] }}</span>
+                    </span>
+                    <a href="{{ $reportUrl }}" class="{{ $link }}">Full academic report @include('partials.icon', ['name' => 'arrow-right', 'size' => 15])</a>
+                </div>
+            </div>
         </header>
 
+        <section aria-label="Student progress summary" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <x-stat-tile label="Weekly study goal" value="Not tracked" :sub="$weeklyGoalSub" tone="mid" />
+            <x-stat-tile label="Quizzes taken" :value="$assessments['quizzes_completed']" :sub="$quizAverageSub" tone="peach" />
+            <x-stat-tile label="Practice exams taken" :value="$assessments['past_papers_completed']" :sub="$pastPaperAverageSub" tone="sky" />
+            <x-stat-tile label="Study notes read" value="Not tracked" sub="Study-note reads are not recorded" tone="default" />
+        </section>
+
+        <p class="rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">Quiz and practice-exam figures come from the sample report and include all available records, not only the selected term. The session timer measures elapsed time since login—not study time. When linked to a verified parent, login/logout and successful dashboard/report visits are shared with that guardian.</p>
+
+        <section aria-labelledby="guardian-link-heading" class="{{ $card }}">
+            <h2 id="guardian-link-heading" class="text-lg font-normal text-ink">Parent account connection</h2>
+            <p class="mt-1 text-sm text-muted">Link a verified parent account to share your recorded login/logout times and visits to student dashboards and reports.</p>
+            @if (session('status'))
+                <p role="status" class="mt-3 rounded-xl border border-line bg-good/10 p-3 text-sm font-medium text-ink">{{ session('status') }}</p>
+            @endif
+            @if ($dashboard['linked_parents'] !== [])
+                <ul class="mt-3 space-y-2">
+                    @foreach ($dashboard['linked_parents'] as $parent)
+                        <li class="rounded-xl border border-line bg-card-2 p-3 text-sm text-ink">{{ $parent['name'] }} · {{ $parent['email'] }} <span class="ml-1 text-xs text-muted">(verified)</span></li>
+                    @endforeach
+                </ul>
+            @else
+                <form method="POST" action="{{ route('student.guardians.store') }}" class="mt-3 flex flex-wrap items-end gap-3">
+                    @csrf
+                    <div class="min-w-60 flex-1">
+                        <label for="parent_email" class="mb-1 block text-sm font-medium text-ink">Verified parent email</label>
+                        <input id="parent_email" name="parent_email" type="email" value="{{ old('parent_email') }}" required autocomplete="email"
+                            class="w-full rounded-xl border border-line bg-card-2 px-3 py-2 text-sm text-ink focus-visible:outline-2 focus-visible:outline-blue">
+                        @error('parent_email')
+                            <p class="mt-1 text-xs text-bad">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <button class="{{ $link }}" type="submit">Link parent account</button>
+                </form>
+                <p class="mt-2 text-xs text-muted">The email must belong to an existing verified parent account.</p>
+            @endif
+        </section>
+
+        <section aria-labelledby="subjects-heading" class="{{ $card }}">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 id="subjects-heading" class="text-xl font-semibold text-ink">My enrolled subjects</h2>
+                    <p class="mt-1 text-sm text-muted">Current subject marks, goals, and recorded assessment results.</p>
+                </div>
+                <a href="{{ $reportUrl }}#subjects-heading" class="{{ $link }}">View all subject details @include('partials.icon', ['name' => 'arrow-right', 'size' => 15])</a>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                @foreach ($dashboard['subjects'] as $subject)
+                    @php
+                        $subjectUrl = $reportUrl.'#subject-'.$subject['key'];
+                        $isFocus = $focus && $subject['key'] === $focus['key'] && $focus['status']['state'] !== 'met';
+                    @endphp
+                    <article class="gg-brutal-card flex h-full flex-col rounded-2xl border-2 border-black p-4 sm:p-5 {{ $isFocus ? 'bg-butter' : 'bg-card' }}">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="min-w-0 font-semibold text-ink">{{ $subject['name'] }}</span>
+                            <span class="shrink-0 rounded-full border border-line bg-card-2 px-2.5 py-0.5 text-xs font-semibold {{ $text[$subject['tone']] }}">{{ $subject['status_label'] }}</span>
+                        </div>
+
+                        <div class="mt-4 flex items-end justify-between gap-3">
+                            <div>
+                                <p class="text-3xl font-semibold tabular-nums text-ink">{{ $subject['current'] }}%</p>
+                                <p class="text-xs text-muted">Current average</p>
+                            </div>
+                            <p class="text-right text-xs font-medium text-muted">Goal {{ $subject['target'] }}%</p>
+                        </div>
+                        <div class="relative mt-3 h-2 rounded-full bg-line/50" role="img" aria-label="{{ $subject['name'] }}: {{ $subject['current'] }} percent, goal {{ $subject['target'] }} percent">
+                            <div class="h-full rounded-full {{ $bg[$subject['tone']] }}" style="width: {{ min(100, max(0, $subject['current'])) }}%"></div>
+                            <span class="absolute -top-1 h-4 w-0.5 rounded bg-ink/70" style="left: {{ min(100, max(0, $subject['target'])) }}%"></span>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <div class="rounded-xl border border-line bg-card-2 p-3">
+                                <p class="text-xs text-muted">Quizzes</p>
+                                <p class="mt-1 font-semibold text-ink">{{ $subject['quiz_count'] }}</p>
+                                <p class="text-xs text-muted">{{ $subject['quiz_average'] === null ? 'No scores' : 'Avg. '.$subject['quiz_average'].'%' }}</p>
+                            </div>
+                            <div class="rounded-xl border border-line bg-card-2 p-3">
+                                <p class="text-xs text-muted">Past papers</p>
+                                <p class="mt-1 font-semibold text-ink">{{ $subject['past_paper_count'] }}</p>
+                                <p class="text-xs text-muted">{{ $subject['past_paper_average'] === null ? 'No scores' : 'Avg. '.$subject['past_paper_average'].'%' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex-1 border-t border-line pt-3">
+                            @if ($subject['weakest_topic'])
+                                <p class="text-xs text-muted">Topic to practise</p>
+                                <p class="mt-1 text-sm font-medium text-ink">{{ $subject['weakest_topic']['name'] }} <span class="font-normal text-muted">· {{ $subject['weakest_topic']['mastery'] }}% mastery</span></p>
+                            @else
+                                <p class="text-sm text-muted">No topic currently needs extra attention.</p>
+                            @endif
+                            @if ($isFocus)
+                                <span class="mt-2 inline-block rounded-full border border-black bg-white px-2.5 py-0.5 text-xs font-semibold text-black">Suggested focus</span>
+                            @endif
+                        </div>
+
+                        <a href="{{ $subjectUrl }}" class="{{ $link }} mt-4 w-fit">View subject report @include('partials.icon', ['name' => 'arrow-right', 'size' => 14])</a>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+
         <div class="grid gap-5 lg:grid-cols-12">
-            {{-- 1. Focus: the subject furthest from its own goal --}}
-            <section aria-labelledby="focus-heading" class="relative overflow-hidden {{ $card }} lg:col-span-5">
-                <div class="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full bg-brand/25 blur-3xl" aria-hidden="true"></div>
-                <div class="relative">
-                    <h2 id="focus-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                        @include('partials.icon', ['name' => 'target', 'size' => 20])
-                        Your focus
-                    </h2>
-                    @if ($focus && $focus['status']['state'] === 'met')
-                        <p class="mt-4 text-2xl font-semibold text-good">Every subject is at goal</p>
-                        <p class="mt-2 text-sm text-muted">Nothing is below its target right now. Keep practising to stay on track.</p>
-                        <a href="{{ $reportUrl }}" class="mt-5 {{ $link }}">Open Academic Performance @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])</a>
-                    @elseif ($focus)
-                        <p class="mt-4 text-sm text-muted">Furthest from its goal</p>
-                        <p class="mt-1 text-3xl font-semibold text-ink">{{ $focus['name'] }}</p>
-                        <p class="mt-2 text-sm text-muted">
-                            <span class="font-semibold tabular-nums text-ink">{{ $focus['current'] }}%</span> now · goal {{ $focus['target'] }}% ·
-                            <span class="font-medium {{ $text[$focus['status']['tone']] }}">{{ $focus['status']['detail'] }}</span>
-                        </p>
-                        <div class="relative mt-4 h-2 rounded-full bg-line" role="img" aria-label="{{ $focus['name'] }}: {{ $focus['current'] }} percent, goal {{ $focus['target'] }} percent">
-                            <div class="h-full rounded-full {{ $bg[$focus['status']['tone']] }}" style="width: {{ $focus['current'] }}%"></div>
-                            <span class="absolute -top-1 h-4 w-0.5 rounded bg-white shadow-xs" style="left: {{ $focus['target'] }}%"></span>
-                        </div>
-                        @if ($focus['weakest_topic'])
-                            <p class="mt-4 text-sm text-muted">Start with <strong class="font-semibold text-ink">{{ $focus['weakest_topic']['name'] }}</strong>, your lowest topic here at {{ $focus['weakest_topic']['mastery'] }}% mastery.</p>
-                        @endif
-                        <div class="mt-5 flex flex-wrap items-center gap-2.5">
-                            <a href="{{ $reportUrl }}#subject-{{ $focus['key'] }}" class="{{ $link }}">
-                                <span>View {{ $focus['name'] }} detail</span>
-                                @include('partials.icon', ['name' => 'arrow-right', 'size' => 16])
-                            </a>
-                        </div>
-                    @else
-                        <p class="mt-4 text-sm text-muted">No subjects to show yet.</p>
-                    @endif
-                </div>
-            </section>
-
-            {{-- 2. Academic snapshot --}}
-            <section aria-label="Academic snapshot" class="grid auto-rows-fr grid-cols-2 gap-3 lg:col-span-7">
-                <x-stat-tile label="Overall average" :value="$snapshot['average'].'%'" :sub="$changeText($snapshot['change']).' since '.$snapshot['first_term']" />
-                <x-stat-tile label="Subjects at goal" :value="$snapshot['at_target'].' / '.$snapshot['subject_count']" :sub="$snapshot['below_goal'] > 0 ? $snapshot['below_goal'].' below goal' : 'All at goal'" tone="peach" />
-                <x-stat-tile label="Questions answered" :value="number_format($snapshot['questions_answered'])" sub="Across all subjects" />
-                <x-stat-tile label="Question accuracy" :value="$snapshot['accuracy'] === null ? '—' : $snapshot['accuracy'].'%'" sub="Correct answers overall" tone="good" />
-            </section>
-
-            {{-- 3. Next learning actions: lowest topic mastery across every subject --}}
             <section aria-labelledby="actions-heading" class="{{ $card }} lg:col-span-7">
-                <div class="flex items-center justify-between gap-3">
-                    <h2 id="actions-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                        @include('partials.icon', ['name' => 'sparkles', 'size' => 20])
-                        Your next learning actions
-                    </h2>
-                </div>
-                <p class="mt-1 text-sm text-muted">Chosen from your lowest topic mastery across all subjects.</p>
-
+                <h2 id="actions-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
+                    @include('partials.icon', ['name' => 'sparkles', 'size' => 20])
+                    Your next learning actions
+                </h2>
+                <p class="mt-1 text-sm text-muted">Suggestions based on your lowest recorded topic mastery.</p>
                 @if (count($dashboard['actions']) > 0)
                     <div class="mt-4 space-y-3">
                         @foreach ($dashboard['actions'] as $action)
@@ -95,40 +181,19 @@
                 @endif
             </section>
 
-            {{-- 4. Subject overview --}}
-            <section aria-labelledby="subjects-heading" class="{{ $card }} lg:col-span-5">
-                <div class="flex items-start justify-between gap-3">
-                    <h2 id="subjects-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                        @include('partials.icon', ['name' => 'bar-chart', 'size' => 20])
-                        Subject overview
-                    </h2>
-                    <a href="{{ $reportUrl }}#subjects-heading" class="text-xs font-medium text-ink underline-offset-4 hover:underline">View details</a>
-                </div>
-                <p class="mt-1 text-sm text-muted">Bars turn amber or red when a subject is below its goal.</p>
-                <ul class="mt-4 space-y-1">
-                    @foreach ($dashboard['subjects'] as $subject)
-                        <li>
-                            <a href="{{ $reportUrl }}#subject-{{ $subject['key'] }}" class="block rounded-lg px-2 py-1.5 transition hover:bg-card-2 focus-visible:outline-2 focus-visible:outline-blue">
-                                <x-bar-row :label="$subject['name']" :value="$subject['current']" :tone="$subject['tone']" />
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </section>
-
-            {{-- 5. Recent activity: latest quizzes and past papers --}}
-            <section aria-labelledby="activity-heading" class="{{ $card }} lg:col-span-7">
-                <div class="flex items-center justify-between gap-2">
+            <section aria-labelledby="activity-heading" class="{{ $card }} lg:col-span-5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
                     <h2 id="activity-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
                         @include('partials.icon', ['name' => 'zap', 'size' => 20])
-                        Recent activity
+                        Recent assessment activity
                     </h2>
-                    <span class="text-xs text-muted">Latest assessments</span>
+                    <span class="text-xs text-muted">Recorded results</span>
                 </div>
+                <p class="mt-1 text-sm text-muted">Latest quizzes and past papers across all subjects.</p>
                 @if (count($dashboard['activity']) > 0)
                     <ul class="mt-3 divide-y divide-line/70">
                         @foreach ($dashboard['activity'] as $row)
-                            <li class="flex items-center justify-between gap-3 py-2.5">
+                            <li class="flex items-center justify-between gap-3 py-3">
                                 <div class="min-w-0">
                                     <p class="truncate font-medium text-ink text-sm">{{ $row['title'] }}</p>
                                     <p class="mt-0.5 text-xs text-muted">{{ $row['subject'] }} · {{ $row['type_label'] }} · {{ $row['date_label'] }}</p>
@@ -138,35 +203,46 @@
                         @endforeach
                     </ul>
                 @else
-                    <p class="mt-4 text-sm text-muted">Complete a quiz or past paper and it will show up here.</p>
+                    <p class="mt-4 text-sm text-muted">Complete a quiz or past paper and it will appear here.</p>
                 @endif
-            </section>
-
-            {{-- 6. Not built yet: one compact card instead of two mostly empty ones --}}
-            <section aria-label="Coming soon" class="{{ $card }} lg:col-span-5">
-                <ul class="space-y-5">
-                    <li>
-                        <div class="flex items-center justify-between gap-2">
-                            <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                                @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
-                                Study planner
-                            </h2>
-                            <span class="{{ $soon }}">Coming soon</span>
-                        </div>
-                        <p class="mt-2 text-sm text-muted">Plan revision sessions and tick them off here. Nothing is scheduled yet because the planner isn't set up.</p>
-                    </li>
-                    <li class="border-t border-line pt-5">
-                        <div class="flex items-center justify-between gap-2">
-                            <h2 id="exams-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                                @include('partials.icon', ['name' => 'calendar', 'size' => 20])
-                                Upcoming exams
-                            </h2>
-                            <span class="{{ $soon }}">Coming soon</span>
-                        </div>
-                        <p class="mt-2 text-sm text-muted">No exams scheduled yet. Dates and a countdown will appear here once an exam schedule is added.</p>
-                    </li>
-                </ul>
+                <a href="{{ $reportUrl }}#assess-heading" class="{{ $link }} mt-3">Open assessment table @include('partials.icon', ['name' => 'arrow-right', 'size' => 14])</a>
             </section>
         </div>
+
+        <section aria-labelledby="trend-heading" class="{{ $card }}">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 id="trend-heading" class="text-lg font-normal text-ink">Academic trend across all terms</h2>
+                    <p class="mt-1 text-sm text-muted">The term selector updates marks and averages; the chart continues to show every term.</p>
+                </div>
+                <a href="{{ $reportUrl }}" class="{{ $link }}">Full report @include('partials.icon', ['name' => 'arrow-right', 'size' => 15])</a>
+            </div>
+            <div class="mt-4">
+                <x-line-chart :series="$dashboard['trend']['series']" :labels="$dashboard['trend']['labels']" id="student-home-term-trend" :height="190" />
+            </div>
+        </section>
+
+        <section aria-label="Planned learning features" class="{{ $card }} grid gap-6 md:grid-cols-2">
+            <div>
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="flex items-center gap-2 text-lg font-normal text-ink">
+                        @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
+                        Study planner
+                    </h2>
+                    <span class="{{ $soon }}">Coming soon</span>
+                </div>
+                <p class="mt-3 text-sm text-muted">Plan revision sessions and track tasks here once the planner is available.</p>
+            </div>
+            <div class="border-t border-line pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="flex items-center gap-2 text-lg font-normal text-ink">
+                        @include('partials.icon', ['name' => 'calendar', 'size' => 20])
+                        Upcoming exams
+                    </h2>
+                    <span class="{{ $soon }}">Coming soon</span>
+                </div>
+                <p class="mt-3 text-sm text-muted">No exam schedule is available yet. Dates will appear here once a schedule is added.</p>
+            </div>
+        </section>
     </div>
 @endsection

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\StudentActivityTracker;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -36,6 +38,7 @@ class AuthController extends Controller
     public function verifyEmail(EmailVerificationRequest $request): RedirectResponse
     {
         $request->fulfill();
+        app(StudentActivityTracker::class)->start($request, $request->user());
 
         return redirect()->route($this->dashboardRouteFor($request->user()->role));
     }
@@ -104,30 +107,55 @@ class AuthController extends Controller
         return back()->withErrors(['email' => __($status)]);
     }
 
-    public function storeRegistration(Request $request): RedirectResponse
+    public function storeRegistration(Request $request, StudentActivityTracker $activity): RedirectResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', Rule::in(['student', 'parent', 'teacher'])],
+            'parent_email' => [
+                Rule::excludeIf($request->input('role') !== 'student'),
+                'nullable',
+                'email',
+                Rule::exists('users', 'email')
+                    ->where('role', 'parent')
+                    ->whereNotNull('email_verified_at'),
+            ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $validated['role'],
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user = DB::transaction(function () use ($validated): User {
+            $parent = isset($validated['parent_email'])
+                ? User::where('email', $validated['parent_email'])
+                    ->where('role', 'parent')
+                    ->whereNotNull('email_verified_at')
+                    ->firstOrFail()
+                : null;
+            $student = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'role' => $validated['role'],
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            if ($parent !== null) {
+                $parent->students()->syncWithoutDetaching([
+                    $student->id => ['linked_at' => now()],
+                ]);
+            }
+
+            return $student;
+        });
 
         event(new Registered($user));
         Auth::login($user);
         $request->session()->regenerate();
+        $activity->start($request, $user);
 
         return redirect()->route($this->dashboardRouteFor($user->role));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, StudentActivityTracker $activity): RedirectResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -141,12 +169,14 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+        $activity->start($request, $request->user());
 
         return redirect()->intended(route($this->dashboardRouteFor($request->user()->role)));
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, StudentActivityTracker $activity): RedirectResponse
     {
+        $activity->end($request, $request->user());
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
