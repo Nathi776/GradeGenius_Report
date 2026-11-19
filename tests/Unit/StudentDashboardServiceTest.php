@@ -46,6 +46,9 @@ class StudentDashboardServiceTest extends TestCase
         $this->assertSame($snapshot['subject_count'] - $snapshot['at_target'], $snapshot['below_goal']);
         $this->assertSame(array_sum(array_column(array_column($report['subjects'], 'questions'), 'attempted')), $snapshot['questions_answered']);
         $this->assertSame($report['assessment_stats']['quiz_accuracy'], $snapshot['accuracy']);
+        $this->assertSame($report['assessment_stats']['quizzes_completed'], $dashboard['assessment_snapshot']['quizzes_completed']);
+        $this->assertSame($report['assessment_stats']['past_papers'], $dashboard['assessment_snapshot']['past_papers_completed']);
+        $this->assertSame($report['assessment_stats']['average_score'], $dashboard['assessment_snapshot']['average_score']);
     }
 
     public function test_focus_is_the_subject_furthest_below_its_own_target(): void
@@ -100,6 +103,10 @@ class StudentDashboardServiceTest extends TestCase
         foreach ($dashboard['subjects'] as $i => $subject) {
             $this->assertSame($report['subjects'][$i]['current'], $subject['current']);
             $this->assertSame($report['subjects'][$i]['target_status']['tone'], $subject['tone']);
+            $this->assertSame($report['subjects'][$i]['quiz_stats']['completed'], $subject['quiz_count']);
+            $this->assertSame($report['subjects'][$i]['quiz_stats']['average'], $subject['quiz_average']);
+            $this->assertSame(count($report['subjects'][$i]['past_papers']), $subject['past_paper_count']);
+            $this->assertSame($report['subjects'][$i]['attention'][0] ?? null, $subject['weakest_topic']);
         }
     }
 

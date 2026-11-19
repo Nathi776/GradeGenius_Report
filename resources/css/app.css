@@ -2,16 +2,27 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source "../views/reports/teacher-home.blade.php";
+@source "../js/teacher-dashboard.js";
 
 @theme {
     --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Plus Jakarta Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif;
     --color-brand: #f23d99;
     --color-blue: #8ee8f4;
     --color-good: #10b981;
     --color-warn: #ff69bd;
     --color-bad: #f87171;
     --color-sky: #8ee8f4;
+    --color-cream: #fdfbf7;
+    --color-mint: #a7f3d0;
+    --color-butter: #fde68a;
+    --color-coral: #fecdd3;
+    --color-lavender: #ddd6fe;
+    --shadow-brutal: 4px 4px 0 #000;
+    --shadow-brutal-sm: 2px 2px 0 #000;
+    --shadow-brutal-lg: 6px 6px 0 #000;
 }
 
 /* Surface tokens used by the report views (bg-card, bg-card-2, border-line, text-muted).
@@ -88,15 +99,15 @@
     --gg-line: #342c4a;
     --gg-line-soft: rgba(255, 255, 255, 0.08);
     --gg-text: #f1f5f9;
-    --gg-text-sub: #b9b0c9;
-    --gg-muted: #b3a8c7;
+    --gg-text-sub: #d0c9dd;
+    --gg-muted: #d0c9dd;
     --gg-card-shadow: 4px 4px 0 rgba(0, 0, 0, 0.55);
 
-    /* Frosted-glass report surfaces: a faint white tint, a light edge, and the blur added below */
+    /* Frosted-glass report surfaces with high-contrast muted text. */
     --glass-bg: rgba(255, 255, 255, 0.07);
     --glass-bg-2: rgba(255, 255, 255, 0.05);
     --glass-edge: rgba(255, 255, 255, 0.16);
-    --glass-muted: rgba(241, 245, 249, 0.66);
+    --glass-muted: #d0c9dd;
     --glass-solid: #1f1a35;
     --glass-solid-2: #272140;
 
@@ -1614,4 +1625,219 @@ html { scroll-behavior: smooth; }
         break-before: page;
         page-break-before: always;
     }
+}
+
+.teacher-engagement-dashboard {
+    --color-sky: #bae6fd;
+    color: #111111;
+    background-color: #fdfbf7;
+    background-image: radial-gradient(#00000014 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.teacher-engagement-dashboard [class~="text-white"] {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard {
+    color: #f1f5f9;
+    background-color: #181326;
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard .bg-white {
+    background-color: #181326;
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard .bg-cream {
+    background-color: #221c35;
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard [class~="border-black"] {
+    border-color: #342c4a;
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard .text-neutral-500,
+[data-theme="dark"] .teacher-engagement-dashboard .text-neutral-600,
+[data-theme="dark"] .teacher-engagement-dashboard .text-neutral-700 {
+    color: #d0c9dd;
+}
+
+.teacher-engagement-dashboard .brutal-card {
+    border: 2px solid var(--teacher-dashboard-ink, #000000);
+    box-shadow: 4px 4px 0 var(--teacher-dashboard-shadow, #000000);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.teacher-engagement-dashboard .brutal-card-interactive:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--teacher-dashboard-shadow, #000000);
+}
+
+.teacher-engagement-dashboard .brutal-card-interactive:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--teacher-dashboard-shadow, #000000);
+}
+
+.teacher-engagement-dashboard .brutal-btn {
+    border: 2px solid #000000;
+    box-shadow: 3px 3px 0 #000000;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+.teacher-engagement-dashboard .brutal-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #000000;
+}
+
+.teacher-engagement-dashboard .brutal-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000000;
+}
+
+.teacher-engagement-dashboard .striped-progress {
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.12),
+        rgba(0, 0, 0, 0.12) 8px,
+        transparent 8px,
+        transparent 16px
+    );
+}
+
+.teacher-engagement-dashboard ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.teacher-engagement-dashboard ::-webkit-scrollbar-track {
+    background: #fdfbf7;
+    border-left: 2px solid #000000;
+}
+
+.teacher-engagement-dashboard ::-webkit-scrollbar-thumb {
+    background: #111111;
+    border-radius: 4px;
+}
+
+@media print {
+    body[data-print-mode="student-report"] .teacher-engagement-dashboard * {
+        visibility: hidden;
+    }
+
+    body[data-print-mode="student-report"] .teacher-engagement-dashboard #studentReportModal,
+    body[data-print-mode="student-report"] .teacher-engagement-dashboard #studentReportModal * {
+        visibility: visible;
+    }
+
+    body[data-print-mode="student-report"] .teacher-engagement-dashboard #studentReportModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    body[data-print-mode="student-report"] .teacher-engagement-dashboard #studentReportCard {
+        max-width: 100% !important;
+        margin: 0 !important;
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+    }
+
+    .teacher-engagement-dashboard .no-print {
+        display: none !important;
+    }
+}
+
+[data-theme="dark"] .teacher-engagement-dashboard {
+    --teacher-dashboard-ink: #342c4a;
+    --teacher-dashboard-shadow: rgba(0, 0, 0, 0.55);
+}
+
+.gg-page:has(.gg-portal-dashboard)::after {
+    display: none;
+}
+
+.gg-portal-dashboard {
+    color: #111111;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.gg-portal-dashboard h1,
+.gg-portal-dashboard h2,
+.gg-portal-dashboard h3 {
+    font-family: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+}
+
+.gg-portal-dashboard .gg-brutal-card {
+    border: 2px solid #111111;
+    box-shadow: 4px 4px 0 #111111;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.gg-portal-dashboard .bg-card-2 {
+    border: 2px solid #111111;
+    box-shadow: 2px 2px 0 #111111;
+}
+
+[data-theme="light"] body:has(.gg-portal-dashboard) {
+    color: #111111;
+    background-color: #fdfbf7;
+    background-image: radial-gradient(#00000014 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard)::before {
+    display: none;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .bg-card,
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .gg-brutal-card {
+    border: 2px solid #111111;
+    background: #ffffff;
+    box-shadow: 4px 4px 0 #111111;
+    color: #111111;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .bg-card-2 {
+    border-color: #111111;
+    background: #fdfbf7;
+    box-shadow: 2px 2px 0 #111111;
+    color: #111111;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .border-line {
+    border-color: #111111;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .text-muted,
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) .text-ink-sub {
+    color: #525252;
+}
+
+[data-theme="light"] .gg-page:has(.gg-portal-dashboard) aside a[aria-current] {
+    border-color: #111111;
+    background: #bae6fd;
+    box-shadow: 2px 2px 0 #111111;
+    color: #111111;
+}
+
+[data-theme="dark"] .gg-page:has(.gg-portal-dashboard) .bg-card,
+[data-theme="dark"] .gg-page:has(.gg-portal-dashboard) .gg-brutal-card {
+    border: 2px solid #746b91;
+    background: #1f1a35;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.65);
+    color: #f1f5f9;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+[data-theme="dark"] .gg-page:has(.gg-portal-dashboard) .bg-card-2 {
+    border-color: #746b91;
+    background: #272140;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.55);
 }

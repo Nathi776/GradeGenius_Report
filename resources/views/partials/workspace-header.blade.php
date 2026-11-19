@@ -9,6 +9,12 @@
     ];
     $roleLabel = $roleLabels[$role] ?? ucfirst($role);
     $initial = strtoupper(substr($user->name ?? 'U', 0, 1));
+    $workspaceTermLabel = 'Term 4 Reports';
+    if (isset($terms, $selectedTerm)) {
+        $workspaceTermLabel = $selectedTerm === 'all'
+            ? 'All Terms'
+            : (($terms[(int) $selectedTerm] ?? 'Term 4').' Reports');
+    }
 @endphp
 
 <header class="no-print mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-card px-4 py-3 sm:px-6">
@@ -20,7 +26,11 @@
             </span>
             <span class="text-xs font-medium text-ink">Academic Year 2026</span>
             <span class="text-xs text-muted">·</span>
-            <span class="rounded-full border border-line bg-card-2 px-2.5 py-0.5 text-[11px] font-semibold text-ink">Term 4 Reports</span>
+            @if (isset($terms, $selectedTerm) && ! ($hideWorkspaceTermSelector ?? false))
+                @include('partials.term-selector', ['terms' => $terms, 'selectedTerm' => $selectedTerm])
+            @else
+                <span class="rounded-full border border-line bg-card-2 px-2.5 py-0.5 text-[11px] font-semibold text-ink">{{ $workspaceTermLabel }}</span>
+            @endif
         </div>
     </div>
 

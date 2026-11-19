@@ -11,7 +11,7 @@
 
 @section('student-content')
     <div class="mx-auto w-full max-w-4xl">
-        @include('partials.print-header', ['title' => 'Official Learner Academic Performance Report', 'student' => ['name' => auth()->user()->name, 'grade' => 12]])
+        @include('partials.print-header', ['title' => 'Official Learner Academic Performance Report', 'student' => ['name' => auth()->user()->name, 'grade' => 12], 'term' => $report['selected_term']])
 
         <header class="flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -26,6 +26,7 @@
                 </button>
             </div>
         </header>
+        <p class="no-print mt-4 rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">The term selector updates marks and averages. Topic mastery and assessment activity are not available by term in this sample; the chart continues to show every term.</p>
 
     {{-- 1. Headline numbers (all derived from the subject list below) --}}
     <section aria-label="Summary" class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">

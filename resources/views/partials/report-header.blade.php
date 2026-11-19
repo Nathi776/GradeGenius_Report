@@ -8,6 +8,9 @@
     </a>
     <div class="gg-header-actions">
         <a href="{{ route('dashboard.landing') }}" class="gg-nav-link">Overview</a>
+        @if (isset($terms, $selectedTerm))
+            @include('partials.term-selector', ['terms' => $terms, 'selectedTerm' => $selectedTerm])
+        @endif
         @include('partials.theme-toggle')
         <form method="POST" action="{{ route('logout') }}">
             @csrf

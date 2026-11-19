@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
@@ -35,6 +36,44 @@ class AuthenticationTest extends TestCase
             'role' => 'student',
         ]);
         Notification::assertSentTo(User::where('email', 'lerato@example.com')->first(), VerifyEmail::class);
+    }
+
+    public function test_student_can_link_to_an_existing_verified_parent_by_email(): void
+    {
+        Notification::fake();
+        $parent = User::factory()->create(['role' => 'parent', 'email' => 'guardian@example.com']);
+
+        $this->post('/register', [
+            'name' => 'Linked Learner',
+            'email' => 'linked@example.com',
+            'role' => 'student',
+            'parent_email' => $parent->email,
+            'password' => 'secret-password',
+            'password_confirmation' => 'secret-password',
+        ])->assertRedirectToRoute('student.home');
+
+        $student = User::where('email', 'linked@example.com')->firstOrFail();
+        $this->assertTrue($parent->students()->whereKey($student->id)->exists());
+        $this->assertDatabaseHas('parent_student_links', [
+            'parent_id' => $parent->id,
+            'student_id' => $student->id,
+        ]);
+    }
+
+    public function test_student_cannot_link_to_an_unverified_or_non_parent_email(): void
+    {
+        $unverifiedParent = User::factory()->unverified()->create(['role' => 'parent']);
+
+        $this->from('/register')->post('/register', [
+            'name' => 'Unlinked Learner',
+            'email' => 'unlinked@example.com',
+            'role' => 'student',
+            'parent_email' => $unverifiedParent->email,
+            'password' => 'secret-password',
+            'password_confirmation' => 'secret-password',
+        ])->assertRedirect('/register')->assertSessionHasErrors('parent_email');
+
+        $this->assertDatabaseMissing('users', ['email' => 'unlinked@example.com']);
     }
 
     public function test_registration_cannot_assign_administrator_role(): void
@@ -119,6 +158,36 @@ class AuthenticationTest extends TestCase
 
         $response->assertRedirectToRoute('dashboard.landing');
         $this->assertGuest();
+    }
+
+    public function test_student_sessions_and_successful_dashboard_visits_are_recorded(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $this->withHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36')
+            ->post('/login', ['email' => $student->email, 'password' => 'password'])
+            ->assertRedirectToRoute('student.home');
+
+        $session = DB::table('student_activity_sessions')
+            ->where('student_id', $student->id)
+            ->first();
+        $this->assertNotNull($session);
+        $this->assertSame('Chrome', $session->browser);
+        $this->assertSame('Windows', $session->platform);
+
+        $this->get('/student')->assertOk();
+        $this->assertDatabaseCount('student_activity_sessions', 1);
+        $this->assertSame(
+            $session->login_at,
+            DB::table('student_activity_sessions')->find($session->id)->login_at,
+            'Dashboard loads must not reset the login timestamp.',
+        );
+        $this->assertDatabaseHas('student_activity_events', [
+            'student_activity_session_id' => $session->id,
+            'event_type' => 'Student dashboard',
+        ]);
+
+        $this->post('/logout')->assertRedirectToRoute('dashboard.landing');
+        $this->assertNotNull(DB::table('student_activity_sessions')->find($session->id)->logout_at);
     }
 
     public function test_users_can_only_access_their_role_dashboard(): void

@@ -7,8 +7,10 @@ use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
 use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\StudentGuardianLinkController;
 use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\TeacherDashboardController;
+use App\Http\Middleware\RecordStudentActivity;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'dashboard')->name('dashboard.landing');
@@ -51,15 +53,16 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/parent/report/{child?}', ParentReportController::class)->name('parent.report');
-
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('student')
         ->name('student.')
-        ->middleware('role:student')
+        ->middleware(['role:student', RecordStudentActivity::class])
         ->group(function (): void {
             Route::get('/', StudentDashboardController::class)
                 ->name('home');
+            Route::post('/guardians', StudentGuardianLinkController::class)
+                ->middleware('throttle:login')
+                ->name('guardians.store');
             Route::get('/report', StudentReportController::class)
                 ->name('report');
             Route::redirect('/reports', '/student/report')
@@ -72,6 +75,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->group(function (): void {
             Route::get('/', ParentDashboardController::class)
                 ->name('home');
+            Route::get('/report/{child?}', ParentReportController::class)
+                ->name('report');
             Route::get('/reports', ParentReportController::class)
                 ->name('reports');
         });

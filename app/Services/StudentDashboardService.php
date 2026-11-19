@@ -37,12 +37,40 @@ final class StudentDashboardService
     {
         return [
             'student' => $report['student'],
+            'terms' => $report['terms'],
+            'selected_term' => $report['selected_term'],
+            'selected_term_index' => $report['selected_term_index'],
+            'all_terms_selected' => $report['all_terms_selected'],
+            'linked_parents' => [],
+            'trend' => [
+                'labels' => $report['terms'],
+                'series' => [$report['chart']['series'][0]],
+            ],
             'status' => $report['overall']['target_status'],
             'snapshot' => $this->snapshot($report),
+            'assessment_snapshot' => $this->assessmentSnapshot($report),
             'focus' => $this->focus($report),
             'actions' => $this->learningActions($report['subjects']),
             'subjects' => $this->subjectOverview($report['subjects']),
             'activity' => array_slice($report['assessments'], 0, self::MAX_ACTIVITY),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $report
+     * @return array<string, int|null>
+     */
+    private function assessmentSnapshot(array $report): array
+    {
+        $quizzes = array_column(array_filter($report['assessments'], fn (array $assessment): bool => $assessment['type'] === 'quiz'), 'score');
+        $papers = array_column(array_filter($report['assessments'], fn (array $assessment): bool => $assessment['type'] === 'past_paper'), 'score');
+
+        return [
+            'quizzes_completed' => count($quizzes),
+            'quiz_average' => $quizzes ? (int) round(array_sum($quizzes) / count($quizzes)) : null,
+            'past_papers_completed' => count($papers),
+            'past_paper_average' => $papers ? (int) round(array_sum($papers) / count($papers)) : null,
+            'average_score' => $report['assessment_stats']['average_score'],
         ];
     }
 
@@ -141,6 +169,11 @@ final class StudentDashboardService
             'target' => $subject['target'],
             'tone' => $subject['target_status']['tone'],
             'status_label' => $subject['target_status']['label'],
+            'quiz_count' => $subject['quiz_stats']['completed'],
+            'quiz_average' => $subject['quiz_stats']['average'],
+            'past_paper_count' => count($subject['past_papers']),
+            'past_paper_average' => $subject['past_paper_average'],
+            'weakest_topic' => $subject['attention'][0] ?? null,
         ], $subjects);
     }
 }

@@ -10,15 +10,24 @@ final class AdministratorDashboardService
     /**
      * @return array<string, mixed>
      */
-    public function build(): array
+    public function build(?int $selectedTermIndex = null): array
     {
         $terms = ['Term 1', 'Term 2', 'Term 3', 'Term 4'];
+        $trendPoints = [63.6, 65.2, 66.5, 67.8];
+        $allTermsSelected = $selectedTermIndex === null;
+        $selectedTermIndex ??= count($terms) - 1;
+        $comparisonTermIndex = $allTermsSelected ? 0 : max(0, $selectedTermIndex - 1);
+        if (! array_key_exists($selectedTermIndex, $terms)) {
+            throw new \InvalidArgumentException('The selected academic term does not exist.');
+        }
 
         $snapshot = [
             'total_learners' => 2341,
-            'school_average' => 67.8,
-            'change' => 4.2,
-            'first_term' => 'Term 1',
+            'school_average' => $trendPoints[$selectedTermIndex],
+            'change' => $trendPoints[$selectedTermIndex] - $trendPoints[$comparisonTermIndex],
+            'first_term' => $terms[$comparisonTermIndex],
+            'selected_term' => $terms[$selectedTermIndex],
+            'all_terms_selected' => $allTermsSelected,
             'pass_rate' => 91.4,
             'bachelor_pass_rate' => 64.2,
             'at_risk_count' => 86,
@@ -127,8 +136,6 @@ final class AdministratorDashboardService
             ['level' => 1, 'label' => 'Level 1 (0-29% · Not Achieved)', 'percentage' => 0.7, 'count' => 16, 'tone' => 'low'],
         ];
 
-        $trendPoints = [63.6, 65.2, 66.5, 67.8];
-
         $interventions = [
             [
                 'title' => 'Grade 12 Euclidean Geometry Intervention',
@@ -160,6 +167,7 @@ final class AdministratorDashboardService
                 'labels' => $terms,
                 'points' => $trendPoints,
             ],
+            'selected_term_index' => $selectedTermIndex,
             'interventions' => $interventions,
         ];
     }

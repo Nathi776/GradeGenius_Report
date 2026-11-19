@@ -15,7 +15,7 @@ class TeacherDashboardTest extends TestCase
         return User::factory()->create($attributes + ['role' => 'teacher']);
     }
 
-    public function test_teacher_home_shows_the_sections_and_honest_empty_states(): void
+    public function test_teacher_home_shows_the_engagement_dashboard_and_sample_data_label(): void
     {
         $this->withoutVite();
 
@@ -24,21 +24,25 @@ class TeacherDashboardTest extends TestCase
         $response->assertOk();
         $response->assertSee('Welcome back, Mrs Naidoo');
         $response->assertSee('Teacher workspace');
-        foreach (['Class performance trend', 'My classes', 'Learners to review', 'Learner insights', 'Upcoming assessments', 'Recent activity', 'Coming soon', 'Demo data'] as $text) {
+        foreach (['Educator Portal', 'Term 4 sample engagement', 'Subjects Taught', 'Select a Subject You Teach', 'Enrolled Students', 'Needs Attention'] as $text) {
             $response->assertSee($text);
         }
-        $response->assertSee('Mathematics');
+        $response->assertSee('Quizzes & Notes Report', false);
     }
 
-    public function test_review_flags_state_their_criteria_and_reasons(): void
+    public function test_engagement_dashboard_includes_search_filters_and_report_dialogs(): void
     {
         $this->withoutVite();
 
         $response = $this->actingAs($this->teacher())->get('/teacher');
 
-        $response->assertSee('below 50%');
-        $response->assertSee('not a judgement of ability');
-        $response->assertSee('since last term');
+        $response->assertSee('Search student by name or ID...');
+        $response->assertSee('Online means an authenticated student session was active within the last 5 minutes.');
+        $response->assertSee('data-learner-presence=', false);
+        $response->assertSee('Presence', false);
+        $response->assertSee('setPerformanceFilter', false);
+        $response->assertSee('Official Subject Report');
+        $response->assertSee('resourceInspectorModal', false);
     }
 
     public function test_sidebar_links_only_to_built_pages(): void

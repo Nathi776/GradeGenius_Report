@@ -34,6 +34,9 @@
                 <option value="parent" @selected(old('role') === 'parent')>Parent</option>
                 <option value="teacher" @selected(old('role') === 'teacher')>Teacher</option>
             </select>
+            <label for="parent_email">Verified parent email (students only, optional)</label>
+            <input id="parent_email" name="parent_email" type="email" value="{{ old('parent_email') }}" autocomplete="email">
+            <p class="text-xs text-muted">If provided, this must be an existing verified parent account. That guardian can view this student’s recorded dashboard and report visits.</p>
             <label for="password">Password</label>
             <input id="password" name="password" type="password" autocomplete="new-password" required>
             <label for="password_confirmation">Confirm password</label>
