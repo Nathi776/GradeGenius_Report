@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Exam;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -39,6 +40,20 @@ class DatabaseSeeder extends Seeder
         $parent->students()->syncWithoutDetaching([
             $student->id => ['linked_at' => now()],
         ]);
+
+        // Sample exam schedule for the demo grade, relative to today so it never goes stale locally.
+        foreach ([
+            ['mathematics', 'Mathematics Test', 'Paper 1', 9],
+            ['physical-sciences', 'Physical Sciences Quiz', 'Term 4', 16],
+            ['english-home-language', 'English Comprehension', 'Term 4', 24],
+            ['life-sciences', 'Life Sciences Test', 'Paper 1', 33],
+            ['accounting', 'Accounting Examination', 'Paper 1', 41],
+        ] as [$subjectKey, $title, $paper, $daysFromToday]) {
+            Exam::updateOrCreate(
+                ['subject_key' => $subjectKey, 'grade' => 12, 'title' => $title],
+                ['paper' => $paper, 'exam_date' => now()->addDays($daysFromToday)->toDateString()],
+            );
+        }
 
         foreach ([1, 3, 5] as $daysAgo) {
             $loginAt = now()->subDays($daysAgo)->setTime(15, 30);

@@ -22,4 +22,7 @@
         </div>
         <a href="{{ $href }}" class="gg-button gg-button-primary shrink-0 whitespace-nowrap text-xs">{{ $actionText }}<span class="sr-only"> for {{ $title }} in {{ $subject }}</span> →</a>
     </div>
+    @if (! $slot->isEmpty())
+        <div class="mt-3 border-t border-line pt-3">{{ $slot }}</div>
+    @endif
 </article>
