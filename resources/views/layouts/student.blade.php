@@ -15,7 +15,7 @@
                 ['key' => 'subjects', 'label' => 'My Subjects', 'icon' => 'book-open', 'href' => $reportUrl.'#subjects-heading'],
                 ['key' => 'performance', 'label' => 'Academic Performance', 'icon' => 'bar-chart', 'href' => $reportUrl],
                 ['key' => 'recommendations', 'label' => 'Learning Recommendations', 'icon' => 'sparkles', 'href' => route('student.recommendations')],
-                ['key' => 'planner', 'label' => 'Study Planner', 'icon' => 'check-circle', 'href' => null],
+                ['key' => 'planner', 'label' => 'Study Planner', 'icon' => 'check-circle', 'href' => route('student.planner')],
             ],
             'Assessments' => [
                 ['key' => 'assessments', 'label' => 'Assessments & Quizzes', 'icon' => 'file', 'href' => null],

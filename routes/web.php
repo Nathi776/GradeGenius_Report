@@ -8,6 +8,7 @@ use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentGuardianLinkController;
+use App\Http\Controllers\StudentPlannerController;
 use App\Http\Controllers\StudentRecommendationsController;
 use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\TeacherDashboardController;
@@ -68,6 +69,16 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('report');
             Route::get('/recommendations', StudentRecommendationsController::class)
                 ->name('recommendations');
+            Route::get('/planner', [StudentPlannerController::class, 'show'])
+                ->name('planner');
+            Route::post('/planner', [StudentPlannerController::class, 'generate'])
+                ->name('planner.generate');
+            Route::patch('/planner/{session}', [StudentPlannerController::class, 'update'])
+                ->whereNumber('session')
+                ->name('planner.update');
+            Route::delete('/planner/{session}', [StudentPlannerController::class, 'destroy'])
+                ->whereNumber('session')
+                ->name('planner.destroy');
             Route::redirect('/reports', '/student/report')
                 ->name('reports');
         });
