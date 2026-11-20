@@ -239,9 +239,25 @@
                         @include('partials.icon', ['name' => 'calendar', 'size' => 20])
                         Upcoming exams
                     </h2>
-                    <span class="{{ $soon }}">Coming soon</span>
+                    @if (count($dashboard['exams']) === 0)
+                        <span class="{{ $soon }}">Coming soon</span>
+                    @endif
                 </div>
-                <p class="mt-3 text-sm text-muted">No exam schedule is available yet. Dates will appear here once a schedule is added.</p>
+                @if (count($dashboard['exams']) > 0)
+                    <ul class="mt-3 divide-y divide-line/70">
+                        @foreach ($dashboard['exams'] as $exam)
+                            <li class="flex items-center justify-between gap-3 py-2.5">
+                                <div class="min-w-0">
+                                    <p class="truncate font-medium text-ink">{{ $exam['subject'] }}</p>
+                                    <p class="mt-0.5 text-xs text-muted">{{ $exam['title'] }}@if ($exam['paper']) · {{ $exam['paper'] }}@endif · {{ $exam['date_label'] }}</p>
+                                </div>
+                                <span class="shrink-0 text-sm font-semibold {{ $exam['days_until'] <= 14 ? 'text-warn' : 'text-muted' }}">{{ $exam['countdown'] }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="mt-3 text-sm text-muted">No exam schedule is available yet. Dates will appear here once a schedule is added.</p>
+                @endif
             </div>
         </section>
     </div>

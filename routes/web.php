@@ -8,6 +8,7 @@ use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentGuardianLinkController;
+use App\Http\Controllers\StudentRecommendationsController;
 use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\TeacherDashboardController;
 use App\Http\Middleware\RecordStudentActivity;
@@ -65,6 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('guardians.store');
             Route::get('/report', StudentReportController::class)
                 ->name('report');
+            Route::get('/recommendations', StudentRecommendationsController::class)
+                ->name('recommendations');
             Route::redirect('/reports', '/student/report')
                 ->name('reports');
         });

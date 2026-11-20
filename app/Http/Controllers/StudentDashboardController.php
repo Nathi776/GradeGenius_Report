@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ExamScheduleService;
 use App\Services\StudentActivityTracker;
 use App\Services\StudentDashboardService;
 use App\Services\StudentReportService;
@@ -17,6 +18,7 @@ class StudentDashboardController extends Controller
         StudentReportService $reports,
         StudentDashboardService $dashboard,
         StudentActivityTracker $activity,
+        ExamScheduleService $exams,
     ): View {
         // TODO: replace DemoReportData with the signed-in learner's data from the database.
         $raw = DemoReportData::forStudent();
@@ -24,6 +26,7 @@ class StudentDashboardController extends Controller
         $raw['student']['name'] = $request->user()->name;
         $report = $reports->build($raw, $termIndex);
         $dashboardData = $dashboard->build($report);
+        $dashboardData['exams'] = $exams->upcomingForGrade($report['student']['grade'], array_column($report['subjects'], 'name', 'key'), null, 3);
         $dashboardData['telemetry'] = $activity->dashboardSnapshot($request, $request->user());
         $dashboardData['linked_parents'] = $request->user()->parents()
             ->where('role', 'parent')
