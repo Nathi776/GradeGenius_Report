@@ -2000,3 +2000,206 @@ html { scroll-behavior: smooth; }
         margin-top: 0.25rem;
     }
 }
+
+.portal-workspace {
+    --portal-ink: #17343a;
+    --portal-muted: #526b70;
+    --portal-line: #d7e3e4;
+    --portal-surface: #ffffff;
+    --portal-surface-soft: #f4f8f8;
+    --portal-accent: #087e83;
+    --portal-accent-soft: #e0f3f1;
+    color: var(--portal-ink);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="dark"] .portal-workspace {
+    --portal-ink: #e6f1f1;
+    --portal-muted: #a8babb;
+    --portal-line: #34494c;
+    --portal-surface: #172629;
+    --portal-surface-soft: #203235;
+    --portal-accent: #67d1c8;
+    --portal-accent-soft: #234441;
+}
+
+.portal-workspace aside > div {
+    border-color: var(--portal-line);
+    background: var(--portal-surface);
+    box-shadow: 0 12px 34px rgba(23, 52, 58, 0.07);
+}
+
+.portal-workspace .logo-text {
+    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.portal-workspace [data-nav] nav > div > p {
+    color: var(--portal-muted);
+    letter-spacing: 0.12em;
+}
+
+.portal-workspace [data-nav] nav a {
+    min-height: 42px;
+    border-color: transparent;
+    border-radius: 0.75rem;
+    color: var(--portal-muted);
+    transition: color 160ms ease, background-color 160ms ease;
+}
+
+.portal-workspace [data-nav] nav a:hover {
+    background: var(--portal-surface-soft);
+    color: var(--portal-ink);
+}
+
+.portal-workspace [data-nav] nav a[aria-current] {
+    border-color: transparent;
+    background: var(--portal-accent-soft);
+    color: var(--portal-accent);
+    font-weight: 650;
+}
+
+.portal-workspace [data-nav] nav a[aria-current] svg {
+    color: var(--portal-accent);
+}
+
+.portal-workspace main > header {
+    border-color: var(--portal-line);
+    background: color-mix(in srgb, var(--portal-surface) 94%, transparent);
+    box-shadow: 0 4px 18px rgba(23, 52, 58, 0.04);
+}
+
+.portal-workspace .gg-portal-dashboard {
+    color: var(--portal-ink);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.portal-workspace .gg-portal-dashboard h1,
+.portal-workspace .gg-portal-dashboard h2,
+.portal-workspace .gg-portal-dashboard h3 {
+    color: var(--portal-ink);
+    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+}
+
+.portal-workspace .gg-portal-dashboard .gg-brutal-card,
+.portal-workspace .gg-portal-dashboard .bg-card,
+.portal-workspace .gg-portal-dashboard .bg-card-2 {
+    border: 1px solid var(--portal-line);
+    box-shadow: 0 2px 8px rgba(23, 52, 58, 0.035);
+    color: var(--portal-ink);
+}
+
+.portal-workspace .gg-portal-dashboard .bg-card {
+    background: var(--portal-surface);
+}
+
+.portal-workspace .gg-portal-dashboard .bg-card-2 {
+    background: var(--portal-surface-soft);
+}
+
+.portal-workspace .gg-portal-dashboard .border-black {
+    border-color: var(--portal-line);
+}
+
+.portal-workspace .gg-portal-dashboard .text-black {
+    color: var(--portal-ink);
+}
+
+.portal-workspace .gg-portal-dashboard .bg-butter {
+    background: var(--portal-accent-soft);
+    color: var(--portal-ink);
+}
+
+.portal-workspace .gg-portal-dashboard .text-muted,
+.portal-workspace .gg-portal-dashboard .text-ink-sub {
+    color: var(--portal-muted);
+}
+
+.portal-workspace .gg-portal-dashboard .text-brand,
+.portal-workspace .gg-portal-dashboard .text-sky {
+    color: var(--portal-accent);
+}
+
+body:has(.portal-workspace) {
+    background: #f3f7f7;
+    background-image: none;
+}
+
+[data-theme="dark"] body:has(.portal-workspace) {
+    background: #101a1c;
+}
+
+@media (max-width: 1023px) {
+    .portal-workspace aside > div {
+        position: relative;
+    }
+}
+
+.portal-workspace .teacher-engagement-dashboard {
+    color: var(--portal-ink);
+    background: transparent;
+    background-image: none;
+}
+
+.portal-workspace .teacher-engagement-dashboard > header {
+    border-color: var(--portal-line);
+    background: color-mix(in srgb, var(--portal-surface) 96%, transparent);
+    box-shadow: 0 4px 18px rgba(23, 52, 58, 0.04);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.portal-workspace .teacher-engagement-dashboard .brutal-card,
+.portal-workspace .teacher-engagement-dashboard .brutal-card-interactive {
+    border: 1px solid var(--portal-line);
+    border-radius: 1rem;
+    background-color: var(--portal-surface);
+    box-shadow: 0 2px 8px rgba(23, 52, 58, 0.05);
+    color: var(--portal-ink);
+}
+
+.portal-workspace .teacher-engagement-dashboard .brutal-btn {
+    border: 1px solid var(--portal-line);
+    border-radius: 0.75rem;
+    box-shadow: none;
+}
+
+.portal-workspace .teacher-engagement-dashboard .border-black {
+    border-color: var(--portal-line);
+}
+
+.portal-workspace .teacher-engagement-dashboard .bg-white,
+.portal-workspace .teacher-engagement-dashboard .bg-cream {
+    background-color: var(--portal-surface);
+    color: var(--portal-ink);
+}
+
+.portal-workspace .teacher-engagement-dashboard .bg-butter,
+.portal-workspace .teacher-engagement-dashboard .bg-mint,
+.portal-workspace .teacher-engagement-dashboard .bg-coral {
+    background-color: var(--portal-accent-soft);
+    color: var(--portal-ink);
+}
+
+.portal-workspace .teacher-engagement-dashboard .bg-sky {
+    background-color: #e5f3f7;
+    color: #19434d;
+}
+
+.portal-workspace .teacher-engagement-dashboard .text-black,
+.portal-workspace .teacher-engagement-dashboard .text-ink {
+    color: var(--portal-ink);
+}
+
+.portal-workspace .teacher-engagement-dashboard .text-neutral-500,
+.portal-workspace .teacher-engagement-dashboard .text-neutral-600,
+.portal-workspace .teacher-engagement-dashboard .text-neutral-700 {
+    color: var(--portal-muted);
+}
+
+[data-theme="dark"] .portal-workspace .teacher-engagement-dashboard .bg-sky {
+    background-color: #244149;
+    color: #d7f0f2;
+}
