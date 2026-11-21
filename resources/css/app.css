@@ -1842,165 +1842,14 @@ html { scroll-behavior: smooth; }
     box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.55);
 }
 
-.student-workspace {
-    --student-ink: #17343a;
-    --student-muted: #526b70;
-    --student-line: #d7e3e4;
-    --student-surface: #ffffff;
-    --student-surface-soft: #f4f8f8;
-    --student-accent: #087e83;
-    --student-accent-soft: #e0f3f1;
-    color: var(--student-ink);
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-}
-
-[data-theme="dark"] .student-workspace {
-    --student-ink: #e6f1f1;
-    --student-muted: #a8babb;
-    --student-line: #34494c;
-    --student-surface: #172629;
-    --student-surface-soft: #203235;
-    --student-accent: #67d1c8;
-    --student-accent-soft: #234441;
-}
-
-.student-workspace aside > div {
-    border-color: var(--student-line);
-    background: var(--student-surface);
-    box-shadow: 0 12px 34px rgba(23, 52, 58, 0.07);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .logo-text {
-    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
-}
-
-.student-workspace [data-nav] nav > div > p {
-    color: var(--student-muted);
-    letter-spacing: 0.12em;
-}
-
-.student-workspace [data-nav] nav a {
-    min-height: 42px;
-    border-color: transparent;
-    border-radius: 0.75rem;
-    color: var(--student-muted);
-    transition: color 160ms ease, background-color 160ms ease;
-}
-
-.student-workspace [data-nav] nav a:hover {
-    background: var(--student-surface-soft);
-    color: var(--student-ink);
-}
-
-.student-workspace [data-nav] nav a[aria-current="page"] {
-    border-color: transparent;
-    background: var(--student-accent-soft);
-    color: var(--student-accent);
-    font-weight: 650;
-}
-
-.student-workspace [data-nav] nav a[aria-current="page"] svg {
-    color: var(--student-accent);
-}
-
-.gg-page:has(.student-workspace) .student-workspace main > header {
-    border-color: var(--student-line);
-    background: color-mix(in srgb, var(--student-surface) 94%, transparent);
-    box-shadow: 0 4px 18px rgba(23, 52, 58, 0.04);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .gg-portal-dashboard {
-    color: var(--student-ink);
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-}
-
-.gg-page:has(.student-workspace) .student-workspace .gg-portal-dashboard h1,
-.gg-page:has(.student-workspace) .student-workspace .gg-portal-dashboard h2,
-.gg-page:has(.student-workspace) .student-workspace .gg-portal-dashboard h3 {
-    color: var(--student-ink);
-    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    font-weight: 700;
-}
-
-.gg-page:has(.student-workspace) .student-workspace .gg-brutal-card,
-.gg-page:has(.student-workspace) .student-workspace .bg-card,
-.gg-page:has(.student-workspace) .student-workspace .bg-card-2 {
-    border: 1px solid var(--student-line);
-    box-shadow: 0 2px 8px rgba(23, 52, 58, 0.035);
-    color: var(--student-ink);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .bg-card {
-    background: var(--student-surface);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .bg-card-2 {
-    background: var(--student-surface-soft);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .border-black {
-    border-color: var(--student-line);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .text-black {
-    color: var(--student-ink);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .bg-butter {
-    background: var(--student-accent-soft);
-    color: var(--student-ink);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .bg-sky {
-    background: #e5f3f7;
-    color: #19434d;
-}
-
-[data-theme="dark"] .gg-page:has(.student-workspace) .student-workspace .bg-sky {
-    background: #244149;
-    color: #d7f0f2;
-}
-
-.gg-page:has(.student-workspace) .student-workspace .bg-lavender {
-    background: #edf0f8;
-}
-
-[data-theme="dark"] .gg-page:has(.student-workspace) .student-workspace .bg-lavender {
-    background: #343650;
-}
-
-.gg-page:has(.student-workspace) .student-workspace .text-muted,
-.gg-page:has(.student-workspace) .student-workspace .text-ink-sub {
-    color: var(--student-muted);
-}
-
-.gg-page:has(.student-workspace) .student-workspace .text-brand,
-.gg-page:has(.student-workspace) .student-workspace .text-sky {
-    color: var(--student-accent);
-}
-
-[data-theme="light"] body:has(.student-workspace) {
-    background: #f3f7f7;
-    background-image: none;
-}
-
-[data-theme="dark"] body:has(.student-workspace) {
-    background: #101a1c;
-    background-image: none;
-}
-
-@media (max-width: 1023px) {
-    .student-workspace aside > div {
-        position: relative;
-    }
-
-    .student-workspace main > header {
-        margin-top: 0.25rem;
-    }
-}
-
+/* ================================================================================
+   WORKSPACE THEME (student, parent, teacher and administrator pages)
+   Every workspace layout wraps its page in .portal-workspace. Colours live in the --portal-*
+   variables below. The shared surface tokens (bg-card, text-muted, border-line ...) are pointed
+   at them here, so pages and components pick up the theme without per-class overrides.
+   The selector in the second block repeats the .gg-page:has() scope only to out-rank the older
+   comic .gg-portal-dashboard rules above.
+   ================================================================================ */
 .portal-workspace {
     --portal-ink: #17343a;
     --portal-muted: #526b70;
@@ -2008,7 +1857,28 @@ html { scroll-behavior: smooth; }
     --portal-surface: #ffffff;
     --portal-surface-soft: #f4f8f8;
     --portal-accent: #087e83;
+    --portal-accent-hover: #066a6e;
     --portal-accent-soft: #e0f3f1;
+    --portal-on-accent: #ffffff;
+    --portal-warn: #b45309;
+    --portal-sky-soft: #e5f3f7;
+    --portal-sky-ink: #19434d;
+    --portal-lavender-soft: #edf0f8;
+    --portal-card-shadow: 0 2px 8px rgba(23, 52, 58, 0.035);
+    --portal-panel-shadow: 0 12px 34px rgba(23, 52, 58, 0.07);
+
+    --glass-bg: var(--portal-surface);
+    --glass-bg-2: var(--portal-surface-soft);
+    --glass-edge: var(--portal-line);
+    --glass-muted: var(--portal-muted);
+    --gg-text: var(--portal-ink);
+    --gg-text-sub: var(--portal-muted);
+    --gg-surface-2: var(--portal-surface-soft);
+    --gg-line: var(--portal-line);
+    --color-brand: var(--portal-accent);
+    --color-blue: var(--portal-accent);
+    --color-warn: var(--portal-warn);
+
     color: var(--portal-ink);
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
@@ -2020,120 +1890,200 @@ html { scroll-behavior: smooth; }
     --portal-surface: #172629;
     --portal-surface-soft: #203235;
     --portal-accent: #67d1c8;
+    --portal-accent-hover: #8fe0d8;
     --portal-accent-soft: #234441;
+    --portal-on-accent: #0f2427;
+    --portal-warn: #f5b84b;
+    --portal-sky-soft: #244149;
+    --portal-sky-ink: #d7f0f2;
+    --portal-lavender-soft: #343650;
+    --portal-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --portal-panel-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
 }
 
-.portal-workspace aside > div {
-    border-color: var(--portal-line);
-    background: var(--portal-surface);
-    box-shadow: 0 12px 34px rgba(23, 52, 58, 0.07);
+.gg-page:has(.portal-workspace) .portal-workspace {
+    & aside > div {
+        border-color: var(--portal-line);
+        background: var(--portal-surface);
+        box-shadow: var(--portal-panel-shadow);
+    }
+
+    & main > header {
+        border-color: var(--portal-line);
+        background: color-mix(in srgb, var(--portal-surface) 94%, transparent);
+        box-shadow: var(--portal-card-shadow);
+    }
+
+    & .logo-text {
+        font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    & .app-icon-badge {
+        border: 1px solid var(--portal-line);
+        box-shadow: none;
+    }
+
+    /* Navigation */
+    & [data-nav] nav > div > p {
+        color: var(--portal-muted);
+        letter-spacing: 0.12em;
+    }
+
+    & [data-nav] nav a {
+        min-height: 42px;
+        border-color: transparent;
+        border-radius: 0.75rem;
+        box-shadow: none;
+        color: var(--portal-muted);
+        transition: color 160ms ease, background-color 160ms ease;
+    }
+
+    & [data-nav] nav a:hover {
+        background: var(--portal-surface-soft);
+        color: var(--portal-ink);
+    }
+
+    & [data-nav] nav a[aria-current] {
+        border-color: transparent;
+        background: var(--portal-accent-soft);
+        box-shadow: none;
+        color: var(--portal-accent);
+        font-weight: 650;
+    }
+
+    & [data-nav] nav a[aria-current] svg {
+        color: var(--portal-accent);
+    }
+
+    /* Cards and panels */
+    & :is(.bg-card, .bg-card-2, .gg-brutal-card) {
+        border: 1px solid var(--portal-line);
+        box-shadow: var(--portal-card-shadow);
+        color: var(--portal-ink);
+    }
+
+    & :is(.bg-card, .gg-brutal-card) {
+        background: var(--portal-surface);
+    }
+
+    & .bg-card-2 {
+        background: var(--portal-surface-soft);
+    }
+
+    & :is(.border-line, .border-black) {
+        border-color: var(--portal-line);
+    }
+
+    /* Text and tints */
+    & :is(.text-black, .text-ink) {
+        color: var(--portal-ink);
+    }
+
+    & :is(.text-muted, .text-ink-sub) {
+        color: var(--portal-muted);
+    }
+
+    & .text-sky {
+        color: var(--portal-accent);
+    }
+
+    & :is(.bg-white, .bg-cream) {
+        background-color: var(--portal-surface);
+        color: var(--portal-ink);
+    }
+
+    & .bg-butter {
+        background: var(--portal-accent-soft);
+        color: var(--portal-ink);
+    }
+
+    & .bg-sky {
+        background: var(--portal-sky-soft);
+        color: var(--portal-sky-ink);
+    }
+
+    & .bg-lavender {
+        background: var(--portal-lavender-soft);
+    }
+
+    & .gg-portal-dashboard {
+        color: var(--portal-ink);
+        font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    & .gg-portal-dashboard :is(h1, h2, h3) {
+        color: var(--portal-ink);
+        font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+        font-weight: 700;
+    }
+
+    /* Buttons: flat, with the workspace accent */
+    & :is(.gg-button, .theme-toggle-trigger) {
+        box-shadow: none;
+        transform: none;
+    }
+
+    & :is(.gg-button, .theme-toggle-trigger):hover {
+        box-shadow: none;
+        transform: none;
+    }
+
+    & .gg-button {
+        border: 1px solid var(--portal-line);
+        border-radius: 0.75rem;
+        font-weight: 700;
+    }
+
+    & .gg-button-primary {
+        border-color: var(--portal-accent);
+        background: var(--portal-accent);
+        color: var(--portal-on-accent);
+    }
+
+    & .gg-button-primary:hover {
+        border-color: var(--portal-accent-hover);
+        background: var(--portal-accent-hover);
+    }
+
+    & .gg-button-surface {
+        background: var(--portal-surface-soft);
+        color: var(--portal-ink);
+    }
+
+    & .gg-button-surface:hover {
+        border-color: var(--portal-accent);
+    }
+
+    & .theme-toggle-trigger {
+        border: 1px solid var(--portal-line);
+        background: var(--portal-surface-soft);
+        color: var(--portal-ink);
+    }
+
+    & .theme-toggle-trigger:hover {
+        border-color: var(--portal-accent);
+    }
 }
 
-.portal-workspace .logo-text {
-    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
-}
-
-.portal-workspace [data-nav] nav > div > p {
-    color: var(--portal-muted);
-    letter-spacing: 0.12em;
-}
-
-.portal-workspace [data-nav] nav a {
-    min-height: 42px;
-    border-color: transparent;
-    border-radius: 0.75rem;
-    color: var(--portal-muted);
-    transition: color 160ms ease, background-color 160ms ease;
-}
-
-.portal-workspace [data-nav] nav a:hover {
-    background: var(--portal-surface-soft);
-    color: var(--portal-ink);
-}
-
-.portal-workspace [data-nav] nav a[aria-current] {
-    border-color: transparent;
-    background: var(--portal-accent-soft);
-    color: var(--portal-accent);
-    font-weight: 650;
-}
-
-.portal-workspace [data-nav] nav a[aria-current] svg {
-    color: var(--portal-accent);
-}
-
-.portal-workspace main > header {
-    border-color: var(--portal-line);
-    background: color-mix(in srgb, var(--portal-surface) 94%, transparent);
-    box-shadow: 0 4px 18px rgba(23, 52, 58, 0.04);
-}
-
-.portal-workspace .gg-portal-dashboard {
-    color: var(--portal-ink);
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-}
-
-.portal-workspace .gg-portal-dashboard h1,
-.portal-workspace .gg-portal-dashboard h2,
-.portal-workspace .gg-portal-dashboard h3 {
-    color: var(--portal-ink);
-    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    font-weight: 700;
-}
-
-.portal-workspace .gg-portal-dashboard .gg-brutal-card,
-.portal-workspace .gg-portal-dashboard .bg-card,
-.portal-workspace .gg-portal-dashboard .bg-card-2 {
-    border: 1px solid var(--portal-line);
-    box-shadow: 0 2px 8px rgba(23, 52, 58, 0.035);
-    color: var(--portal-ink);
-}
-
-.portal-workspace .gg-portal-dashboard .bg-card {
-    background: var(--portal-surface);
-}
-
-.portal-workspace .gg-portal-dashboard .bg-card-2 {
-    background: var(--portal-surface-soft);
-}
-
-.portal-workspace .gg-portal-dashboard .border-black {
-    border-color: var(--portal-line);
-}
-
-.portal-workspace .gg-portal-dashboard .text-black {
-    color: var(--portal-ink);
-}
-
-.portal-workspace .gg-portal-dashboard .bg-butter {
-    background: var(--portal-accent-soft);
-    color: var(--portal-ink);
-}
-
-.portal-workspace .gg-portal-dashboard .text-muted,
-.portal-workspace .gg-portal-dashboard .text-ink-sub {
-    color: var(--portal-muted);
-}
-
-.portal-workspace .gg-portal-dashboard .text-brand,
-.portal-workspace .gg-portal-dashboard .text-sky {
-    color: var(--portal-accent);
-}
-
-body:has(.portal-workspace) {
+[data-theme="light"] body:has(.portal-workspace) {
     background: #f3f7f7;
     background-image: none;
 }
 
 [data-theme="dark"] body:has(.portal-workspace) {
     background: #101a1c;
+    background-image: none;
 }
 
 @media (max-width: 1023px) {
     .portal-workspace aside > div {
         position: relative;
+    }
+
+    .portal-workspace main > header {
+        margin-top: 0.25rem;
     }
 }
 
@@ -2164,6 +2114,15 @@ body:has(.portal-workspace) {
     border: 1px solid var(--portal-line);
     border-radius: 0.75rem;
     box-shadow: none;
+}
+
+.portal-workspace .teacher-engagement-dashboard [class*="shadow-brutal"] {
+    box-shadow: var(--portal-card-shadow);
+}
+
+.portal-workspace .teacher-engagement-dashboard .bg-black {
+    background-color: var(--portal-accent);
+    color: var(--portal-on-accent);
 }
 
 .portal-workspace .teacher-engagement-dashboard .border-black {
