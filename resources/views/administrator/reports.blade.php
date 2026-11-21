@@ -16,7 +16,7 @@
         'term' => $selectedTerm === 'all' ? 'All Terms' : $terms[(int) $selectedTerm],
     ])
 
-    <div class="space-y-5">
+    <div class="gg-portal-dashboard space-y-5">
         <header class="flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h1 class="text-3xl font-normal tracking-tight text-ink sm:text-4xl">Executive Academic Dashboard</h1>

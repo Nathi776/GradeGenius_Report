@@ -31,8 +31,8 @@
         $itemBase = 'flex items-center gap-3 rounded-xl border px-3 py-2 text-sm font-medium';
     @endphp
 
-    <div class="mx-auto flex w-full max-w-360 flex-col gap-4 p-4 lg:flex-row lg:items-start lg:gap-6 lg:p-6">
-        <aside class="no-print lg:sticky lg:top-6 lg:w-72 lg:shrink-0" aria-label="Student workspace">
+    <div class="portal-workspace student-workspace mx-auto flex w-full max-w-360 flex-col gap-4 p-4 lg:flex-row lg:items-start lg:gap-6 lg:p-6">
+        <aside class="student-sidebar no-print lg:sticky lg:top-6 lg:w-72 lg:shrink-0" aria-label="Student workspace">
             <div class="flex flex-col rounded-2xl border border-line bg-card p-4 lg:max-h-[calc(100vh-3rem)]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="min-w-0">
