@@ -34,6 +34,50 @@ class StudentDashboardController extends Controller
             ->map(fn ($parent): array => ['name' => $parent->name, 'email' => $parent->email])
             ->all();
 
+        // Calculate real study time, streak, and weekly goal
+        $today = now()->startOfDay();
+        $weekStart = $today->copy()->startOfWeek();
+        $weekEnd = $today->copy()->endOfWeek();
+        $realStudyMinutes = (int) \App\Models\StudySession::where('user_id', $request->user()->id)
+            ->where('status', \App\Models\StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->sum('actual_minutes');
+        $weeklyMinutes = (int) \App\Models\StudySession::where('user_id', $request->user()->id)
+            ->where('status', \App\Models\StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->whereBetween('planned_date', [$weekStart, $weekEnd])
+            ->sum('actual_minutes');
+
+        $streak = 0;
+        $checkDate = $today->copy();
+        $todayHasDone = \App\Models\StudySession::where('user_id', $request->user()->id)
+            ->whereDate('planned_date', $checkDate)
+            ->where('status', \App\Models\StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->exists();
+        if (! $todayHasDone) {
+            $checkDate->subDay();
+        }
+        while (true) {
+            $hasDone = \App\Models\StudySession::where('user_id', $request->user()->id)
+                ->whereDate('planned_date', $checkDate)
+                ->where('status', \App\Models\StudySession::STATUS_DONE)
+                ->where('is_counted', true)
+                ->exists();
+            if (! $hasDone) {
+                break;
+            }
+            $streak++;
+            $checkDate->subDay();
+        }
+
+        $dashboardData['study_stats'] = [
+            'streak' => $streak,
+            'weekly_minutes' => $weeklyMinutes,
+            'weekly_goal' => 630,
+            'real_study_minutes' => $realStudyMinutes,
+        ];
+
         return view('reports.student-home', [
             'dashboard' => $dashboardData,
             'terms' => $raw['terms'],

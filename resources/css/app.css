@@ -1844,8 +1844,8 @@ html { scroll-behavior: smooth; }
 
 .student-workspace {
     --student-ink: #17343a;
-    --student-muted: #526b70;
-    --student-line: #d7e3e4;
+    --student-muted: #243f45;
+    --student-line: #c6d5d7;
     --student-surface: #ffffff;
     --student-surface-soft: #f4f8f8;
     --student-accent: #087e83;
@@ -2001,10 +2001,200 @@ html { scroll-behavior: smooth; }
     }
 }
 
+/* ================================================================================
+   STUDENT WORKSPACE / PLANNER LIGHT-MODE REFINEMENTS
+   Unified button surfaces, crisp borders, tactile shadows, and high-contrast text.
+   ================================================================================ */
+
+/* Card surfaces & border consistency in light mode */
+:root:not([data-theme="dark"]) .student-workspace .bg-card,
+[data-theme="light"] .student-workspace .bg-card {
+    background-color: #ffffff;
+    border: 1px solid var(--student-line);
+    box-shadow: 0 1px 3px rgba(23, 52, 58, 0.05), 0 4px 12px rgba(23, 52, 58, 0.03);
+    color: var(--student-ink);
+}
+
+:root:not([data-theme="dark"]) .student-workspace .bg-card-2,
+[data-theme="light"] .student-workspace .bg-card-2 {
+    background-color: #f7fafb;
+    border: 1px solid var(--student-line);
+    box-shadow: 0 1px 2px rgba(23, 52, 58, 0.035);
+    color: var(--student-ink);
+}
+
+/* Unified action buttons across the planner and surrounding layout in light mode */
+:root:not([data-theme="dark"]) .student-workspace .planner-btn,
+[data-theme="light"] .student-workspace .planner-btn,
+:root:not([data-theme="dark"]) .student-workspace .gg-button-surface,
+[data-theme="light"] .student-workspace .gg-button-surface {
+    background-color: #ffffff;
+    border: 1px solid var(--student-line);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(23, 52, 58, 0.08);
+    color: var(--student-ink);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root:not([data-theme="dark"]) .student-workspace .gg-button-surface,
+[data-theme="light"] .student-workspace .gg-button-surface {
+    padding: 0.375rem 0.75rem;
+    transform: none;
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-btn:hover,
+[data-theme="light"] .student-workspace .planner-btn:hover,
+:root:not([data-theme="dark"]) .student-workspace .gg-button-surface:hover,
+[data-theme="light"] .student-workspace .gg-button-surface:hover {
+    background-color: #f0f8f8;
+    border-color: var(--student-accent);
+    color: var(--student-accent);
+    box-shadow: 0 2px 5px rgba(23, 52, 58, 0.12);
+    transform: translateY(-1px);
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-btn:active,
+[data-theme="light"] .student-workspace .planner-btn:active,
+:root:not([data-theme="dark"]) .student-workspace .gg-button-surface:active,
+[data-theme="light"] .student-workspace .gg-button-surface:active {
+    background-color: #e2efef;
+    box-shadow: 0 1px 1px rgba(23, 52, 58, 0.08);
+    transform: translateY(0);
+}
+
+/* Button-specific subtle hover accents in light mode */
+:root:not([data-theme="dark"]) .student-workspace .planner-btn-done:hover,
+[data-theme="light"] .student-workspace .planner-btn-done:hover {
+    background-color: #f0fdf4;
+    border-color: #059669;
+    color: #065f46;
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-btn-skip:hover,
+[data-theme="light"] .student-workspace .planner-btn-skip:hover {
+    background-color: #f8fafc;
+    border-color: #64748b;
+    color: #334155;
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-btn-undo:hover,
+[data-theme="light"] .student-workspace .planner-btn-undo:hover {
+    background-color: #f0fdfa;
+    border-color: #0d9488;
+    color: #0f766e;
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-btn-remove:hover,
+[data-theme="light"] .student-workspace .planner-btn-remove:hover {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    color: #b91c1c;
+}
+
+/* Stat card captions & labels - high contrast against light cards */
+:root:not([data-theme="dark"]) .student-workspace [aria-label="Plan summary"] p.text-muted,
+[data-theme="light"] .student-workspace [aria-label="Plan summary"] p.text-muted {
+    color: #1c383d;
+    font-weight: 500;
+}
+
+:root:not([data-theme="dark"]) .student-workspace [aria-label="Plan summary"] p.text-\[11px\],
+[data-theme="light"] .student-workspace [aria-label="Plan summary"] p.text-\[11px\] {
+    color: #17343a;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+/* Subject & duration metadata in planner cards */
+:root:not([data-theme="dark"]) .student-workspace .planner-session-meta,
+[data-theme="light"] .student-workspace .planner-session-meta {
+    color: #1e3b40;
+    font-weight: 500;
+}
+
+/* Crisp Done & Skipped session status badges */
+:root:not([data-theme="dark"]) .student-workspace .planner-status-done,
+[data-theme="light"] .student-workspace .planner-status-done {
+    display: inline-flex;
+    align-items: center;
+    color: #064e3b;
+    background-color: #d1fae5;
+    border: 1px solid #6ee7b7;
+    border-radius: 9999px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(6, 78, 59, 0.06);
+    vertical-align: middle;
+}
+
+:root:not([data-theme="dark"]) .student-workspace .planner-status-skipped,
+[data-theme="light"] .student-workspace .planner-status-skipped {
+    display: inline-flex;
+    align-items: center;
+    color: #78350f;
+    background-color: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 9999px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(120, 53, 15, 0.06);
+    vertical-align: middle;
+}
+
+/* Strikethrough completed topics remain legible in light mode */
+:root:not([data-theme="dark"]) .student-workspace li p.line-through,
+[data-theme="light"] .student-workspace li p.line-through {
+    color: #17343a;
+    opacity: 0.82;
+}
+
+/* Dark mode explicit isolation: zero alteration to dark theme */
+[data-theme="dark"] .student-workspace .planner-status-done,
+[data-theme="dark"] .student-workspace .planner-status-skipped {
+    color: inherit;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    display: inline;
+}
+
+[data-theme="dark"] .student-workspace .gg-button-surface {
+    color: var(--gg-text);
+    background: var(--gg-surface-2);
+    border: 2px solid var(--gg-line);
+    box-shadow: 2px 2px 0 var(--gg-line);
+    border-radius: 0.65rem;
+    padding: 0.7rem 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+[data-theme="dark"] .student-workspace .gg-button-surface:hover {
+    border-color: var(--primary);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--gg-line);
+}
+
 .portal-workspace {
     --portal-ink: #17343a;
-    --portal-muted: #526b70;
-    --portal-line: #d7e3e4;
+    --portal-muted: #243f45;
+    --portal-line: #c6d5d7;
     --portal-surface: #ffffff;
     --portal-surface-soft: #f4f8f8;
     --portal-accent: #087e83;

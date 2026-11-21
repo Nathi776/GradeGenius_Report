@@ -65,10 +65,10 @@
                                                     <span class="min-w-0 flex-1 leading-snug">{{ $item['label'] }}</span>
                                                 </a>
                                             @else
-                                                <span aria-disabled="true" class="{{ $itemBase }} cursor-not-allowed border-transparent text-muted">
+                                                <span aria-disabled="true" class="{{ $itemBase }} cursor-not-allowed border-transparent text-muted/60 opacity-50 select-none pointer-events-none">
                                                     @include('partials.icon', ['name' => $item['icon'], 'size' => 18])
                                                     <span class="min-w-0 flex-1 leading-snug">{{ $item['label'] }}</span>
-                                                    <span class="shrink-0 rounded-full border border-line px-2 py-0.5 text-[10px] uppercase tracking-wider">Soon</span>
+                                                    <span class="shrink-0 rounded-full border border-line/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted/80">Soon</span>
                                                 </span>
                                             @endif
                                         </li>
@@ -82,7 +82,7 @@
                         @include('partials.theme-toggle')
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="gg-button gg-button-surface" type="submit">Sign out</button>
+                            <button class="gg-button gg-button-surface student-sign-out-btn" type="submit">Sign out</button>
                         </form>
                     </div>
                 </div>
