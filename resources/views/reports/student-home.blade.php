@@ -229,9 +229,9 @@
                         @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
                         Study planner
                     </h2>
-                    <span class="{{ $soon }}">Coming soon</span>
                 </div>
-                <p class="mt-3 text-sm text-muted">Plan revision sessions and track tasks here once the planner is available.</p>
+                <p class="mt-3 text-sm text-muted">Turn your weakest topics into short revision sessions across the week.</p>
+                <a href="{{ route('student.planner') }}" class="mt-3 inline-flex items-center rounded-lg border border-line bg-card-2 px-3 py-1.5 text-sm font-medium text-ink hover:border-blue focus-visible:outline-2 focus-visible:outline-blue">Open the planner</a>
             </div>
             <div class="border-t border-line pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
                 <div class="flex items-center justify-between gap-2">

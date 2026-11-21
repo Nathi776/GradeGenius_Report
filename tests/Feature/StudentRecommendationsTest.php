@@ -52,7 +52,7 @@ class StudentRecommendationsTest extends TestCase
             ->assertOk()
             ->assertSee('No exam schedule is available yet')
             ->assertSee('Study planner')
-            ->assertSee('Coming soon');
+            ->assertSee('Open the planner');
     }
 
     public function test_sidebar_links_to_the_page_and_marks_it_current(): void

@@ -94,14 +94,12 @@
                 </section>
 
                 <section aria-labelledby="planner-heading" class="{{ $card }}">
-                    <div class="flex items-center justify-between gap-2">
-                        <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
-                            @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
-                            Study planner
-                        </h2>
-                        <span class="shrink-0 whitespace-nowrap rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">Coming soon</span>
-                    </div>
-                    <p class="mt-3 text-sm text-muted">Soon you'll be able to turn this list into a weekly plan of revision sessions.</p>
+                    <h2 id="planner-heading" class="flex items-center gap-2 text-lg font-normal text-ink">
+                        @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
+                        Study planner
+                    </h2>
+                    <p class="mt-3 text-sm text-muted">Turn this list into a week of short revision sessions.</p>
+                    <a href="{{ route('student.planner') }}" class="mt-3 inline-flex items-center rounded-lg border border-line bg-card-2 px-3 py-1.5 text-sm font-medium text-ink hover:border-blue focus-visible:outline-2 focus-visible:outline-blue">Open the planner</a>
                 </section>
             </aside>
         </div>
