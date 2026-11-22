@@ -135,6 +135,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('messages.show');
             Route::post('/messages/{message}/acknowledge', [TeacherMessageController::class, 'acknowledge'])
                 ->whereNumber('message')
+                ->middleware('throttle:20,1')
                 ->name('messages.acknowledge');
         });
 
@@ -151,6 +152,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::get('/messages/create', [TeacherMessageController::class, 'create'])
                 ->name('messages.create');
             Route::post('/messages', [TeacherMessageController::class, 'store'])
+                ->middleware('throttle:20,1')
                 ->name('messages.store');
         });
 

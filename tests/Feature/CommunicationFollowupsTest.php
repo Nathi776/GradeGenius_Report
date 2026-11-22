@@ -48,4 +48,15 @@ class CommunicationFollowupsTest extends TestCase
         $this->assertSame(1, $teacher->notifications()->count());
         $this->assertSame('Thanks, noted', $message->fresh()->quick_reply);
     }
+
+    public function test_teacher_message_sending_is_rate_limited(): void
+    {
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $this->actingAs($teacher)->post('/teacher/messages', []);
+        }
+
+        $this->actingAs($teacher)->post('/teacher/messages', [])->assertStatus(429);
+    }
 }
