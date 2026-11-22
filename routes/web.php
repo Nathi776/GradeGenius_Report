@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ParentDashboardController;
+use App\Http\Controllers\ParentPlannerController;
 use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
@@ -73,6 +74,17 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('planner');
             Route::post('/planner', [StudentPlannerController::class, 'generate'])
                 ->name('planner.generate');
+            Route::post('/planner/session', [StudentPlannerController::class, 'storeSession'])
+                ->name('planner.store');
+            Route::post('/planner/{session}/start', [StudentPlannerController::class, 'start'])
+                ->whereNumber('session')
+                ->name('planner.start');
+            Route::post('/planner/{session}/pause', [StudentPlannerController::class, 'pause'])
+                ->whereNumber('session')
+                ->name('planner.pause');
+            Route::post('/planner/{session}/resume', [StudentPlannerController::class, 'resume'])
+                ->whereNumber('session')
+                ->name('planner.resume');
             Route::patch('/planner/{session}', [StudentPlannerController::class, 'update'])
                 ->whereNumber('session')
                 ->name('planner.update');
@@ -89,6 +101,15 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->group(function (): void {
             Route::get('/', ParentDashboardController::class)
                 ->name('home');
+            Route::get('/planner', [ParentPlannerController::class, 'show'])
+                ->name('planner');
+            Route::get('/planner/recap', [ParentPlannerController::class, 'recap'])
+                ->name('planner.recap');
+            Route::post('/encouragements', [ParentPlannerController::class, 'sendEncouragement'])
+                ->name('encouragements.store');
+            Route::delete('/encouragements/{encouragement}', [ParentPlannerController::class, 'deleteEncouragement'])
+                ->whereNumber('encouragement')
+                ->name('encouragements.destroy');
             Route::get('/report/{child?}', ParentReportController::class)
                 ->name('report');
             Route::get('/reports', ParentReportController::class)

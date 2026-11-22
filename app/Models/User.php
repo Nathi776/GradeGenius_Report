@@ -40,8 +40,46 @@ class User extends Authenticatable implements MustVerifyEmail
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'parent_student_links', 'parent_id', 'student_id')
-            ->withPivot('linked_at')
+            ->withPivot(['linked_at', 'status'])
             ->withTimestamps();
+    }
+
+    /**
+     * Verified child accounts linked to this parent account.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function linkedChildren(): BelongsToMany
+    {
+        return $this->students();
+    }
+
+    /**
+     * Scope query to verified parent-child links.
+     */
+    public function scopeVerified($query)
+    {
+        return $query->where('parent_student_links.status', 'verified');
+    }
+
+    /**
+     * Words of encouragement sent by this parent.
+     *
+     * @return HasMany<ParentEncouragement, $this>
+     */
+    public function sentEncouragements(): HasMany
+    {
+        return $this->hasMany(ParentEncouragement::class, 'parent_id');
+    }
+
+    /**
+     * Words of encouragement received by this student.
+     *
+     * @return HasMany<ParentEncouragement, $this>
+     */
+    public function receivedEncouragements(): HasMany
+    {
+        return $this->hasMany(ParentEncouragement::class, 'student_id');
     }
 
     /**

@@ -87,6 +87,23 @@
                                 </a>
                             </div>
                             <p class="mt-2 text-[11px] text-muted">Sign-in and observed session span over the last 7 days; not study time.</p>
+
+                            <div class="mt-3 rounded-xl border-2 border-black bg-white p-3 shadow-xs dark:bg-card">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold uppercase tracking-wider text-muted">Real Study Time</p>
+                                        <p class="mt-0.5 text-lg font-bold text-ink">{{ $learner['real_study_minutes'] ?? 0 }} min</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[11px] font-semibold uppercase tracking-wider text-muted">Study Streak</p>
+                                        <p class="mt-0.5 text-sm font-bold text-ink">🔥 {{ $learner['streak'] ?? 0 }} {{ ($learner['streak'] ?? 0) === 1 ? 'day' : 'days' }}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex items-center justify-between border-t border-line/60 pt-2 text-xs">
+                                    <span class="text-muted">Weekly study goal</span>
+                                    <span class="font-semibold text-ink">{{ $learner['weekly_study_minutes'] ?? 0 }} / 630 min</span>
+                                </div>
+                            </div>
                         </article>
                     @endforeach
                 </div>
@@ -108,8 +125,8 @@
                 <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
                     <x-stat-tile label="Total logins this week" :value="$selectedLearner['logins_7d']" sub="Recorded portal sessions" />
                     <x-stat-tile label="Observed session span" :value="$selectedLearner['duration_7d']" sub="Across sessions started in the last 7 days · not study time" tone="sky" />
-                    <x-stat-tile label="Last active & device" :value="$selectedLearner['last_active_label'] ?? 'No activity recorded'" :sub="$selectedLearner['latest_browser'] ? $selectedLearner['latest_browser'].' · '.$selectedLearner['latest_platform'] : 'Device details unavailable'" />
-                    <x-stat-tile label="Recorded visits" :value="$selectedLearner['recorded_visits']" sub="Successful dashboard/report views" tone="peach" />
+                    <x-stat-tile label="Real Study Time" :value="($realStudyStats['total_minutes'] ?? 0).' min'" sub="Verified completed study time" tone="good" />
+                    <x-stat-tile label="Study Streak" :value="($realStudyStats['streak'] ?? 0).' days'" sub="Consecutive days with study sessions" tone="peach" />
                 </div>
                 <p class="mt-3 text-xs text-muted">School, grade, subject averages, study actions, and educator remarks are not linked to this account. This activity log does not collect IP addresses or locations.</p>
             </section>
@@ -388,9 +405,22 @@
                         @include('partials.icon', ['name' => 'check-circle', 'size' => 20])
                         Study planner
                     </h2>
-                    <span class="{{ $soon }}">Coming soon</span>
+                    <a href="{{ route('parent.planner', array_filter(['child_id' => $selectedLearner['id'] ?? null])) }}" class="shrink-0 text-xs font-semibold text-ink underline underline-offset-2">View full plan →</a>
                 </div>
-                <p class="mt-4 text-sm text-muted">You'll be able to see {{ $child['first_name'] }}'s planned revision sessions here. Nothing is scheduled because the planner isn't set up.</p>
+                <div class="mt-4 space-y-2.5">
+                    <div class="flex items-center justify-between rounded-xl border border-line bg-card-2 p-3">
+                        <span class="text-xs text-muted">Study Streak</span>
+                        <span class="text-sm font-semibold text-ink">🔥 {{ $realStudyStats['streak'] ?? 0 }} {{ ($realStudyStats['streak'] ?? 0) === 1 ? 'day' : 'days' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-xl border border-line bg-card-2 p-3">
+                        <span class="text-xs text-muted">Weekly Goal</span>
+                        <span class="text-sm font-semibold text-ink">{{ $realStudyStats['weekly_minutes'] ?? 0 }} / {{ $realStudyStats['weekly_goal'] ?? 630 }} min</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-xl border border-line bg-card-2 p-3">
+                        <span class="text-xs text-muted">Total Real Study Time</span>
+                        <span class="text-sm font-semibold text-ink">{{ $realStudyStats['total_minutes'] ?? 0 }} min</span>
+                    </div>
+                </div>
             </section>
 
             {{-- 9. Notifications --}}
