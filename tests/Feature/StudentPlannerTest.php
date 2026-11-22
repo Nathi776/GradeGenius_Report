@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ParentEncouragement;
 use App\Models\StudySession;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,18 +60,80 @@ class StudentPlannerTest extends TestCase
     public function test_a_session_can_be_marked_done_skipped_and_undone(): void
     {
         $student = $this->student();
-        $session = StudySession::factory()->create(['user_id' => $student->id]);
+        $session = StudySession::factory()->create([
+            'user_id' => $student->id,
+            'planned_date' => now()->toDateString(),
+            'started_at' => now()->subMinutes(30),
+            'minutes' => 30,
+        ]);
 
         $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'done']);
         $this->assertSame('done', $session->fresh()->status);
+        $this->assertTrue($session->fresh()->is_counted);
         $this->assertNotNull($session->fresh()->completed_at);
 
         $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'skipped']);
         $this->assertSame('skipped', $session->fresh()->status);
+        $this->assertFalse($session->fresh()->is_counted);
         $this->assertNull($session->fresh()->completed_at);
 
         $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'planned']);
         $this->assertSame('planned', $session->fresh()->status);
+    }
+
+    public function test_two_minute_cheat_is_flagged_too_short_and_not_counted(): void
+    {
+        $student = $this->student();
+        $session = StudySession::factory()->create([
+            'user_id' => $student->id,
+            'planned_date' => now()->toDateString(),
+            'started_at' => now()->subMinutes(2),
+            'minutes' => 30,
+        ]);
+
+        $response = $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'done']);
+
+        $response->assertSessionHas('error');
+        $fresh = $session->fresh();
+        $this->assertSame('too_short', $fresh->status);
+        $this->assertFalse($fresh->is_counted);
+        $this->assertNull($fresh->completed_at);
+    }
+
+    public function test_future_sessions_cannot_be_completed_or_skipped_before_their_date(): void
+    {
+        $student = $this->student();
+        $session = StudySession::factory()->create([
+            'user_id' => $student->id,
+            'planned_date' => now()->addDays(2)->toDateString(),
+            'started_at' => now()->subMinutes(30),
+            'minutes' => 30,
+        ]);
+
+        $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'done'])
+            ->assertSessionHas('error');
+        $this->assertSame('planned', $session->fresh()->status);
+
+        $this->actingAs($student)->patch("/student/planner/{$session->id}", ['status' => 'skipped'])
+            ->assertSessionHas('error');
+        $this->assertSame('planned', $session->fresh()->status);
+    }
+
+    public function test_child_sees_word_of_encouragement_from_parent(): void
+    {
+        $this->withoutVite();
+        $student = $this->student();
+        $parent = User::factory()->create(['role' => 'parent', 'name' => 'Sam Mthombeni']);
+        ParentEncouragement::create([
+            'parent_id' => $parent->id,
+            'student_id' => $student->id,
+            'message' => 'You got this, focus on Probability today!',
+        ]);
+
+        $this->actingAs($student)->get('/student/planner')
+            ->assertOk()
+            ->assertSee('Word of encouragement from Sam Mthombeni')
+            ->assertSee('You got this, focus on Probability today!');
     }
 
     public function test_an_invalid_status_is_rejected(): void

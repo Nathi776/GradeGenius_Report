@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StudySession;
 use App\Services\ExamScheduleService;
 use App\Services\StudentActivityTracker;
 use App\Services\StudentDashboardService;
@@ -33,6 +34,50 @@ class StudentDashboardController extends Controller
             ->get(['users.name', 'users.email'])
             ->map(fn ($parent): array => ['name' => $parent->name, 'email' => $parent->email])
             ->all();
+
+        // Calculate real study time, streak, and weekly goal
+        $today = now()->startOfDay();
+        $weekStart = $today->copy()->startOfWeek();
+        $weekEnd = $today->copy()->endOfWeek();
+        $realStudyMinutes = (int) StudySession::where('user_id', $request->user()->id)
+            ->where('status', StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->sum('actual_minutes');
+        $weeklyMinutes = (int) StudySession::where('user_id', $request->user()->id)
+            ->where('status', StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->whereBetween('planned_date', [$weekStart, $weekEnd])
+            ->sum('actual_minutes');
+
+        $streak = 0;
+        $checkDate = $today->copy();
+        $todayHasDone = StudySession::where('user_id', $request->user()->id)
+            ->whereDate('planned_date', $checkDate)
+            ->where('status', StudySession::STATUS_DONE)
+            ->where('is_counted', true)
+            ->exists();
+        if (! $todayHasDone) {
+            $checkDate->subDay();
+        }
+        while (true) {
+            $hasDone = StudySession::where('user_id', $request->user()->id)
+                ->whereDate('planned_date', $checkDate)
+                ->where('status', StudySession::STATUS_DONE)
+                ->where('is_counted', true)
+                ->exists();
+            if (! $hasDone) {
+                break;
+            }
+            $streak++;
+            $checkDate->subDay();
+        }
+
+        $dashboardData['study_stats'] = [
+            'streak' => $streak,
+            'weekly_minutes' => $weeklyMinutes,
+            'weekly_goal' => 630,
+            'real_study_minutes' => $realStudyMinutes,
+        ];
 
         return view('reports.student-home', [
             'dashboard' => $dashboardData,

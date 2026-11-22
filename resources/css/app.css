@@ -2162,3 +2162,62 @@ html { scroll-behavior: smooth; }
     background-color: #244149;
     color: #d7f0f2;
 }
+
+/* Study planner details (student planner page). Colours come from the workspace theme variables,
+   so they follow light and dark mode without separate rules. */
+.gg-page:has(.portal-workspace) .portal-workspace {
+    & .planner-btn:hover {
+        border-color: var(--portal-accent);
+        color: var(--portal-accent);
+    }
+
+    & .planner-btn-done:hover {
+        border-color: var(--color-good);
+        color: var(--color-good);
+    }
+
+    & .planner-btn-skip:hover {
+        border-color: var(--portal-muted);
+        color: var(--portal-ink);
+    }
+
+    & .planner-btn-remove:hover {
+        border-color: var(--color-bad);
+        color: var(--color-bad);
+    }
+
+    & .planner-session-meta {
+        color: var(--portal-muted);
+        font-weight: 500;
+    }
+
+    & :is(.planner-status-done, .planner-status-skipped) {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid;
+        border-radius: 9999px;
+        padding: 0.1rem 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        vertical-align: middle;
+    }
+
+    & .planner-status-done {
+        border-color: color-mix(in srgb, var(--color-good) 45%, transparent);
+        background: color-mix(in srgb, var(--color-good) 14%, transparent);
+        color: var(--color-good);
+    }
+
+    & .planner-status-skipped {
+        border-color: color-mix(in srgb, var(--portal-warn) 45%, transparent);
+        background: color-mix(in srgb, var(--portal-warn) 14%, transparent);
+        color: var(--portal-warn);
+    }
+
+    & li p.line-through {
+        opacity: 0.8;
+    }
+}
