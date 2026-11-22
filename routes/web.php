@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassAnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ParentDashboardController;
@@ -135,7 +136,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('messages.show');
             Route::post('/messages/{message}/acknowledge', [TeacherMessageController::class, 'acknowledge'])
                 ->whereNumber('message')
+                ->middleware('throttle:20,1')
                 ->name('messages.acknowledge');
+            Route::get('/announcements/{announcement}', [ClassAnnouncementController::class, 'showForParent'])
+                ->whereNumber('announcement')
+                ->name('announcements.show');
         });
 
     Route::prefix('teacher')
@@ -151,7 +156,15 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::get('/messages/create', [TeacherMessageController::class, 'create'])
                 ->name('messages.create');
             Route::post('/messages', [TeacherMessageController::class, 'store'])
+                ->middleware('throttle:20,1')
                 ->name('messages.store');
+            Route::get('/announcements', [ClassAnnouncementController::class, 'index'])
+                ->name('announcements.index');
+            Route::get('/announcements/create', [ClassAnnouncementController::class, 'create'])
+                ->name('announcements.create');
+            Route::post('/announcements', [ClassAnnouncementController::class, 'store'])
+                ->middleware('throttle:10,1')
+                ->name('announcements.store');
         });
 
     Route::prefix('administrator')
