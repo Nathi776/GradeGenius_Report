@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $parent->students()->syncWithoutDetaching([
-            $student->id => ['linked_at' => now()],
+            $student->id => ['linked_at' => now(), 'status' => 'verified'],
         ]);
 
         // Sample exam schedule for the demo grade, relative to today so it never goes stale locally.

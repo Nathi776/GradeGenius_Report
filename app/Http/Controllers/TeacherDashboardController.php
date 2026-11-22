@@ -32,6 +32,7 @@ class TeacherDashboardController extends Controller
                         'id' => (string) $l->id,
                         'user_id' => $l->id,
                         'name' => $l->name,
+                        // TODO: replace these placeholder averages with the learner's recorded marks.
                         'term_averages' => [60, 65, 68, 70],
                     ];
                 }

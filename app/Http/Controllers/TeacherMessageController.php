@@ -177,6 +177,10 @@ class TeacherMessageController extends Controller
 
         abort_unless($parent->id === $message->parent_id, 403, 'Unauthorized access to message.');
 
+        if ($message->acknowledged_at !== null) {
+            return back()->with('status', 'You have already replied to this note.');
+        }
+
         $validated = $request->validate([
             'quick_reply' => ['nullable', 'string', Rule::in([
                 'Thanks, noted',
