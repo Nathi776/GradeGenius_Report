@@ -9,6 +9,7 @@
     ];
     $roleLabel = $roleLabels[$role] ?? ucfirst($role);
     $initial = strtoupper(substr($user->name ?? 'U', 0, 1));
+    $unreadNotificationsCount = $user ? $user->unreadNotifications()->count() : 0;
     $workspaceTermLabel = 'Term 4 Reports';
     if (isset($terms, $selectedTerm)) {
         $workspaceTermLabel = $selectedTerm === 'all'
@@ -43,6 +44,19 @@
             <span class="hidden sm:inline">Print / Save PDF</span>
             <span class="sm:hidden">Print</span>
         </button>
+
+        {{-- Notifications Bell --}}
+        <a href="{{ route('notifications.index') }}"
+            title="Notifications: {{ $unreadNotificationsCount }} unread"
+            class="relative inline-flex size-8 items-center justify-center rounded-xl border border-line bg-card-2 text-ink transition hover:border-brand/50 hover:bg-card focus-visible:outline-2 focus-visible:outline-blue"
+            aria-label="View notifications ({{ $unreadNotificationsCount }} unread)">
+            @include('partials.icon', ['name' => 'bell', 'size' => 15])
+            @if ($unreadNotificationsCount > 0)
+                <span class="absolute -top-1 -right-1 flex min-w-4 h-4 items-center justify-center rounded-full bg-bad px-1 text-[10px] font-bold text-white shadow-xs">
+                    {{ $unreadNotificationsCount > 9 ? '9+' : $unreadNotificationsCount }}
+                </span>
+            @endif
+        </a>
 
         {{-- User Profile Pill --}}
         <div class="flex items-center gap-2 rounded-xl border border-line bg-card-2 pl-2 pr-3 py-1">

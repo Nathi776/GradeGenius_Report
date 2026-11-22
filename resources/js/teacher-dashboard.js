@@ -817,10 +817,15 @@ if (dashboardRoot) {
           </td>
 
           <td class="py-3.5 px-4 text-right whitespace-nowrap">
-            <button onclick="openStudentReport('${student.id}')" class="brutal-btn bg-butter hover:bg-amber-300 px-3.5 py-2 rounded-xl font-display font-bold text-xs cursor-pointer inline-flex items-center gap-1.5">
-              <span>View Student Report</span>
-              <span>→</span>
-            </button>
+            <div class="inline-flex items-center gap-2">
+              <a href="/teacher/messages/create?student_id=${student.user_id || student.id}&name=${encodeURIComponent(student.name)}&subject=${encodeURIComponent(subject.name)}&mark=${m.avgQuizPercent}&target=75" class="brutal-btn bg-sky hover:bg-sky-300 px-3 py-2 rounded-xl font-display font-bold text-xs inline-flex items-center gap-1.5" title="Message parent of ${student.name}">
+                <span>Message Parent</span>
+              </a>
+              <button onclick="openStudentReport('${student.id}')" class="brutal-btn bg-butter hover:bg-amber-300 px-3.5 py-2 rounded-xl font-display font-bold text-xs cursor-pointer inline-flex items-center gap-1.5">
+                <span>View Student Report</span>
+                <span>→</span>
+              </button>
+            </div>
           </td>
         `;
 
@@ -1112,7 +1117,10 @@ if (dashboardRoot) {
             </div>
           </div>
 
-          <div class="flex flex-wrap sm:flex-nowrap gap-3">
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+            <a href="/teacher/messages/create?student_id=${student.user_id || student.id}&name=${encodeURIComponent(student.name)}&subject=${encodeURIComponent(subject.name)}&mark=${metrics.avgQuizPercent}&target=75" class="brutal-btn bg-sky hover:bg-sky-300 px-3.5 py-2 rounded-xl font-display font-bold text-xs inline-flex items-center gap-1.5">
+              <span>Message Parent</span>
+            </a>
             <div class="bg-cream border-2 border-black rounded-xl px-4 py-2.5 text-center">
               <p class="text-[11px] font-bold uppercase text-neutral-500">Subject Avg</p>
               <p class="font-display font-extrabold text-2xl">${metrics.avgQuizPercent}%</p>

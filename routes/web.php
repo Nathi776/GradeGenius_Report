@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ParentDashboardController;
 use App\Http\Controllers\ParentPlannerController;
 use App\Http\Controllers\ParentReportController;
+use App\Http\Controllers\ParentStudentLinkController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
 use App\Http\Controllers\StudentDashboardController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\StudentPlannerController;
 use App\Http\Controllers\StudentRecommendationsController;
 use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\TeacherDashboardController;
+use App\Http\Controllers\TeacherMessageController;
 use App\Http\Middleware\RecordStudentActivity;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +60,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.markAllRead');
+
     Route::prefix('student')
         ->name('student.')
         ->middleware(['role:student', RecordStudentActivity::class])
@@ -101,6 +111,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->group(function (): void {
             Route::get('/', ParentDashboardController::class)
                 ->name('home');
+            Route::post('/links/{student}/confirm', [ParentStudentLinkController::class, 'confirm'])
+                ->whereNumber('student')
+                ->name('links.confirm');
+            Route::post('/links/{student}/reject', [ParentStudentLinkController::class, 'reject'])
+                ->whereNumber('student')
+                ->name('links.reject');
             Route::get('/planner', [ParentPlannerController::class, 'show'])
                 ->name('planner');
             Route::get('/planner/recap', [ParentPlannerController::class, 'recap'])
@@ -114,6 +130,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('report');
             Route::get('/reports', ParentReportController::class)
                 ->name('reports');
+            Route::get('/messages/{message}', [TeacherMessageController::class, 'showForParent'])
+                ->whereNumber('message')
+                ->name('messages.show');
+            Route::post('/messages/{message}/acknowledge', [TeacherMessageController::class, 'acknowledge'])
+                ->whereNumber('message')
+                ->name('messages.acknowledge');
         });
 
     Route::prefix('teacher')
@@ -124,6 +146,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->name('home');
             Route::get('/reports', [TeacherReportController::class, 'index'])
                 ->name('reports');
+            Route::get('/messages', [TeacherMessageController::class, 'index'])
+                ->name('messages.index');
+            Route::get('/messages/create', [TeacherMessageController::class, 'create'])
+                ->name('messages.create');
+            Route::post('/messages', [TeacherMessageController::class, 'store'])
+                ->name('messages.store');
         });
 
     Route::prefix('administrator')

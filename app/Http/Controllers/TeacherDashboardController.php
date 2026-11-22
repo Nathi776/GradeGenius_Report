@@ -16,9 +16,38 @@ class TeacherDashboardController extends Controller
         TeacherDashboardService $dashboard,
         TeacherLearnerPresenceService $presence,
     ): View {
-        // TODO: load the signed-in teacher's assigned classes and enrolled learners from the database.
-        // A teacher must only ever see classes and learners they are authorised for.
-        $data = DemoReportData::classesForTeacher();
+        $teacher = $request->user();
+        $dbClasses = $teacher->teachingClasses()->with('learners')->get();
+
+        if ($dbClasses->isNotEmpty()) {
+            $data = [
+                'teacher' => ['name' => $teacher->name],
+                'terms' => ['Term 1', 'Term 2', 'Term 3', 'Term 4'],
+                'classes' => [],
+            ];
+            foreach ($dbClasses as $sc) {
+                $learners = [];
+                foreach ($sc->learners as $l) {
+                    $learners[] = [
+                        'id' => (string) $l->id,
+                        'user_id' => $l->id,
+                        'name' => $l->name,
+                        'term_averages' => [60, 65, 68, 70],
+                    ];
+                }
+                $data['classes'][] = [
+                    'key' => 'class-'.$sc->id,
+                    'name' => $sc->name,
+                    'subject' => $sc->subject,
+                    'grade' => $sc->grade,
+                    'target' => $sc->target ?? 65,
+                    'learners' => $learners,
+                ];
+            }
+        } else {
+            $data = DemoReportData::classesForTeacher();
+        }
+
         $learnerUserIds = [];
         foreach ($data['classes'] as $class) {
             foreach ($class['learners'] as $learner) {

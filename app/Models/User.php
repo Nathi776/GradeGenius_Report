@@ -28,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function parents(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'parent_student_links', 'student_id', 'parent_id')
-            ->withPivot('linked_at')
+            ->withPivot(['linked_at', 'status'])
             ->withTimestamps();
     }
 
@@ -51,7 +51,17 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function linkedChildren(): BelongsToMany
     {
-        return $this->students();
+        return $this->students()->wherePivot('status', 'verified');
+    }
+
+    /**
+     * Pending child account link requests awaiting parent confirmation.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function pendingChildren(): BelongsToMany
+    {
+        return $this->students()->wherePivot('status', 'pending');
     }
 
     /**
@@ -90,6 +100,40 @@ class User extends Authenticatable implements MustVerifyEmail
     public function studySessions(): HasMany
     {
         return $this->hasMany(StudySession::class);
+    }
+
+    /**
+     * Classes taught by this educator.
+     *
+     * @return HasMany<SchoolClass, $this>
+     */
+    public function teachingClasses(): HasMany
+    {
+        return $this->hasMany(SchoolClass::class, 'teacher_id');
+    }
+
+    /**
+     * Classes this student is enrolled in.
+     *
+     * @return BelongsToMany<SchoolClass, $this>
+     */
+    public function enrolledClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(SchoolClass::class, 'class_learner', 'learner_id', 'school_class_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if this educator teaches the given student in any class.
+     */
+    public function teachesStudent(User|int $student): bool
+    {
+        $studentId = $student instanceof User ? $student->id : $student;
+
+        return SchoolClass::query()
+            ->where('teacher_id', $this->id)
+            ->whereHas('learners', fn ($query) => $query->where('users.id', $studentId))
+            ->exists();
     }
 
     /**

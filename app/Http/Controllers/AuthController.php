@@ -140,7 +140,10 @@ class AuthController extends Controller
 
             if ($parent !== null) {
                 $parent->students()->syncWithoutDetaching([
-                    $student->id => ['linked_at' => now()],
+                    $student->id => [
+                        'linked_at' => now(),
+                        'status' => 'pending',
+                    ],
                 ]);
             }
 

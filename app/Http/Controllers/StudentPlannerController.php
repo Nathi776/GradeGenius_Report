@@ -254,6 +254,11 @@ class StudentPlannerController extends Controller
         $study = $request->user()->studySessions()->findOrFail($session);
         $today = now()->startOfDay();
 
+        $request->validate([
+            'status' => ['nullable', 'string', Rule::in([StudySession::STATUS_PLANNED, StudySession::STATUS_SKIPPED, StudySession::STATUS_DONE, 'reschedule'])],
+            'action' => ['nullable', 'string', Rule::in([StudySession::STATUS_PLANNED, StudySession::STATUS_SKIPPED, StudySession::STATUS_DONE, 'reschedule'])],
+        ]);
+
         $action = $request->input('action') ?? $request->input('status');
 
         if ($action === 'reschedule') {
@@ -300,6 +305,7 @@ class StudentPlannerController extends Controller
             $study->update([
                 'status' => StudySession::STATUS_SKIPPED,
                 'is_counted' => false,
+                'completed_at' => null,
                 'finished_at' => now(),
             ]);
 

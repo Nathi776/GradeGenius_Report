@@ -49,7 +49,7 @@
                 ['key' => 'planner', 'label' => 'Study Planner', 'icon' => 'check-circle', 'href' => $activeChild ? route('parent.planner', ['child_id' => $activeChild]) : route('parent.planner')],
             ],
             'Account' => [
-                ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'mail', 'href' => null],
+                ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'bell', 'href' => route('notifications.index')],
                 ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => null],
             ],
         ];

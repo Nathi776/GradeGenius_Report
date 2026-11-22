@@ -25,6 +25,63 @@
     @include('partials.print-header', ['title' => 'Parent & Guardian Academic Progress Report', 'student' => $dashboard['child'], 'term' => $dashboard['snapshot']['term']])
 
     <div class="gg-portal-dashboard space-y-5">
+        @if (session('status'))
+            <div class="rounded-2xl border border-good/40 bg-good/15 p-4 text-sm font-semibold text-ink" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="rounded-2xl border border-bad/40 bg-bad/15 p-4 text-sm font-semibold text-ink" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (isset($pendingChildren) && $pendingChildren->isNotEmpty())
+            <section aria-labelledby="pending-requests-heading" class="gg-brutal-card rounded-3xl border-2 border-warn/80 bg-warn/10 p-5 sm:p-6">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 id="pending-requests-heading" class="flex items-center gap-2 text-xl font-semibold text-ink">
+                            <span class="inline-flex size-3 rounded-full bg-warn animate-ping"></span>
+                            Pending Learner Link Requests
+                        </h2>
+                        <p class="mt-1 text-sm text-muted">The following student accounts have requested to link with your guardian profile. Confirming allows you to monitor their academic reports and receive educator notes.</p>
+                    </div>
+                    <span class="rounded-full border border-line bg-card-2 px-3 py-1 text-xs font-semibold text-ink">{{ $pendingChildren->count() }} Pending</span>
+                </div>
+
+                <div class="mt-4 grid gap-3 md:grid-cols-2">
+                    @foreach ($pendingChildren as $pending)
+                        <div class="flex flex-col justify-between gap-3 rounded-2xl border-2 border-line bg-card p-4 sm:flex-row sm:items-center">
+                            <div class="flex min-w-0 items-center gap-3">
+                                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-lavender font-semibold text-base text-ink">
+                                    {{ strtoupper(substr($pending->name, 0, 1)) }}
+                                </span>
+                                <div class="min-w-0">
+                                    <h3 class="truncate font-semibold text-ink">{{ $pending->name }}</h3>
+                                    <p class="truncate text-xs text-muted">{{ $pending->email }}</p>
+                                    <span class="mt-1 inline-block text-[11px] font-medium text-warn">Awaiting your approval</span>
+                                </div>
+                            </div>
+                            <div class="flex shrink-0 items-center gap-2">
+                                <form method="POST" action="{{ route('parent.links.confirm', $pending->id) }}">
+                                    @csrf
+                                    <button type="submit" class="gg-button gg-button-primary px-3 py-1.5 text-xs font-semibold">
+                                        Confirm Link
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('parent.links.reject', $pending->id) }}" onsubmit="return confirm('Are you sure you want to decline this link request?');">
+                                    @csrf
+                                    <button type="submit" class="gg-button gg-button-surface px-3 py-1.5 text-xs font-semibold text-muted hover:text-bad">
+                                        Decline
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
         <header class="{{ $card }} flex flex-wrap items-center justify-between gap-4">
             <div class="flex min-w-0 items-center gap-4">
                 <span class="flex size-14 shrink-0 items-center justify-center rounded-2xl border-2 border-black bg-lavender font-semibold text-2xl text-black">{{ strtoupper(substr(trim($guardian->name), 0, 1)) }}</span>
@@ -122,9 +179,10 @@
                     </div>
                     <p class="text-sm text-muted">{{ $selectedLearner['email'] }}</p>
                 </div>
-                <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
                     <x-stat-tile label="Total logins this week" :value="$selectedLearner['logins_7d']" sub="Recorded portal sessions" />
                     <x-stat-tile label="Observed session span" :value="$selectedLearner['duration_7d']" sub="Across sessions started in the last 7 days · not study time" tone="sky" />
+                    <x-stat-tile label="Recorded visits" :value="$selectedLearner['recorded_visits'] ?? 0" sub="Successful dashboard/report views" tone="peach" />
                     <x-stat-tile label="Real Study Time" :value="($realStudyStats['total_minutes'] ?? 0).' min'" sub="Verified completed study time" tone="good" />
                     <x-stat-tile label="Study Streak" :value="($realStudyStats['streak'] ?? 0).' days'" sub="Consecutive days with study sessions" tone="peach" />
                 </div>

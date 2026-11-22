@@ -172,6 +172,7 @@ class StudentPlannerTest extends TestCase
         $parent = User::factory()->create(['role' => 'parent']);
 
         $this->actingAs($parent)->get('/student/planner')->assertForbidden();
+        auth()->logout();
         $this->get('/student/planner')->assertRedirect('/login');
     }
 }

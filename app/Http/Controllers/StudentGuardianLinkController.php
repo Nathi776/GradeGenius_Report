@@ -27,9 +27,12 @@ class StudentGuardianLinkController extends Controller
             ->firstOrFail();
 
         $request->user()->parents()->syncWithoutDetaching([
-            $parent->id => ['linked_at' => now()],
+            $parent->id => [
+                'linked_at' => now(),
+                'status' => 'pending',
+            ],
         ]);
 
-        return back()->with('status', 'Your verified parent account has been linked.');
+        return back()->with('status', 'Your guardian link request has been submitted and is awaiting parent confirmation.');
     }
 }

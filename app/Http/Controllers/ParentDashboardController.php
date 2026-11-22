@@ -84,9 +84,9 @@ class ParentDashboardController extends Controller
         $requestedLearnerId = $request->query('learner') ?? $request->query('child_id');
         if ($requestedLearnerId !== null) {
             $learnerId = filter_var($requestedLearnerId, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-            abort_unless($learnerId !== false, 403, 'Invalid learner ID.');
+            abort_unless($learnerId !== false, 404, 'Invalid learner ID.');
             $selectedLearner = collect($linkedLearners)->firstWhere('id', $learnerId);
-            abort_if($selectedLearner === null, 403, 'Unauthorized access to child.');
+            abort_if($selectedLearner === null, 404, 'Unauthorized access to child.');
         } else {
             $selectedLearner = $linkedLearners[0] ?? null;
         }
@@ -132,10 +132,13 @@ class ParentDashboardController extends Controller
             $streak = $this->calculateStreak($learnerId, $today);
         }
 
+        $pendingChildren = $request->user()->pendingChildren()->get();
+
         return view('reports.parent-home', [
             'dashboard' => $dashboard->build($reportsByChild[$key], $names, $key, $childCards),
             'linkedLearners' => $linkedLearners,
             'selectedLearner' => $selectedLearner,
+            'pendingChildren' => $pendingChildren,
             'terms' => $terms,
             'selectedTerm' => AcademicTermSelection::value($termIndex),
             'realStudyStats' => [

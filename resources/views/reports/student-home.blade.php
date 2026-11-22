@@ -61,11 +61,12 @@
             </div>
         </header>
 
-        <section aria-label="Student progress summary" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <section aria-label="Student progress summary" class="grid grid-cols-2 gap-3 lg:grid-cols-5">
             <x-stat-tile label="Weekly study goal" :value="($dashboard['study_stats']['weekly_minutes'] ?? 0).' / '.($dashboard['study_stats']['weekly_goal'] ?? 630).' min'" :sub="round((($dashboard['study_stats']['weekly_minutes'] ?? 0) / ($dashboard['study_stats']['weekly_goal'] ?? 630)) * 100).'% of weekly target completed'" tone="mid" />
             <x-stat-tile label="Quizzes taken" :value="$assessments['quizzes_completed']" :sub="$quizAverageSub" tone="peach" />
             <x-stat-tile label="Practice exams taken" :value="$assessments['past_papers_completed']" :sub="$pastPaperAverageSub" tone="sky" />
             <x-stat-tile label="Study minutes" :value="($dashboard['study_stats']['real_study_minutes'] ?? 0).' min'" sub="Verified counted sessions" tone="good" />
+            <x-stat-tile label="Study notes read" value="Not tracked" sub="Study-note reads are not recorded" tone="default" />
         </section>
 
         <p class="rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">Quiz and practice-exam figures come from the sample report and include all available records, not only the selected term. The session timer measures elapsed time since login—not study time. When linked to a verified parent, login/logout and successful dashboard/report visits are shared with that guardian.</p>

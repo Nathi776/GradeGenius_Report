@@ -23,8 +23,8 @@
                 ['key' => 'reports', 'label' => 'Class Report', 'icon' => 'trending-up', 'href' => route('teacher.reports')],
             ],
             'Communication' => [
-                ['key' => 'communication', 'label' => 'Communication', 'icon' => 'mail', 'href' => null],
-                ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'zap', 'href' => null],
+                ['key' => 'messages', 'label' => 'Sent Notes', 'icon' => 'mail', 'href' => route('teacher.messages.index')],
+                ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'bell', 'href' => route('notifications.index')],
                 ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => null],
             ],
         ];
