@@ -46,6 +46,7 @@
                     'concern' => 'Academic Concern',
                     'praise' => 'Commendation',
                     'meeting_request' => 'Consultation Request',
+                    'class_announcement' => 'Class Announcement',
                 ];
                 $typeLabel = $typeLabels[$data['type'] ?? ''] ?? 'Notification';
                 $toneClasses = match($data['type'] ?? '') {

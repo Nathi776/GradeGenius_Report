@@ -24,6 +24,7 @@
             ],
             'Communication' => [
                 ['key' => 'messages', 'label' => 'Sent Notes', 'icon' => 'mail', 'href' => route('teacher.messages.index')],
+                ['key' => 'announcements', 'label' => 'Announcements', 'icon' => 'bell', 'href' => route('teacher.announcements.index')],
                 ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'bell', 'href' => route('notifications.index')],
                 ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => null],
             ],
