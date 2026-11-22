@@ -11,7 +11,7 @@
         $groups = [
             'Teaching' => [
                 ['key' => 'home', 'label' => 'Dashboard', 'icon' => 'home', 'href' => route('teacher.home')],
-                ['key' => 'classes', 'label' => 'My Classes', 'icon' => 'users', 'href' => route('teacher.home').'#classes-heading'],
+                ['key' => 'classes', 'label' => 'My Classes', 'icon' => 'users', 'href' => route('teacher.classes.index')],
                 ['key' => 'performance', 'label' => 'Student Performance', 'icon' => 'bar-chart', 'href' => null],
                 ['key' => 'resources', 'label' => 'Learning Resources', 'icon' => 'book-open', 'href' => null],
                 ['key' => 'lessons', 'label' => 'Lesson Plans', 'icon' => 'file', 'href' => null],
