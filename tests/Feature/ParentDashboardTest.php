@@ -34,7 +34,7 @@ class ParentDashboardTest extends TestCase
         $this->withoutVite();
         $parent = $this->parent();
         $student = User::factory()->create(['name' => 'Linked Learner', 'email' => 'linked-student@example.com']);
-        $parent->students()->attach($student->id, ['linked_at' => now()]);
+        $parent->students()->attach($student->id, ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($student)->get('/student')->assertOk();
         $this->actingAs($parent)->get('/parent')
@@ -71,7 +71,7 @@ class ParentDashboardTest extends TestCase
         $parent = $this->parent();
         $firstStudent = User::factory()->create(['name' => 'First Linked Learner', 'role' => 'student']);
         $secondStudent = User::factory()->create(['name' => 'Selected Linked Learner', 'role' => 'student']);
-        $parent->students()->attach([$firstStudent->id, $secondStudent->id], ['linked_at' => now()]);
+        $parent->students()->attach([$firstStudent->id, $secondStudent->id], ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($parent)->get('/parent?learner='.$secondStudent->id)
             ->assertOk()
@@ -88,7 +88,7 @@ class ParentDashboardTest extends TestCase
         $this->withoutVite();
         $parent = $this->parent();
         $student = User::factory()->create(['role' => 'student']);
-        $parent->students()->attach($student->id, ['linked_at' => now()]);
+        $parent->students()->attach($student->id, ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($student)->get('/student')->assertOk();
         $response = $this->actingAs($parent)->get('/parent');

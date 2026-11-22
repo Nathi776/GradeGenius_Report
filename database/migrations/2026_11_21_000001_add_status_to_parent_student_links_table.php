@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('parent_student_links', function (Blueprint $table): void {
             if (! Schema::hasColumn('parent_student_links', 'status')) {
-                $table->string('status', 32)->default('pending')->after('linked_at');
+                $table->string('status', 32)->default('verified')->after('linked_at');
             }
         });
     }
