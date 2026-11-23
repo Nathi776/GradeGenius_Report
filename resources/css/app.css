@@ -2310,3 +2310,111 @@ html { scroll-behavior: smooth; }
         backdrop-filter: none;
     }
 }
+
+/* ================================================================================
+   LIGHT MODE: CHART ACCENT AND AUTH PAGES
+   The overall chart series follows the text colour (see line-chart.blade.php), and its area fill
+   uses --chart-area: brand teal in light mode, the original pink everywhere else.
+   Sign-in, register and password pages drop the comic-style hard shadows for the same glass look
+   as the workspaces.
+   ================================================================================ */
+[data-theme="light"] .portal-workspace {
+    --chart-area: #087e83;
+}
+
+[data-theme="light"] body:has(.gg-auth) {
+    background-color: #e9f3f4;
+    background-image:
+        radial-gradient(44rem circle at 6% 4%, rgba(8, 126, 131, 0.26), transparent 62%),
+        radial-gradient(40rem circle at 96% 8%, rgba(110, 168, 240, 0.30), transparent 60%),
+        radial-gradient(46rem circle at 90% 96%, rgba(176, 150, 238, 0.26), transparent 62%),
+        radial-gradient(38rem circle at 4% 92%, rgba(94, 214, 190, 0.28), transparent 60%);
+    background-attachment: fixed;
+}
+
+[data-theme="light"] .gg-auth .app-icon-badge {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 14px rgba(23, 52, 58, 0.1);
+}
+
+[data-theme="light"] .gg-auth .logo-reports-badge {
+    border: 1px solid rgba(8, 126, 131, 0.25);
+    background: rgba(8, 126, 131, 0.12);
+    box-shadow: none;
+    transform: none;
+    color: #0a5a5e;
+}
+
+[data-theme="light"] .gg-auth-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 8px 28px rgba(23, 52, 58, 0.1), 0 0 0 1px rgba(8, 126, 131, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(20px) saturate(165%);
+    backdrop-filter: blur(20px) saturate(165%);
+}
+
+[data-theme="light"] .gg-auth-card h1 {
+    color: #17343a;
+}
+
+[data-theme="light"] .gg-auth-card > p,
+[data-theme="light"] .gg-auth-card label {
+    color: #526b70;
+}
+
+[data-theme="light"] .gg-auth-card .gg-auth-icon {
+    border: 0;
+    background: #087e83;
+    box-shadow: none;
+    color: #ffffff;
+}
+
+[data-theme="light"] .gg-auth-card :is(input[type=email], input[type=password], input[type=text], select) {
+    border: 1px solid #c3d5d8;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: none;
+    color: #17343a;
+}
+
+[data-theme="light"] .gg-auth-card :is(input[type=email], input[type=password], input[type=text], select):focus {
+    border-color: #087e83;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(8, 126, 131, 0.18);
+}
+
+[data-theme="light"] .gg-auth-card .gg-button-primary {
+    border: 0;
+    background: #087e83;
+    box-shadow: none;
+    color: #ffffff;
+}
+
+[data-theme="light"] .gg-auth-card .gg-button-primary:hover {
+    background: #066a6f;
+    transform: none;
+}
+
+[data-theme="light"] .gg-auth-card :is(.gg-auth-link, .gg-auth-footer a) {
+    color: #087e83;
+}
+
+[data-theme="light"] .gg-auth-corner-toggle button {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 14px rgba(23, 52, 58, 0.1);
+}
+
+/* Form controls on glass cards need a visible edge, not the near-white card edge. */
+[data-theme="light"] .gg-page:has(.portal-workspace) .portal-workspace :is(input, select, textarea).bg-card-2 {
+    border-color: #9db7ba;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+[data-theme="light"] .gg-page:has(.portal-workspace) .portal-workspace :is(input, select, textarea).bg-card-2:focus {
+    border-color: #087e83;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(8, 126, 131, 0.18);
+}

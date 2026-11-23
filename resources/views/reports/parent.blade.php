@@ -135,7 +135,7 @@
                     <details data-subject-card id="subject-{{ $s['key'] }}" class="group rounded-xl border border-line bg-card-2 open:border-blue/40">
                         <summary class="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 rounded-xl p-4 focus-visible:outline-2 focus-visible:outline-blue [&::-webkit-details-marker]:hidden">
                             <span class="flex min-w-40 flex-1 items-center gap-3">
-                                <span class="size-2.5 shrink-0 rounded-full" style="background: {{ $s['color'] }}"></span>
+                                <span class="size-2.5 shrink-0 rounded-full text-ink" style="background: {{ $s['color'] }}"></span>
                                 <span class="font-medium text-ink">{{ $s['name'] }}</span>
                             </span>
                             <span class="flex items-center gap-2">

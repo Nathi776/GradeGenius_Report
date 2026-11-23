@@ -32,8 +32,8 @@
 <svg viewBox="0 0 {{ $w }} {{ $h }}" class="h-auto w-full" role="img" aria-label="{{ implode('. ', $summary) ?: 'Progress over time' }}">
     <defs>
         <linearGradient id="{{ $id }}-area" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#f23d99" stop-opacity="0.35" />
-            <stop offset="100%" stop-color="#f23d99" stop-opacity="0" />
+            <stop offset="0%" style="stop-color: var(--chart-area, #f23d99)" stop-opacity="0.35" />
+            <stop offset="100%" style="stop-color: var(--chart-area, #f23d99)" stop-opacity="0" />
         </linearGradient>
     </defs>
 
@@ -61,9 +61,9 @@
             @if ($s['area'])
                 <path d="{{ $line }} L{{ round($x($lastIndex), 1) }},{{ round($y($lo), 1) }} L{{ round($x(0), 1) }},{{ round($y($lo), 1) }} Z" fill="url(#{{ $id }}-area)" />
             @endif
-            <path d="{{ $line }}" fill="none" stroke="{{ $s['color'] }}" stroke-width="{{ $isOverall ? 3 : 2 }}" stroke-linecap="round" stroke-linejoin="round" @if (! $isOverall) stroke-opacity="0.85" @endif />
+            <path d="{{ $line }}" fill="none" stroke="{{ $s['color'] }}" @if ($isOverall) class="text-ink" @endif stroke-width="{{ $isOverall ? 3 : 2 }}" stroke-linecap="round" stroke-linejoin="round" @if (! $isOverall) stroke-opacity="0.85" @endif />
             @foreach ($s['points'] as $i => $v)
-                <circle cx="{{ round($x($i), 1) }}" cy="{{ round($y($v), 1) }}" r="{{ $isOverall ? 4.5 : 3 }}" fill="{{ $isOverall ? '#f23d99' : $s['color'] }}">
+                <circle cx="{{ round($x($i), 1) }}" cy="{{ round($y($v), 1) }}" r="{{ $isOverall ? 4.5 : 3 }}" @if ($isOverall) style="fill: var(--chart-area, #f23d99)" @else fill="{{ $s['color'] }}" @endif>
                     <title>{{ $s['name'] }}, {{ $labels[$i] }}: {{ $v }}%</title>
                 </circle>
                 @if ($s['labels'] ?? false)

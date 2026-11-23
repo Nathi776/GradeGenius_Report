@@ -49,7 +49,7 @@
             @foreach ($report['chart']['series'] as $s)
                 <button type="button" data-series-toggle="{{ $s['key'] }}" aria-pressed="true"
                     class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-muted opacity-50 transition aria-pressed:text-white aria-pressed:opacity-100 focus-visible:outline-2 focus-visible:outline-blue">
-                    <span class="size-2.5 rounded-full" style="background: {{ $s['color'] }}"></span>
+                    <span class="size-2.5 rounded-full text-ink" style="background: {{ $s['color'] }}"></span>
                     {{ $s['name'] }}
                 </button>
             @endforeach
@@ -72,7 +72,7 @@
                 <details data-subject-card id="subject-{{ $s['key'] }}" class="group rounded-xl border border-line bg-card-2 open:border-blue/40" @if ($s['key'] === $report['focus_key']) open @endif>
                     <summary class="flex cursor-pointer list-none flex-wrap items-center gap-x-5 gap-y-3 rounded-xl p-4 focus-visible:outline-2 focus-visible:outline-blue [&::-webkit-details-marker]:hidden">
                         <span class="flex min-w-44 flex-1 items-center gap-3">
-                            <span class="size-2.5 shrink-0 rounded-full" style="background: {{ $s['color'] }}"></span>
+                            <span class="size-2.5 shrink-0 rounded-full text-ink" style="background: {{ $s['color'] }}"></span>
                             <span class="font-medium text-ink">{{ $s['name'] }}</span>
                         </span>
                         <span class="flex items-baseline gap-2">

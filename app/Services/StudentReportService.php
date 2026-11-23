@@ -184,7 +184,7 @@ final class StudentReportService
     private function chart(array $subjects, array $overall): array
     {
         $series = [[
-            'key' => 'overall', 'name' => 'Overall', 'color' => '#f8fafc',
+            'key' => 'overall', 'name' => 'Overall', 'color' => 'currentColor',
             'points' => $overall['term_averages'], 'area' => true, 'labels' => true,
         ]];
         foreach ($subjects as $s) {
