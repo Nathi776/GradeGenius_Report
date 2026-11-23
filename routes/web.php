@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassAnnouncementController;
+use App\Http\Controllers\ClassMarksImportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LearnerResultController;
 use App\Http\Controllers\NotificationController;
@@ -177,6 +178,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->whereNumber('class')
                 ->middleware('throttle:60,1')
                 ->name('classes.learners.store');
+            Route::get('/classes/{class}/marks-template', [ClassMarksImportController::class, 'template'])
+                ->whereNumber('class')
+                ->name('classes.marks.template');
+            Route::post('/classes/{class}/marks-import', [ClassMarksImportController::class, 'store'])
+                ->whereNumber('class')
+                ->middleware('throttle:10,1')
+                ->name('classes.marks.import');
             Route::get('/classes/{class}/learners/{learner}/results/create', [LearnerResultController::class, 'create'])
                 ->whereNumber(['class', 'learner'])
                 ->name('classes.learners.results.create');

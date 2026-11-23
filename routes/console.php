@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::call(fn () => app(StudentActivityTracker::class)->pruneExpired())->daily();
+
+Schedule::command('app:prune-notifications')->daily();

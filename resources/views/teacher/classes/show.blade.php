@@ -38,6 +38,31 @@
         </form>
     </section>
 
+    <section class="rounded-2xl border border-line bg-card p-5 sm:p-6 space-y-3" aria-labelledby="import-heading">
+        <h2 id="import-heading" class="text-lg font-semibold text-ink">Import marks from a CSV file</h2>
+        <p class="text-sm text-muted">Columns: email, type (quiz or past paper), title, mark, term (1 to 4), date (YYYY-MM-DD), and optionally attempts, topic and topic_mastery. If any row is wrong nothing is imported.</p>
+        @if (session('import_errors'))
+            <div class="rounded-xl border border-bad/40 bg-bad/10 p-3 text-sm text-ink" role="alert">
+                <p class="font-semibold">Nothing was imported. Please fix these rows:</p>
+                <ul class="mt-1 list-disc pl-5">
+                    @foreach (session('import_errors') as $importError)
+                        <li>{{ $importError }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        @error('marks_file')
+            <p class="text-xs font-medium text-bad">{{ $message }}</p>
+        @enderror
+        <form method="POST" action="{{ route('teacher.classes.marks.import', $schoolClass->id) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
+            @csrf
+            <label for="marks_file" class="sr-only">CSV file</label>
+            <input type="file" name="marks_file" id="marks_file" accept=".csv,text/csv" required class="min-w-0 flex-1 text-sm text-ink">
+            <button type="submit" class="gg-button gg-button-primary px-4 py-2 text-sm font-bold">Import marks</button>
+            <a href="{{ route('teacher.classes.marks.template', $schoolClass->id) }}" class="gg-button gg-button-surface px-4 py-2 text-xs font-bold">Download template</a>
+        </form>
+    </section>
+
     <section class="rounded-2xl border border-line bg-card p-5 sm:p-6" aria-labelledby="learners-heading">
         <h2 id="learners-heading" class="text-lg font-semibold text-ink">Learners ({{ $schoolClass->learners->count() }})</h2>
         <ul class="mt-3 divide-y divide-line/70">
