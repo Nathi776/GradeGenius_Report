@@ -10,6 +10,7 @@ use App\Http\Controllers\ParentReportController;
 use App\Http\Controllers\ParentStudentLinkController;
 use App\Http\Controllers\Reports\AdministratorReportController;
 use App\Http\Controllers\Reports\TeacherReportController;
+use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentGuardianLinkController;
 use App\Http\Controllers\StudentPlannerController;
@@ -158,6 +159,23 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::post('/messages', [TeacherMessageController::class, 'store'])
                 ->middleware('throttle:20,1')
                 ->name('messages.store');
+            Route::get('/classes', [SchoolClassController::class, 'index'])
+                ->name('classes.index');
+            Route::get('/classes/create', [SchoolClassController::class, 'create'])
+                ->name('classes.create');
+            Route::post('/classes', [SchoolClassController::class, 'store'])
+                ->middleware('throttle:20,1')
+                ->name('classes.store');
+            Route::get('/classes/{class}', [SchoolClassController::class, 'show'])
+                ->whereNumber('class')
+                ->name('classes.show');
+            Route::post('/classes/{class}/learners', [SchoolClassController::class, 'addLearner'])
+                ->whereNumber('class')
+                ->middleware('throttle:60,1')
+                ->name('classes.learners.store');
+            Route::delete('/classes/{class}/learners/{learner}', [SchoolClassController::class, 'removeLearner'])
+                ->whereNumber(['class', 'learner'])
+                ->name('classes.learners.destroy');
             Route::get('/announcements', [ClassAnnouncementController::class, 'index'])
                 ->name('announcements.index');
             Route::get('/announcements/create', [ClassAnnouncementController::class, 'create'])

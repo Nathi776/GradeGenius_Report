@@ -11,7 +11,7 @@
         $groups = [
             'Teaching' => [
                 ['key' => 'home', 'label' => 'Dashboard', 'icon' => 'home', 'href' => route('teacher.home')],
-                ['key' => 'classes', 'label' => 'My Classes', 'icon' => 'users', 'href' => route('teacher.home').'#classes-heading'],
+                ['key' => 'classes', 'label' => 'My Classes', 'icon' => 'users', 'href' => route('teacher.classes.index')],
                 ['key' => 'performance', 'label' => 'Student Performance', 'icon' => 'bar-chart', 'href' => null],
                 ['key' => 'resources', 'label' => 'Learning Resources', 'icon' => 'book-open', 'href' => null],
                 ['key' => 'lessons', 'label' => 'Lesson Plans', 'icon' => 'file', 'href' => null],
@@ -24,7 +24,7 @@
             ],
             'Communication' => [
                 ['key' => 'messages', 'label' => 'Sent Notes', 'icon' => 'mail', 'href' => route('teacher.messages.index')],
-                ['key' => 'announcements', 'label' => 'Announcements', 'icon' => 'bell', 'href' => route('teacher.announcements.index')],
+                ['key' => 'announcements', 'label' => 'Announcements', 'icon' => 'zap', 'href' => route('teacher.announcements.index')],
                 ['key' => 'notifications', 'label' => 'Notifications', 'icon' => 'bell', 'href' => route('notifications.index')],
                 ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => null],
             ],
