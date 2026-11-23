@@ -512,18 +512,7 @@ html { scroll-behavior: smooth; }
     box-shadow: 6px 6px 0 #171321;
 }
 
-.gg-button-blue {
-    color: white;
-    background: linear-gradient(135deg, #f23d99 0%, #ff69bd 100%);
-    border: 2.5px solid #171321;
-    box-shadow: 4px 4px 0 #171321;
-}
 
-.gg-button-blue:hover {
-    background: linear-gradient(135deg, #c51f79 0%, #8e0f63 100%);
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #171321;
-}
 
 .gg-button-cyan {
     color: #07191c;
@@ -1275,9 +1264,6 @@ html { scroll-behavior: smooth; }
     background: linear-gradient(90deg, #f23d99 0%, #8ee8f4 100%);
 }
 
-.gg-bar-topic span {
-    background: var(--secondary);
-}
 
 .gg-note {
     display: flex;
@@ -1340,97 +1326,21 @@ html { scroll-behavior: smooth; }
     box-shadow: 3px 3px 0 var(--gg-line);
 }
 
-.gg-subject-list { display: grid; gap: .8rem; }
 
-.gg-subject-card {
-    overflow: hidden;
-    border: 2.5px solid var(--gg-line);
-    border-radius: .95rem;
-    background: var(--gg-surface);
-    box-shadow: 3px 3px 0 var(--gg-line);
-    transition: border-color .2s;
-}
 
-.gg-subject-card[open] {
-    border-color: var(--primary);
-}
 
-.gg-subject-card summary {
-    display: grid;
-    grid-template-columns: minmax(13rem, 1.3fr) 7rem 6.5rem minmax(11rem, 1fr) 1rem;
-    gap: 1rem;
-    align-items: center;
-    padding: 1.1rem 1.25rem;
-    cursor: pointer;
-    list-style: none;
-    color: var(--gg-text);
-}
 
-.gg-subject-card summary::-webkit-details-marker { display: none; }
 
-.gg-subject-name {
-    display: inline-flex;
-    align-items: center;
-    gap: .7rem;
-    font-weight: 800;
-    color: var(--gg-text);
-}
 
-.gg-subject-score {
-    font-size: 1.5rem;
-    font-weight: 900;
-    text-align: right;
-    color: var(--gg-text);
-}
 
-.gg-subject-score b {
-    margin-left: .25rem;
-    color: #10b981;
-    font-size: .8rem;
-    font-weight: 700;
-}
 
-.gg-subject-sparkline { width: 6rem; height: 2rem; }
-.gg-subject-sparkline polyline { fill: none; stroke-width: 2.2; }
 
-.gg-subject-goal > span {
-    display: block;
-    height: .45rem;
-    overflow: hidden;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--gg-line);
-}
 
-[data-theme="dark"] .gg-subject-goal > span {
-    background: #342c4a;
-    border-color: transparent;
-}
 
-.gg-subject-goal > span b { display: block; height: 100%; border-radius: inherit; }
 
-.gg-subject-goal small {
-    display: block;
-    margin-top: .35rem;
-    color: #10b981;
-    font-size: .75rem;
-    white-space: nowrap;
-    font-weight: 700;
-}
 
-.gg-subject-chevron {
-    color: var(--gg-muted);
-    font-size: 1.1rem;
-    text-align: right;
-}
 
-.gg-subject-details {
-    padding: 0 1.25rem 1.4rem;
-    border-top: 2px solid var(--gg-line);
-    background: var(--gg-surface-2);
-}
 
-.gg-subject-details .gg-bars { margin-top: 1rem; }
 
 /* In Light Theme: ensure cards and student reports use dark text cleanly */
 [data-theme="light"] .bg-card,
@@ -1450,7 +1360,6 @@ html { scroll-behavior: smooth; }
 }
 
 /* Labels written for the dark theme in report components (bar-row, details) must stay readable on white cards. */
-[data-theme="light"] .text-slate-100,
 [data-theme="light"] .text-slate-200 {
     color: #171321;
 }
@@ -1530,9 +1439,6 @@ html { scroll-behavior: smooth; }
     .gg-stats { grid-template-columns: repeat(2, 1fr); }
     .gg-metric-grid { grid-template-columns: repeat(2, 1fr); }
     .gg-bar-row { grid-template-columns: 1fr 2fr 2.5rem; gap: .5rem; font-size: .8rem; }
-    .gg-subject-card summary { grid-template-columns: 1fr auto 1rem; }
-    .gg-subject-sparkline, .gg-subject-goal { display: none; }
-    .gg-subject-score { grid-column: 2; }
 }
 
 @media (max-width: 560px) {
@@ -1570,7 +1476,7 @@ html { scroll-behavior: smooth; }
     nav,
     form[action*="logout"],
     .theme-toggle,
-    button:not(.print-include) {
+    button {
         display: none !important;
     }
 
@@ -1621,10 +1527,6 @@ html { scroll-behavior: smooth; }
         margin-bottom: 1.5rem !important;
     }
 
-    .print-break-before {
-        break-before: page;
-        page-break-before: always;
-    }
 }
 
 .teacher-engagement-dashboard {
@@ -2418,3 +2320,52 @@ html { scroll-behavior: smooth; }
     outline: none;
     box-shadow: 0 0 0 3px rgba(8, 126, 131, 0.18);
 }
+
+/* Verification PIN field */
+.gg-auth-card .gg-pin-input {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: .5em;
+    padding-left: calc(.9rem + .5em);
+    font-variant-numeric: tabular-nums;
+}
+.gg-auth-card .gg-pin-input::placeholder { letter-spacing: .5em; opacity: .35; }
+
+/* Auth card: stacked secondary actions in light mode */
+.gg-auth-card form + form { margin-top: .6rem; }
+
+[data-theme="light"] .gg-auth-card .gg-button-surface {
+    color: #17343a;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(23, 52, 58, 0.18);
+    box-shadow: none;
+    transform: none;
+}
+
+[data-theme="light"] .gg-auth-card .gg-button-surface:hover:not(:disabled) {
+    border-color: #087e83;
+    background: #fff;
+}
+
+[data-theme="light"] .gg-auth-card .gg-button-surface:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* Landing (light): keep the sunburst brand look, but give floating text a readable frosted backing */
+[data-theme="light"] .gg-landing :is(.gg-stats, .gg-section-heading) {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px rgba(86, 16, 62, 0.18);
+}
+
+[data-theme="light"] .gg-landing .gg-section-heading { padding: 1.5rem 2rem 1.75rem; }
+
+[data-theme="light"] .gg-landing .gg-stats {
+    margin-block: 2rem;
+    padding: 2.5rem 1.5rem;
+}
+
+[data-theme="light"] .gg-landing :is(.gg-section-heading p, .gg-stat > span:last-child) { color: #4a3a52; }

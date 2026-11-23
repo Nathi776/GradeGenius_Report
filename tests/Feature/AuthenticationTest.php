@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Mail\VerificationPinMail;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
@@ -16,9 +17,9 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_a_user_can_register_and_is_logged_in(): void
+    public function test_a_user_can_register_and_is_asked_for_an_emailed_pin(): void
     {
-        Notification::fake();
+        Mail::fake();
 
         $response = $this->post('/register', [
             'name' => 'Lerato Mokoena',
@@ -28,19 +29,19 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'secret-password',
         ]);
 
-        $response->assertRedirectToRoute('student.home');
+        $response->assertRedirectToRoute('verification.notice');
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'name' => 'Lerato Mokoena',
             'email' => 'lerato@example.com',
             'role' => 'student',
         ]);
-        Notification::assertSentTo(User::where('email', 'lerato@example.com')->first(), VerifyEmail::class);
+        Mail::assertSent(VerificationPinMail::class, fn (VerificationPinMail $mail): bool => $mail->hasTo('lerato@example.com'));
     }
 
     public function test_student_can_link_to_an_existing_verified_parent_by_email(): void
     {
-        Notification::fake();
+        Mail::fake();
         $parent = User::factory()->create(['role' => 'parent', 'email' => 'guardian@example.com']);
 
         $this->post('/register', [
@@ -50,7 +51,7 @@ class AuthenticationTest extends TestCase
             'parent_email' => $parent->email,
             'password' => 'secret-password',
             'password_confirmation' => 'secret-password',
-        ])->assertRedirectToRoute('student.home');
+        ])->assertRedirectToRoute('verification.notice');
 
         $student = User::where('email', 'linked@example.com')->firstOrFail();
         $this->assertTrue($parent->students()->whereKey($student->id)->exists());

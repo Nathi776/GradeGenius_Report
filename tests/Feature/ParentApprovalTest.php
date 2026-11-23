@@ -39,7 +39,7 @@ class ParentApprovalTest extends TestCase
             'parent_email' => $parent->email,
             'password' => 'SecurePass123!',
             'password_confirmation' => 'SecurePass123!',
-        ])->assertRedirect('/student');
+        ])->assertRedirectToRoute('verification.notice');
 
         $student = User::where('email', 'kabelo@school.co.za')->firstOrFail();
 

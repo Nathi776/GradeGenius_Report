@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Services\EmailVerificationPin;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password', 'role'])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'verification_code'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -145,6 +145,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Email a 6-digit PIN instead of a link, so verification finishes in the browser the person is already using.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        app(EmailVerificationPin::class)->issue($this);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -153,6 +161,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'verification_code_expires_at' => 'datetime',
+            'verification_code_sent_at' => 'datetime',
             'password' => 'hashed',
             'shares_activity' => 'boolean',
         ];

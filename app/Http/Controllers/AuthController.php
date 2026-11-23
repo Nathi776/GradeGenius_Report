@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\EmailVerificationPin;
+use App\Services\PinResult;
 use App\Services\StudentActivityTracker;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +22,8 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly EmailVerificationPin $pin) {}
+
     public function create(): View
     {
         return view('auth.login');
@@ -30,28 +34,68 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function verificationNotice(): View
-    {
-        return view('auth.verify-email');
-    }
-
-    public function verifyEmail(EmailVerificationRequest $request): RedirectResponse
-    {
-        $request->fulfill();
-        app(StudentActivityTracker::class)->start($request, $request->user());
-
-        return redirect()->route($this->dashboardRouteFor($request->user()->role));
-    }
-
-    public function resendVerification(Request $request): RedirectResponse
+    public function verificationNotice(Request $request): View|RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route($this->dashboardRouteFor($request->user()->role));
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        return view('auth.verify-email', [
+            'resendWaitSeconds' => $this->pin->secondsUntilResend($request->user()),
+            'pinLength' => EmailVerificationPin::LENGTH,
+        ]);
+    }
 
-        return back()->with('status', 'A new verification link has been sent to your email address.');
+    public function verifyEmail(Request $request, StudentActivityTracker $activity): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route($this->dashboardRouteFor($user->role));
+        }
+
+        $validated = $request->validate([
+            'pin' => ['required', 'digits:'.EmailVerificationPin::LENGTH],
+        ], [
+            'pin.required' => 'Enter the 6-digit code from your email.',
+            'pin.digits' => 'The code is 6 digits long.',
+        ]);
+
+        $result = $this->pin->verify($user, $validated['pin']);
+
+        if ($result !== PinResult::Correct) {
+            return back()->withErrors(['pin' => match ($result) {
+                PinResult::Wrong => 'That code is not right. Check the email and try again.',
+                PinResult::Expired => 'That code has expired. Request a new one.',
+                PinResult::TooManyAttempts => 'Too many wrong attempts. Request a new code.',
+                default => 'There is no active code. Request a new one.',
+            }]);
+        }
+
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+        $activity->start($request, $user);
+
+        return redirect()->route($this->dashboardRouteFor($user->role));
+    }
+
+    public function resendVerification(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route($this->dashboardRouteFor($user->role));
+        }
+
+        $wait = $this->pin->secondsUntilResend($user);
+
+        if ($wait > 0) {
+            return back()->withErrors(['pin' => "Please wait {$wait} seconds before requesting another code."]);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return back()->with('status', 'A new code has been sent to your email address.');
     }
 
     public function showForgotPassword(): View
@@ -107,7 +151,7 @@ class AuthController extends Controller
         return back()->withErrors(['email' => __($status)]);
     }
 
-    public function storeRegistration(Request $request, StudentActivityTracker $activity): RedirectResponse
+    public function storeRegistration(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -153,9 +197,8 @@ class AuthController extends Controller
         event(new Registered($user));
         Auth::login($user);
         $request->session()->regenerate();
-        $activity->start($request, $user);
 
-        return redirect()->route($this->dashboardRouteFor($user->role));
+        return redirect()->route('verification.notice');
     }
 
     public function store(Request $request, StudentActivityTracker $activity): RedirectResponse
