@@ -15,6 +15,12 @@ class CommunicationDemoSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->warn('Demo seeders are disabled in production.');
+
+            return;
+        }
+
         $teacher = User::where('email', 'teacher@example.com')->firstOrFail();
         $student = User::where('email', 'test@example.com')->firstOrFail();
 

@@ -33,7 +33,7 @@ class ParentDashboardTest extends TestCase
     {
         $this->withoutVite();
         $parent = $this->parent();
-        $student = User::factory()->create(['name' => 'Linked Learner', 'email' => 'linked-student@example.com']);
+        $student = User::factory()->create(['name' => 'Linked Learner', 'email' => 'linked-student@example.com', 'shares_activity' => true]);
         $parent->students()->attach($student->id, ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($student)->get('/student')->assertOk();
@@ -69,8 +69,8 @@ class ParentDashboardTest extends TestCase
     public function test_parent_can_select_only_a_linked_learner_for_telemetry(): void
     {
         $parent = $this->parent();
-        $firstStudent = User::factory()->create(['name' => 'First Linked Learner', 'role' => 'student']);
-        $secondStudent = User::factory()->create(['name' => 'Selected Linked Learner', 'role' => 'student']);
+        $firstStudent = User::factory()->create(['name' => 'First Linked Learner', 'role' => 'student', 'shares_activity' => true]);
+        $secondStudent = User::factory()->create(['name' => 'Selected Linked Learner', 'role' => 'student', 'shares_activity' => true]);
         $parent->students()->attach([$firstStudent->id, $secondStudent->id], ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($parent)->get('/parent?learner='.$secondStudent->id)
@@ -87,7 +87,7 @@ class ParentDashboardTest extends TestCase
     {
         $this->withoutVite();
         $parent = $this->parent();
-        $student = User::factory()->create(['role' => 'student']);
+        $student = User::factory()->create(['role' => 'student', 'shares_activity' => true]);
         $parent->students()->attach($student->id, ['linked_at' => now(), 'status' => 'verified']);
 
         $this->actingAs($student)->get('/student')->assertOk();

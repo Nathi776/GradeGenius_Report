@@ -16,9 +16,9 @@ class TeacherLearnerPresenceServiceTest extends TestCase
     {
         config(['session.driver' => 'database', 'session.table' => 'sessions']);
 
-        $online = User::factory()->create(['role' => 'student']);
-        $offline = User::factory()->create(['role' => 'student']);
-        $neverSeen = User::factory()->create(['role' => 'student']);
+        $online = User::factory()->create(['role' => 'student', 'shares_activity' => true]);
+        $offline = User::factory()->create(['role' => 'student', 'shares_activity' => true]);
+        $neverSeen = User::factory()->create(['role' => 'student', 'shares_activity' => true]);
         $notStudent = User::factory()->create(['role' => 'parent']);
 
         DB::table('sessions')->insert([

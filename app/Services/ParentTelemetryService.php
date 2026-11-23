@@ -22,7 +22,7 @@ final class ParentTelemetryService
         $students = $parent->students()
             ->where('role', 'student')
             ->orderBy('name')
-            ->get(['users.id', 'users.name', 'users.email']);
+            ->get(['users.id', 'users.name', 'users.email', 'users.shares_activity']);
 
         return $students->map(fn (User $student): array => $this->forStudent($student))->all();
     }
@@ -32,6 +32,10 @@ final class ParentTelemetryService
      */
     private function forStudent(User $student): array
     {
+        if (! $student->shares_activity) {
+            return $this->notShared($student);
+        }
+
         $cutoff = now()->subDays(self::RETENTION_DAYS);
         $weekStart = now()->subDays(7);
         $weeklySessions = DB::table('student_activity_sessions')
@@ -119,6 +123,31 @@ final class ParentTelemetryService
             'latest_platform' => $latest->platform ?? null,
             'recorded_visits' => $recordedVisits,
             'sessions' => $recent,
+            'sharing' => true,
+        ];
+    }
+
+    /**
+     * What a parent sees for a learner who keeps their activity private.
+     *
+     * @return array<string, mixed>
+     */
+    private function notShared(User $student): array
+    {
+        return [
+            'id' => $student->id,
+            'name' => $student->name,
+            'email' => $student->email,
+            'logins_7d' => 0,
+            'duration_7d' => '0h 0m',
+            'status_label' => 'Not shared',
+            'last_active' => null,
+            'last_active_label' => null,
+            'latest_browser' => null,
+            'latest_platform' => null,
+            'recorded_visits' => 0,
+            'sessions' => [],
+            'sharing' => false,
         ];
     }
 }

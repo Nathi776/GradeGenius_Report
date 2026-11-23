@@ -46,10 +46,15 @@
                     @if ($telemetry['current_session'])
                         <p data-session-timer data-started-at="{{ $telemetry['current_session']['started_at'] }}" class="mt-1 font-mono text-2xl font-semibold tabular-nums text-ink">{{ $telemetry['current_session']['elapsed'] }}</p>
                         <p class="mt-1 truncate text-xs font-medium text-ink">{{ $telemetry['current_session']['browser'] }} · {{ $telemetry['current_session']['platform'] }}</p>
-                        <p class="mt-1 text-[11px] text-muted">{{ $dashboard['linked_parents'] === [] ? 'Not shared with a parent' : 'Visible to linked parent account' }}</p>
+                        <p class="mt-1 text-[11px] text-muted">{{ auth()->user()->shares_activity ? 'Visible to your parents and teachers' : 'Private: only you can see this' }}</p>
                     @else
                         <p class="mt-2 text-sm font-medium text-muted">Session data unavailable</p>
                     @endif
+                    <form method="POST" action="{{ route('student.privacy.activity-sharing') }}" class="mt-2">
+                        @csrf
+                        <input type="hidden" name="shares_activity" value="{{ auth()->user()->shares_activity ? 0 : 1 }}">
+                        <button type="submit" class="text-[11px] font-semibold text-ink underline underline-offset-2 hover:text-blue focus-visible:outline-2 focus-visible:outline-blue">{{ auth()->user()->shares_activity ? 'Make my activity private' : 'Share my activity with parents and teachers' }}</button>
+                    </form>
                 </section>
                 <div class="flex flex-wrap items-center gap-2 sm:col-span-2 sm:justify-end">
                     <span class="inline-flex items-center gap-2 rounded-full border border-line bg-card-2 px-3 py-1 text-sm text-ink">
@@ -69,7 +74,7 @@
             <x-stat-tile label="Study notes read" value="Not tracked" sub="Study-note reads are not recorded" tone="default" />
         </section>
 
-        <p class="rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">Quiz and practice-exam figures come from the sample report and include all available records, not only the selected term. The session timer measures elapsed time since login—not study time. When linked to a verified parent, login/logout and successful dashboard/report visits are shared with that guardian.</p>
+        <p class="rounded-xl border border-line bg-card-2 p-3 text-sm text-muted">Quiz and practice-exam figures come from the sample report and include all available records, not only the selected term. The session timer measures elapsed time since login—not study time. Your login activity is private unless you choose to share it with your parents and teachers using the link on the session card.</p>
 
         <section aria-labelledby="guardian-link-heading" class="{{ $card }}">
             <h2 id="guardian-link-heading" class="text-lg font-normal text-ink">Parent account connection</h2>

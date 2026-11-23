@@ -16,6 +16,12 @@ class DemoMarksSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->warn('Demo seeders are disabled in production.');
+
+            return;
+        }
+
         $student = User::query()->where('email', 'test@example.com')->where('role', 'student')->first();
 
         if ($student === null || $student->learnerSubjects()->exists()) {

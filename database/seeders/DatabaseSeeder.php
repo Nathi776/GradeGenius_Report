@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command?->warn('Demo seeders are disabled in production.');
+
+            return;
+        }
+
         $password = Hash::make('DemoPass123!');
 
         $student = User::updateOrCreate(

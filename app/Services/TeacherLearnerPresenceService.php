@@ -32,19 +32,19 @@ final class TeacherLearnerPresenceService
             ]);
         }
 
-        $studentIds = DB::table('users')
+        $students = DB::table('users')
             ->whereIn('id', $userIds)
             ->where('role', 'student')
-            ->pluck('id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
+            ->pluck('shares_activity', 'id');
+        $studentIds = $students->keys()->map(fn ($id): int => (int) $id)->all();
+        $sharingIds = $students->filter()->keys()->map(fn ($id): int => (int) $id)->all();
         $table = (string) config('session.table', 'sessions');
-        $latestSessions = $studentIds === []
+        $latestSessions = $sharingIds === []
             ? collect()
             : DB::table($table)
                 ->select('user_id')
                 ->selectRaw('MAX(last_activity) as last_activity')
-                ->whereIn('user_id', $studentIds)
+                ->whereIn('user_id', $sharingIds)
                 ->groupBy('user_id')
                 ->get()
                 ->keyBy('user_id');
@@ -56,6 +56,16 @@ final class TeacherLearnerPresenceService
                 $presence[$userId] = [
                     'state' => 'unavailable',
                     'label' => 'Unlinked',
+                    'last_active' => null,
+                ];
+
+                continue;
+            }
+
+            if (! in_array($userId, $sharingIds, true)) {
+                $presence[$userId] = [
+                    'state' => 'unavailable',
+                    'label' => 'Not shared',
                     'last_active' => null,
                 ];
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentGuardianLinkController;
 use App\Http\Controllers\StudentPlannerController;
+use App\Http\Controllers\StudentPrivacyController;
 use App\Http\Controllers\StudentRecommendationsController;
 use App\Http\Controllers\StudentReportController;
 use App\Http\Controllers\TeacherDashboardController;
@@ -79,6 +80,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::post('/guardians', StudentGuardianLinkController::class)
                 ->middleware('throttle:login')
                 ->name('guardians.store');
+            Route::post('/privacy/activity-sharing', [StudentPrivacyController::class, 'updateActivitySharing'])
+                ->name('privacy.activity-sharing');
             Route::get('/report', StudentReportController::class)
                 ->name('report');
             Route::get('/recommendations', StudentRecommendationsController::class)
