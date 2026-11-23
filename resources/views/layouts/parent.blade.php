@@ -94,6 +94,11 @@
                             </div>
                         @endif
 
+                        @php
+                            if (! config('reports.show_planned_menu_items')) {
+                                $groups = array_filter(array_map(fn (array $items): array => array_values(array_filter($items, fn (array $item): bool => ! empty($item['href']))), $groups));
+                            }
+                        @endphp
                         @foreach ($groups as $heading => $items)
                             <div>
                                 <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted">{{ $heading }}</p>

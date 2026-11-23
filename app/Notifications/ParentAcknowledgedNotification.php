@@ -13,8 +13,7 @@ class ParentAcknowledgedNotification extends Notification
     public function __construct(
         public TeacherMessage $message,
         public string $reply
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<int, string>

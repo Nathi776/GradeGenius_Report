@@ -53,6 +53,11 @@
 
                 <div id="teacher-nav" data-nav class="mt-4 flex min-h-0 flex-1 flex-col max-lg:hidden">
                     <nav aria-label="Teacher navigation" class="min-h-0 flex-1 space-y-5 overflow-y-auto pr-1">
+                        @php
+                            if (! config('reports.show_planned_menu_items')) {
+                                $groups = array_filter(array_map(fn (array $items): array => array_values(array_filter($items, fn (array $item): bool => ! empty($item['href']))), $groups));
+                            }
+                        @endphp
                         @foreach ($groups as $heading => $items)
                             <div>
                                 <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted">{{ $heading }}</p>

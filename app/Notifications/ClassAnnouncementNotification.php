@@ -11,9 +11,7 @@ class ClassAnnouncementNotification extends Notification
 {
     use Queueable;
 
-    public function __construct(public ClassAnnouncement $announcement)
-    {
-    }
+    public function __construct(public ClassAnnouncement $announcement) {}
 
     /**
      * @return array<int, string>

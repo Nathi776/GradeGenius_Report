@@ -61,7 +61,7 @@ class ClassAnnouncementTest extends TestCase
 
         Notification::assertSentTo($confirmed, ClassAnnouncementNotification::class);
         Notification::assertNotSentTo([$pending, $unrelated], ClassAnnouncementNotification::class);
-        Mail::assertSent(ClassAnnouncementMail::class, 1);
+        Mail::assertQueued(ClassAnnouncementMail::class, 1);
         $this->assertSame(1, ClassAnnouncement::first()->recipients_count);
     }
 
