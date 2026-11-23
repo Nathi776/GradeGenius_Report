@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\ExamScheduleService;
 use App\Services\LearningRecommendationService;
+use App\Services\ReportDataSource;
 use App\Services\StudentReportService;
-use App\Support\DemoReportData;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -16,9 +16,9 @@ class StudentRecommendationsController extends Controller
         StudentReportService $reports,
         ExamScheduleService $exams,
         LearningRecommendationService $recommendations,
+        ReportDataSource $source,
     ): View {
-        // TODO: replace DemoReportData with the signed-in learner's data from the database.
-        $raw = DemoReportData::forStudent();
+        $raw = $source->forStudent($request->user());
         $raw['student']['name'] = $request->user()->name;
         $report = $reports->build($raw, count($raw['terms']) - 1);
         $upcoming = $exams->upcomingForGrade($report['student']['grade'], array_column($report['subjects'], 'name', 'key'));

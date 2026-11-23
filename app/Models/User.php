@@ -25,6 +25,14 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @return BelongsToMany<User, $this>
      */
+    /**
+     * The subjects this learner has recorded marks in.
+     */
+    public function learnerSubjects(): HasMany
+    {
+        return $this->hasMany(LearnerSubject::class, 'student_id');
+    }
+
     public function parents(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'parent_student_links', 'student_id', 'parent_id')

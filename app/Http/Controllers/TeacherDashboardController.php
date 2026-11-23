@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LearnerReportRepository;
 use App\Services\TeacherDashboardService;
 use App\Services\TeacherLearnerPresenceService;
 use App\Support\AcademicTermSelection;
@@ -15,6 +16,7 @@ class TeacherDashboardController extends Controller
         Request $request,
         TeacherDashboardService $dashboard,
         TeacherLearnerPresenceService $presence,
+        LearnerReportRepository $marks,
     ): View {
         $teacher = $request->user();
         $dbClasses = $teacher->teachingClasses()->with('learners')->get();
@@ -32,8 +34,7 @@ class TeacherDashboardController extends Controller
                         'id' => (string) $l->id,
                         'user_id' => $l->id,
                         'name' => $l->name,
-                        // TODO: replace these placeholder averages with the learner's recorded marks.
-                        'term_averages' => [60, 65, 68, 70],
+                        'term_averages' => $marks->termAveragesFor($l, $sc->subject) ?? [],
                     ];
                 }
                 $data['classes'][] = [

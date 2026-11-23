@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NoReportDataException;
 use App\Models\StudySession;
 use App\Services\ParentDashboardService;
 use App\Services\ParentReportService;
 use App\Services\ParentTelemetryService;
+use App\Services\ReportDataSource;
 use App\Support\AcademicTermSelection;
 use App\Support\DemoReportData;
 use Carbon\Carbon;
@@ -19,6 +21,7 @@ class ParentDashboardController extends Controller
         ParentReportService $reports,
         ParentDashboardService $dashboard,
         ParentTelemetryService $telemetry,
+        ReportDataSource $source,
     ): View {
         $verifiedChildren = $request->user()->linkedChildren()->wherePivot('status', 'verified')->get();
 
@@ -31,9 +34,12 @@ class ParentDashboardController extends Controller
             $childCards = [];
 
             foreach ($verifiedChildren as $student) {
+                $raw = $source->forStudentOrNull($student);
+                if ($raw === null) {
+                    continue;
+                }
+
                 $childKey = (string) $student->id;
-                $raw = DemoReportData::forStudent();
-                $raw['student']['name'] = $student->name;
                 $reportsByChild[$childKey] = $reports->build($raw, null, $termIndex);
                 $names[$childKey] = $student->name;
 
@@ -48,11 +54,19 @@ class ParentDashboardController extends Controller
                 ];
             }
 
-            $key = $request->query('child') ?? $request->query('child_id') ?? (string) $verifiedChildren->first()->id;
+            if ($reportsByChild === []) {
+                throw new NoReportDataException;
+            }
+
+            $key = $request->query('child') ?? $request->query('child_id') ?? array_key_first($reportsByChild);
             if (! isset($reportsByChild[$key])) {
-                $key = (string) $verifiedChildren->first()->id;
+                $key = array_key_first($reportsByChild);
             }
         } else {
+            if (! $source->demoFallbackEnabled()) {
+                throw new NoReportDataException('no_children');
+            }
+
             $linked = DemoReportData::childrenForParent();
             $key = $request->query('child', array_key_first($linked));
             abort_unless(is_string($key) && isset($linked[$key]), 404);

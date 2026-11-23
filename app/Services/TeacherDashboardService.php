@@ -36,6 +36,10 @@ final class TeacherDashboardService
             $latest = [];
             $atRisk = 0;
             foreach ($class['learners'] as $learner) {
+                if ($learner['term_averages'] === []) {
+                    continue;
+                }
+
                 $current = (int) end($learner['term_averages']);
                 $latest[] = $current;
                 foreach ($learner['term_averages'] as $i => $mark) {

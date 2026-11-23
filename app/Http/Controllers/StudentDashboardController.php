@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\StudySession;
 use App\Services\ExamScheduleService;
+use App\Services\ReportDataSource;
 use App\Services\StudentActivityTracker;
 use App\Services\StudentDashboardService;
 use App\Services\StudentReportService;
 use App\Support\AcademicTermSelection;
-use App\Support\DemoReportData;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -20,9 +20,9 @@ class StudentDashboardController extends Controller
         StudentDashboardService $dashboard,
         StudentActivityTracker $activity,
         ExamScheduleService $exams,
+        ReportDataSource $source,
     ): View {
-        // TODO: replace DemoReportData with the signed-in learner's data from the database.
-        $raw = DemoReportData::forStudent();
+        $raw = $source->forStudent($request->user());
         $termIndex = AcademicTermSelection::fromRequest($request, $raw['terms']);
         $raw['student']['name'] = $request->user()->name;
         $report = $reports->build($raw, $termIndex);

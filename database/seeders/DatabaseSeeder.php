@@ -97,5 +97,7 @@ class DatabaseSeeder extends Seeder
                 ],
             ]);
         }
+
+        $this->call(DemoMarksSeeder::class);
     }
 }

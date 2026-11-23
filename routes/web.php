@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassAnnouncementController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LearnerResultController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ParentDashboardController;
 use App\Http\Controllers\ParentPlannerController;
@@ -173,6 +174,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
                 ->whereNumber('class')
                 ->middleware('throttle:60,1')
                 ->name('classes.learners.store');
+            Route::get('/classes/{class}/learners/{learner}/results/create', [LearnerResultController::class, 'create'])
+                ->whereNumber(['class', 'learner'])
+                ->name('classes.learners.results.create');
+            Route::post('/classes/{class}/learners/{learner}/results', [LearnerResultController::class, 'store'])
+                ->whereNumber(['class', 'learner'])
+                ->middleware('throttle:60,1')
+                ->name('classes.learners.results.store');
             Route::delete('/classes/{class}/learners/{learner}', [SchoolClassController::class, 'removeLearner'])
                 ->whereNumber(['class', 'learner'])
                 ->name('classes.learners.destroy');

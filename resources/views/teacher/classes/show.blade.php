@@ -48,6 +48,7 @@
                         <p class="text-xs text-muted">{{ $learner->email }}</p>
                     </div>
                     <div class="flex items-center gap-2">
+                        <a href="{{ route('teacher.classes.learners.results.create', [$schoolClass->id, $learner->id]) }}" class="gg-button gg-button-surface px-3 py-1.5 text-xs font-bold">Record mark</a>
                         <a href="{{ route('teacher.messages.create', ['student_id' => $learner->id, 'subject' => $schoolClass->subject, 'target' => $schoolClass->target ?? 65]) }}" class="gg-button gg-button-surface px-3 py-1.5 text-xs font-bold">Message parent</a>
                         <form method="POST" action="{{ route('teacher.classes.learners.destroy', [$schoolClass->id, $learner->id]) }}" onsubmit="return confirm('Remove {{ addslashes($learner->name) }} from this class?')">
                             @csrf

@@ -6,9 +6,9 @@ use App\Models\ParentEncouragement;
 use App\Models\StudySession;
 use App\Services\ExamScheduleService;
 use App\Services\LearningRecommendationService;
+use App\Services\ReportDataSource;
 use App\Services\StudentReportService;
 use App\Services\StudyPlannerService;
-use App\Support\DemoReportData;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -367,9 +367,7 @@ class StudentPlannerController extends Controller
      */
     private function reportFor(Request $request, StudentReportService $reports): array
     {
-        // TODO: replace DemoReportData with the signed-in learner's data from the database.
-        $raw = DemoReportData::forStudent();
-        $raw['student']['name'] = $request->user()->name;
+        $raw = app(ReportDataSource::class)->forStudent($request->user());
 
         return $reports->build($raw, count($raw['terms']) - 1);
     }

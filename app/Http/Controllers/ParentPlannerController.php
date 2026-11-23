@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ParentEncouragement;
 use App\Models\StudySession;
 use App\Models\User;
+use App\Services\ReportDataSource;
 use App\Services\StudentReportService;
-use App\Support\DemoReportData;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class ParentPlannerController extends Controller
 {
-    public function show(Request $request, StudentReportService $reports): View
+    public function show(Request $request, StudentReportService $reports, ReportDataSource $source): View
     {
         $children = $request->user()->linkedChildren()->wherePivot('status', 'verified')->get();
 
@@ -48,9 +48,8 @@ class ParentPlannerController extends Controller
             ->get();
 
         // Subject names from student report data
-        $rawReport = DemoReportData::forStudent();
-        $reportData = $reports->build($rawReport, 3);
-        $subjectNames = array_column($reportData['subjects'], 'name', 'key');
+        $rawReport = $source->forStudentOrNull($selectedChild);
+        $subjectNames = $rawReport === null ? [] : array_column($reports->build($rawReport, 3)['subjects'], 'name', 'key');
 
         $days = $sessions->groupBy(fn (StudySession $s): string => $s->planned_date->toDateString())
             ->map(function ($group, string $date) use ($today, $subjectNames): array {
@@ -119,7 +118,7 @@ class ParentPlannerController extends Controller
         ]);
     }
 
-    public function recap(Request $request, StudentReportService $reports): View
+    public function recap(Request $request, StudentReportService $reports, ReportDataSource $source): View
     {
         $children = $request->user()->linkedChildren()->wherePivot('status', 'verified')->get();
 
@@ -144,9 +143,8 @@ class ParentPlannerController extends Controller
             ->orderBy('id')
             ->get();
 
-        $rawReport = DemoReportData::forStudent();
-        $reportData = $reports->build($rawReport, 3);
-        $subjectNames = array_column($reportData['subjects'], 'name', 'key');
+        $rawReport = $source->forStudentOrNull($selectedChild);
+        $subjectNames = $rawReport === null ? [] : array_column($reports->build($rawReport, 3)['subjects'], 'name', 'key');
 
         $plannedCount = $sessions->count();
         $doneCount = $sessions->where('status', StudySession::STATUS_DONE)->where('is_counted', true)->count();
