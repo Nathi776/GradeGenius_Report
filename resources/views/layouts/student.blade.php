@@ -25,7 +25,7 @@
             'Progress' => [
                 ['key' => 'activity', 'label' => 'Learning Activity', 'icon' => 'zap', 'href' => null],
                 ['key' => 'achievements', 'label' => 'Achievements', 'icon' => 'star', 'href' => null],
-                ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => null],
+                ['key' => 'settings', 'label' => 'Settings', 'icon' => 'sliders', 'href' => route('student.settings')],
             ],
         ];
         $itemBase = 'flex items-center gap-3 rounded-xl border px-3 py-2 text-sm font-medium';
@@ -95,7 +95,7 @@
         </aside>
 
         <main class="min-w-0 flex-1">
-            @include('partials.workspace-header')
+            @include('partials.workspace-header', ['showPrintButton' => $active === 'performance'])
             @yield('student-content')
         </main>
     </div>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\StudySession;
 use App\Services\ExamScheduleService;
 use App\Services\ReportDataSource;
-use App\Services\StudentActivityTracker;
 use App\Services\StudentDashboardService;
 use App\Services\StudentReportService;
 use App\Support\AcademicTermSelection;
@@ -18,7 +17,6 @@ class StudentDashboardController extends Controller
         Request $request,
         StudentReportService $reports,
         StudentDashboardService $dashboard,
-        StudentActivityTracker $activity,
         ExamScheduleService $exams,
         ReportDataSource $source,
     ): View {
@@ -28,12 +26,6 @@ class StudentDashboardController extends Controller
         $report = $reports->build($raw, $termIndex);
         $dashboardData = $dashboard->build($report);
         $dashboardData['exams'] = $exams->upcomingForGrade($report['student']['grade'], array_column($report['subjects'], 'name', 'key'), null, 3);
-        $dashboardData['telemetry'] = $activity->dashboardSnapshot($request, $request->user());
-        $dashboardData['linked_parents'] = $request->user()->parents()
-            ->where('role', 'parent')
-            ->get(['users.name', 'users.email'])
-            ->map(fn ($parent): array => ['name' => $parent->name, 'email' => $parent->email])
-            ->all();
 
         // Calculate real study time, streak, and weekly goal
         $today = now()->startOfDay();

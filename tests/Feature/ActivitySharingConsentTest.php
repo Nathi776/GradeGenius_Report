@@ -76,14 +76,19 @@ class ActivitySharingConsentTest extends TestCase
         $this->assertSame('online', app(TeacherLearnerPresenceService::class)->forUserIds([$student->id])[$student->id]['state']);
     }
 
-    public function test_student_dashboard_shows_the_sharing_switch(): void
+    public function test_student_settings_shows_the_sharing_switch_and_the_dashboard_shows_the_state(): void
     {
         $student = User::factory()->create(['role' => 'student']);
 
+        $this->actingAs($student)->get(route('student.settings'))
+            ->assertOk()
+            ->assertSee('Private, only you can see it')
+            ->assertSee('Share my activity with parents and teachers');
+
         $this->actingAs($student)->get('/student')
             ->assertOk()
-            ->assertSee('Private: only you can see this')
-            ->assertSee('Share my activity with parents and teachers');
+            ->assertSee('Activity sharing:')
+            ->assertSee('Manage in Settings');
     }
 
     public function test_demo_seeders_do_not_run_in_production(): void

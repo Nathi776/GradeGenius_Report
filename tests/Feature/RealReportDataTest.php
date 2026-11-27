@@ -40,7 +40,7 @@ class RealReportDataTest extends TestCase
         $this->assertSame('Real Learner', $raw['student']['name']);
         $this->assertSame(['Term 1', 'Term 2', 'Term 3', 'Term 4'], $raw['terms']);
         $subject = $raw['subjects'][0];
-        $this->assertSame([55, 55, 61, 61], $subject['term_averages']);
+        $this->assertSame([55, null, 61, null], $subject['term_averages']);
         $this->assertSame(80, $subject['target']);
         $this->assertSame(['Probability' => 48], $subject['topics']);
         $this->assertSame('Probability Quiz', $subject['quizzes'][0]['title']);

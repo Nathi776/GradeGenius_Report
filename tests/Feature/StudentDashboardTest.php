@@ -25,7 +25,7 @@ class StudentDashboardTest extends TestCase
         $response->assertOk();
         $response->assertSee('Lerato Mokoena');
         $response->assertSee('Student portal');
-        $response->assertSee('Sample academic profile');
+        $response->assertDontSee('Sample academic profile');
         foreach (DemoReportData::forStudent()['subjects'] as $subject) {
             $response->assertSee($subject['name']);
         }
@@ -45,19 +45,18 @@ class StudentDashboardTest extends TestCase
         $response->assertSee('Coming soon');
         $response->assertSee('No exam schedule is available yet');
         $response->assertSee('Study streak');
-        $response->assertSee('Current login session');
         $response->assertSee('Weekly study goal');
         $response->assertSee('Practice exams taken');
-        $response->assertSee('Study notes read');
-        $response->assertSee('data-session-timer', false);
-        $response->assertSee('not study time');
-        $response->assertSee('Parent account connection');
-        $response->assertSee('Study-note reads are not recorded');
+        $response->assertSee('Activity sharing:');
+        $response->assertDontSee('Current login session');
+        $response->assertDontSee('data-session-timer', false);
+        $response->assertDontSee('Study notes read');
+        $response->assertDontSee('Parent account connection');
         $response->assertDontSee('Unread Note');
         $response->assertDontSee('Pending Quiz');
     }
 
-    public function test_student_can_link_a_verified_parent_from_the_dashboard(): void
+    public function test_student_can_link_a_verified_parent_from_settings(): void
     {
         $parent = User::factory()->create(['role' => 'parent', 'email' => 'guardian@example.com']);
         $student = $this->student();

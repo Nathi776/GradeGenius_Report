@@ -10,7 +10,7 @@ namespace App\Services;
  * everywhere. Plain arrays in, plain arrays out; no framework dependency, easy to unit test.
  *
  * Raw input, per subject:
- *   name, term_averages[] (one per term), target?, questions{attempted,correct},
+ *   name, term_averages[] (one per term; null = no mark recorded that term), target?, questions{attempted,correct},
  *   topics{name => mastery}, past_papers[{title,score,date}], quizzes[{title,score,attempts,date}]
  */
 final class StudentReportService
@@ -70,10 +70,11 @@ final class StudentReportService
     // ------------------------------------------------------------------ subject
     private function subject(array $s, int $index, int $defaultTarget, int $termIndex, bool $allTermsSelected): array
     {
-        $series = array_map('floatval', $s['term_averages']);
-        $current = (int) round($series[$termIndex]);
-        $comparisonTermIndex = $allTermsSelected ? 0 : max(0, $termIndex - 1);
-        $previous = (int) round($series[$comparisonTermIndex]);
+        $series = array_map(fn ($mark) => $mark === null ? null : (float) $mark, array_values($s['term_averages']));
+        $currentIndex = $this->latestRecordedIndex($series, $termIndex);
+        $current = (int) round($series[$currentIndex]);
+        $comparisonIndex = $this->comparisonIndex($series, $currentIndex, $allTermsSelected);
+        $previous = $comparisonIndex === null ? $current : (int) round($series[$comparisonIndex]);
         $target = (int) ($s['target'] ?? $defaultTarget);
 
         $topics = [];
@@ -95,7 +96,8 @@ final class StudentReportService
             'key' => strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', $s['name']), '-')),
             'name' => $s['name'],
             'color' => self::PALETTE[$index % count(self::PALETTE)],
-            'series' => array_map(fn ($v) => (int) round($v), $series),
+            'series' => array_map(fn ($v) => $v === null ? null : (int) round($v), $series),
+            'mark_term_index' => $currentIndex,
             'current' => $current,
             'level' => self::level($current),
             'change' => $current - $previous,
@@ -143,20 +145,23 @@ final class StudentReportService
         $current = $this->mean(array_column($subjects, 'current'));
         $termAverages = [];
         foreach (array_keys($terms) as $t) {
-            $termAverages[] = (int) round($this->mean(array_map(fn ($s) => $s['series'][$t], $subjects)));
+            $recorded = array_values(array_filter(array_map(fn ($s) => $s['series'][$t] ?? null, $subjects), fn ($v) => $v !== null));
+            $termAverages[] = $recorded === [] ? null : (int) round($this->mean($recorded));
         }
         // Use the rounded figure the learner sees, so "74%" never comes with the wrong "pts to go".
         $status = $this->targetStatus(round($current), $target);
 
-        $previousTermIndex = $allTermsSelected ? 0 : max(0, $termIndex - 1);
+        $currentIndex = $this->latestRecordedIndex($termAverages, $termIndex);
+        $comparisonIndex = $this->comparisonIndex($termAverages, $currentIndex, $allTermsSelected) ?? $currentIndex;
 
         return [
             'current' => (int) round($current),
             'level' => self::level(round($current)),
-            'change' => $termAverages[$termIndex] - $termAverages[$previousTermIndex],
+            'change' => $termAverages[$currentIndex] - $termAverages[$comparisonIndex],
             'term_averages' => $termAverages,
+            'recorded_term_count' => count(array_filter($termAverages, fn ($v) => $v !== null)),
             'current_term' => $terms[$termIndex],
-            'first_term' => $terms[$previousTermIndex],
+            'first_term' => $terms[$comparisonIndex],
             'subject_count' => count($subjects),
             'at_target' => count(array_filter($subjects, fn ($s) => $s['target_status']['state'] === 'met')),
             'target' => $target,
@@ -246,6 +251,44 @@ final class StudentReportService
             'quiz_accuracy' => $attempted ? (int) round($correct / $attempted * 100) : null,
             'questions_answered' => $attempted,
         ];
+    }
+
+    /**
+     * Index of the latest recorded mark at or before the selected term; if nothing was recorded by then,
+     * the earliest later one. Never invents a mark.
+     *
+     * @param  array<int, int|float|null>  $series
+     */
+    private function latestRecordedIndex(array $series, int $termIndex): int
+    {
+        for ($i = min($termIndex, count($series) - 1); $i >= 0; $i--) {
+            if ($series[$i] !== null) {
+                return $i;
+            }
+        }
+        foreach ($series as $i => $mark) {
+            if ($mark !== null) {
+                return $i;
+            }
+        }
+
+        throw new \InvalidArgumentException('A subject needs at least one recorded mark.');
+    }
+
+    /**
+     * All terms selected: compare with the first recorded term. One term selected: compare with the
+     * recorded term before it. Null when there is nothing earlier to compare with.
+     *
+     * @param  array<int, int|float|null>  $series
+     */
+    private function comparisonIndex(array $series, int $currentIndex, bool $allTermsSelected): ?int
+    {
+        $earlier = array_keys(array_filter(array_slice($series, 0, $currentIndex, true), fn ($v) => $v !== null));
+        if ($earlier === []) {
+            return null;
+        }
+
+        return $allTermsSelected ? $earlier[0] : end($earlier);
     }
 
     private function mean(array $values): float

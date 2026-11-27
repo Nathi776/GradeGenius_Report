@@ -37,6 +37,7 @@
 
     <div class="flex items-center gap-2.5 sm:gap-3">
         {{-- Print / Save PDF Button --}}
+        @if ($showPrintButton ?? true)
         <button type="button" onclick="window.print()"
             title="Print or Save Report as PDF"
             class="inline-flex items-center gap-2 rounded-xl border border-line bg-card-2 px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-brand/50 hover:bg-card focus-visible:outline-2 focus-visible:outline-blue">
@@ -44,6 +45,7 @@
             <span class="hidden sm:inline">Print / Save PDF</span>
             <span class="sm:hidden">Print</span>
         </button>
+        @endif
 
         {{-- Notifications Bell --}}
         <a href="{{ route('notifications.index') }}"

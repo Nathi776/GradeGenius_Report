@@ -41,7 +41,7 @@ final class LearnerReportRepository
     }
 
     /**
-     * The learner's mark series for one subject, filled so every term has a number, or null when none recorded.
+     * The marks actually recorded for one subject, in term order (terms without a mark are left out), or null when none.
      *
      * @return list<int>|null
      */
@@ -49,7 +49,7 @@ final class LearnerReportRepository
     {
         $subject = $student->learnerSubjects()->whereRaw('lower(name) = ?', [mb_strtolower($subjectName)])->first();
 
-        return $subject !== null && $this->hasAnyAverage($subject) ? $this->filledAverages($subject) : null;
+        return $subject !== null && $this->hasAnyAverage($subject) ? array_values(array_filter($this->recordedAverages($subject), fn (?int $mark): bool => $mark !== null)) : null;
     }
 
     private function gradeFor(User $student): int
@@ -63,27 +63,18 @@ final class LearnerReportRepository
     }
 
     /**
-     * @return list<int>
+     * One entry per term, null where nothing was recorded. Marks are never copied into other terms.
+     *
+     * @return list<int|null>
      */
-    private function filledAverages(LearnerSubject $subject): array
+    private function recordedAverages(LearnerSubject $subject): array
     {
-        $stored = array_pad(array_values($subject->term_averages ?? []), count(self::TERMS), null);
-        $first = null;
-        foreach ($stored as $mark) {
-            if ($mark !== null) {
-                $first = (int) $mark;
-                break;
-            }
-        }
+        $stored = array_values($subject->term_averages ?? []);
 
-        $filled = [];
-        $previous = $first;
-        foreach (array_slice($stored, 0, count(self::TERMS)) as $mark) {
-            $previous = $mark === null ? $previous : (int) $mark;
-            $filled[] = (int) $previous;
-        }
-
-        return $filled;
+        return array_map(
+            fn (int $index): ?int => isset($stored[$index]) ? (int) $stored[$index] : null,
+            array_keys(self::TERMS),
+        );
     }
 
     /**
@@ -100,7 +91,7 @@ final class LearnerReportRepository
 
         $array = [
             'name' => $subject->name,
-            'term_averages' => $this->filledAverages($subject),
+            'term_averages' => $this->recordedAverages($subject),
             'questions' => ['attempted' => $subject->questions_attempted, 'correct' => min($subject->questions_correct, $subject->questions_attempted)],
             'topics' => $subject->topicMasteries->sortBy('topic')->pluck('mastery', 'topic')->map(fn ($mastery): int => (int) $mastery)->all(),
             'past_papers' => $results->where('kind', 'past_paper')->map($row)->values()->all(),

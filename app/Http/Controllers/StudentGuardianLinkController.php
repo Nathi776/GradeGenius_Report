@@ -26,6 +26,10 @@ class StudentGuardianLinkController extends Controller
             ->whereNotNull('email_verified_at')
             ->firstOrFail();
 
+        if ($request->user()->parents()->where('users.id', $parent->id)->exists()) {
+            return back()->with('status', 'That parent account is already linked to you.');
+        }
+
         $request->user()->parents()->syncWithoutDetaching([
             $parent->id => [
                 'linked_at' => now(),

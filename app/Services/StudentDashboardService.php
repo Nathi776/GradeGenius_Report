@@ -41,7 +41,6 @@ final class StudentDashboardService
             'selected_term' => $report['selected_term'],
             'selected_term_index' => $report['selected_term_index'],
             'all_terms_selected' => $report['all_terms_selected'],
-            'linked_parents' => [],
             'trend' => [
                 'labels' => $report['terms'],
                 'series' => [$report['chart']['series'][0]],

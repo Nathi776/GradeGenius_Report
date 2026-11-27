@@ -14,7 +14,14 @@
             if ($v !== null) { $values[] = $v; }
         }
     }
-    $lo = max(0, (int) (floor((min($values) - 8) / 20) * 20));
+    $recordedTerms = [];
+    foreach ($series as $s) {
+        foreach (array_values($s['points']) as $i => $v) {
+            if ($v !== null) { $recordedTerms[$i] = true; }
+        }
+    }
+    $hasTrend = count($recordedTerms) >= 2;
+    $lo = $values === [] ? 0 : max(0, (int) (floor((min($values) - 8) / 20) * 20));
     $hi = 100;
     $n = count($labels);
 
@@ -25,10 +32,15 @@
     $summary = [];
     foreach ($series as $s) {
         if ($s['key'] === 'overall') {
-            $summary[] = 'Overall average by term: ' . implode(', ', array_map(fn ($l, $v) => "$l $v percent", $labels, $s['points']));
+            $summary[] = 'Overall average by term: ' . implode(', ', array_filter(array_map(fn ($l, $v) => $v === null ? null : "$l $v percent", $labels, array_values($s['points']))));
         }
     }
 @endphp
+@if (! $hasTrend)
+    <div class="flex items-center justify-center rounded-xl border border-dashed border-line px-4 text-center text-sm text-muted" style="min-height: {{ min($height, 140) }}px">
+        Marks from at least two terms are needed to show a trend. Your recorded marks will appear here as terms are added.
+    </div>
+@else
 <svg viewBox="0 0 {{ $w }} {{ $h }}" class="h-auto w-full" role="img" aria-label="{{ implode('. ', $summary) ?: 'Progress over time' }}">
     <defs>
         <linearGradient id="{{ $id }}-area" x1="0" x2="0" y1="0" y2="1">
@@ -51,18 +63,28 @@
         @php
             $isOverall = $s['key'] === 'overall';
             $segments = [];
+            $recordedIndexes = [];
             foreach (array_values($s['points']) as $i => $v) {
-                $segments[] = ($i === 0 ? 'M' : 'L') . round($x($i), 1) . ',' . round($y($v), 1);
+                if ($v === null) {
+                    continue;
+                }
+                $segments[] = ($segments === [] ? 'M' : 'L') . round($x($i), 1) . ',' . round($y($v), 1);
+                $recordedIndexes[] = $i;
+            }
+            if ($recordedIndexes === []) {
+                continue;
             }
             $line = implode(' ', $segments);
-            $lastIndex = count($s['points']) - 1;
+            $firstIndex = $recordedIndexes[0];
+            $lastIndex = end($recordedIndexes);
         @endphp
         <g data-series="{{ $s['key'] }}">
             @if ($s['area'])
-                <path d="{{ $line }} L{{ round($x($lastIndex), 1) }},{{ round($y($lo), 1) }} L{{ round($x(0), 1) }},{{ round($y($lo), 1) }} Z" fill="url(#{{ $id }}-area)" />
+                <path d="{{ $line }} L{{ round($x($lastIndex), 1) }},{{ round($y($lo), 1) }} L{{ round($x($firstIndex), 1) }},{{ round($y($lo), 1) }} Z" fill="url(#{{ $id }}-area)" />
             @endif
             <path d="{{ $line }}" fill="none" stroke="{{ $s['color'] }}" @if ($isOverall) class="text-ink" @endif stroke-width="{{ $isOverall ? 3 : 2 }}" stroke-linecap="round" stroke-linejoin="round" @if (! $isOverall) stroke-opacity="0.85" @endif />
             @foreach ($s['points'] as $i => $v)
+                @continue($v === null)
                 <circle cx="{{ round($x($i), 1) }}" cy="{{ round($y($v), 1) }}" r="{{ $isOverall ? 4.5 : 3 }}" @if ($isOverall) style="fill: var(--chart-area, #f23d99)" @else fill="{{ $s['color'] }}" @endif>
                     <title>{{ $s['name'] }}, {{ $labels[$i] }}: {{ $v }}%</title>
                 </circle>
@@ -73,3 +95,4 @@
         </g>
     @endforeach
 </svg>
+@endif

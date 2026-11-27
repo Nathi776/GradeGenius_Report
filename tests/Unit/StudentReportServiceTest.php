@@ -123,4 +123,42 @@ class StudentReportServiceTest extends TestCase
         $this->assertSame(array_unique($keys), $keys);
         $this->assertContains('english-home-language', $keys);
     }
+
+    private function gappyReport(array $termAverages, ?int $termIndex = null): array
+    {
+        $raw = DemoReportData::forStudent();
+        $subject = ['name' => 'Mathematics', 'term_averages' => $termAverages] + $raw['subjects'][0];
+
+        return (new StudentReportService)->build(['subjects' => [$subject]] + $raw, $termIndex);
+    }
+
+    public function test_unrecorded_terms_stay_empty_and_are_never_filled_in(): void
+    {
+        $r = $this->gappyReport([null, null, null, 45]);
+
+        $this->assertSame([null, null, null, 45], $r['subjects'][0]['series']);
+        $this->assertSame([null, null, null, 45], $r['overall']['term_averages']);
+        $this->assertSame([null, null, null, 45], $r['chart']['series'][0]['points']);
+        $this->assertSame(1, $r['overall']['recorded_term_count']);
+        $this->assertSame(45, $r['overall']['current']);
+        $this->assertSame(0, $r['overall']['change']);
+    }
+
+    public function test_change_compares_the_latest_recorded_mark_with_the_first_recorded_one(): void
+    {
+        $r = $this->gappyReport([50, null, 62, null]);
+
+        $this->assertSame(62, $r['subjects'][0]['current']);
+        $this->assertSame(12, $r['subjects'][0]['change']);
+        $this->assertSame(12, $r['overall']['change']);
+        $this->assertSame('Term 1', $r['overall']['first_term']);
+    }
+
+    public function test_a_selected_term_uses_the_latest_mark_recorded_by_then(): void
+    {
+        $r = $this->gappyReport([50, null, 62, 70], 1);
+
+        $this->assertSame(50, $r['subjects'][0]['current']);
+        $this->assertSame(0, $r['subjects'][0]['change']);
+    }
 }
