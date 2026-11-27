@@ -38,7 +38,7 @@
 @endphp
 @if (! $hasTrend)
     <div class="flex items-center justify-center rounded-xl border border-dashed border-line px-4 text-center text-sm text-muted" style="min-height: {{ min($height, 140) }}px">
-        Marks from at least two terms are needed to show a trend. Your recorded marks will appear here as terms are added.
+        Marks from at least two terms are needed to show a trend. They will appear here as terms are recorded.
     </div>
 @else
 <svg viewBox="0 0 {{ $w }} {{ $h }}" class="h-auto w-full" role="img" aria-label="{{ implode('. ', $summary) ?: 'Progress over time' }}">

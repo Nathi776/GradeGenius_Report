@@ -6,6 +6,7 @@ use App\Http\Controllers\ClassMarksImportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LearnerResultController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ParentActivityController;
 use App\Http\Controllers\ParentDashboardController;
 use App\Http\Controllers\ParentPlannerController;
 use App\Http\Controllers\ParentReportController;
@@ -127,6 +128,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::post('/links/{student}/reject', [ParentStudentLinkController::class, 'reject'])
                 ->whereNumber('student')
                 ->name('links.reject');
+            Route::get('/activity', ParentActivityController::class)
+                ->name('activity');
             Route::get('/planner', [ParentPlannerController::class, 'show'])
                 ->name('planner');
             Route::get('/planner/recap', [ParentPlannerController::class, 'recap'])

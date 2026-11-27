@@ -26,6 +26,7 @@ final class ParentDashboardService
         $goal = $subjects === [] ? null : (int) round(array_sum(array_column($subjects, 'target')) / count($subjects));
 
         return [
+            'has_marks' => true,
             'children' => $children,
             'child_cards' => $childCards,
             'active_child' => $activeChild,
@@ -36,6 +37,7 @@ final class ParentDashboardService
                 'average' => $overall['current'],
                 'level' => $overall['level'],
                 'change' => $overall['change'],
+                'has_comparison' => $overall['has_comparison'],
                 'term' => $overall['current_term'],
                 'first_term' => $overall['first_term'],
                 'at_target' => $overall['at_target'],
@@ -53,6 +55,27 @@ final class ParentDashboardService
             'activity' => $report['activity'],
             'recent' => array_slice($report['assessments'], 0, 4),
             'activity_groups' => $this->activityGroups(array_slice($report['assessments'], 0, 6)),
+        ];
+    }
+
+    /**
+     * Dashboard for a linked child whose teacher has not recorded any marks yet. Nothing is invented:
+     * the page shows who the child is and says plainly that there is nothing to report.
+     *
+     * @param  array<string, string>  $children  Child key => display name
+     * @param  array<string, array<string, mixed>>  $childCards
+     * @return array<string, mixed>
+     */
+    public function buildWithoutMarks(array $children, string $activeChild, array $childCards): array
+    {
+        $name = $children[$activeChild];
+
+        return [
+            'has_marks' => false,
+            'children' => $children,
+            'child_cards' => $childCards,
+            'active_child' => $activeChild,
+            'child' => ['name' => $name, 'first_name' => explode(' ', trim($name))[0], 'grade' => null],
         ];
     }
 

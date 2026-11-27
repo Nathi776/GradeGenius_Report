@@ -35,6 +35,7 @@
             'planner' => route('parent.planner', ['child_id' => $key]),
             'recap' => route('parent.planner.recap', ['child_id' => $key]),
             'progress' => route('parent.report', ['child' => $key]),
+            'activity' => route('parent.activity', ['child' => $key]),
             default => route('parent.home', ['child' => $key]),
         };
 
@@ -42,6 +43,7 @@
             'Overview' => [
                 ['key' => 'home', 'label' => 'Dashboard', 'icon' => 'home', 'href' => $activeChild ? route('parent.home', ['child' => $activeChild]) : route('parent.home')],
                 ['key' => 'progress', 'label' => 'Academic Progress', 'icon' => 'bar-chart', 'href' => $activeChild ? route('parent.report', ['child' => $activeChild]) : route('parent.reports')],
+                ['key' => 'activity', 'label' => 'Learner Activity', 'icon' => 'zap', 'href' => $activeChild ? route('parent.activity', ['child' => $activeChild]) : route('parent.activity')],
                 ['key' => 'support', 'label' => 'Learning Support', 'icon' => 'sparkles', 'href' => ($activeChild ? route('parent.home', ['child' => $activeChild]) : route('parent.home')).'#support-heading'],
             ],
             'Plan ahead' => [

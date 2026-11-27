@@ -73,8 +73,9 @@ final class ParentReportService
     private function summary(string $first, array $o): string
     {
         $pts = abs($o['change']).' '.(abs($o['change']) === 1 ? 'point' : 'points');
-        $move = $o['change'] > 0 ? "up {$pts} since {$o['first_term']}"
-            : ($o['change'] < 0 ? "down {$pts} since {$o['first_term']}" : "unchanged since {$o['first_term']}");
+        $move = ! ($o['has_comparison'] ?? true) ? 'with no earlier recorded term to compare with yet'
+            : ($o['change'] > 0 ? "up {$pts} since {$o['first_term']}"
+            : ($o['change'] < 0 ? "down {$pts} since {$o['first_term']}" : "unchanged since {$o['first_term']}"));
         $verb = $o['subject_count'] === 1 ? 'subject is' : 'subjects are';
 
         return "{$first} is averaging {$o['current']}%, {$move}. {$o['at_target']} of {$o['subject_count']} {$verb} at goal.";
@@ -91,6 +92,13 @@ final class ParentReportService
         return $t
             ? "Encourage {$first} to spend a little time on {$t['name']} in {$focus['name']} ({$t['mastery']}% mastery): go over the notes together and try some practice questions."
             : "Talk to {$first} about how {$focus['name']} is going and ask the teacher what would help most.";
+    }
+
+    private function assessmentDeltaLabel(int $delta): string
+    {
+        $count = abs($delta);
+
+        return ($delta > 0 ? '+' : ($delta < 0 ? '−' : '')).$count.' '.($count === 1 ? 'assessment' : 'assessments');
     }
 
     /** Quizzes and past papers completed recently, based on completion dates only. */
@@ -123,6 +131,7 @@ final class ParentReportService
             'completed_30d' => $completed,
             'completed_prev_30d' => $previous,
             'delta' => $completed - $previous,
+            'delta_label' => $this->assessmentDeltaLabel($completed - $previous),
             'weeks_active' => $weeksActive,
             'weeks_total' => self::ACTIVITY_WEEKS,
             'last_label' => $last['date_label'] ?? null,

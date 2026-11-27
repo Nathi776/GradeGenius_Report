@@ -138,4 +138,23 @@ class ParentReportServiceTest extends TestCase
         $raw['subjects'] = [$raw['subjects'][0]];
         $this->assertStringContainsString('1 of 1 subject is at goal', $this->report($raw)['summary']);
     }
+
+    public function test_a_single_recorded_term_is_not_described_as_unchanged(): void
+    {
+        $raw = DemoReportData::forStudent(self::TODAY);
+        $subject = ['term_averages' => [null, null, null, 45]] + $raw['subjects'][0];
+        $r = $this->report(['subjects' => [$subject]] + $raw);
+
+        $this->assertFalse($r['overall']['has_comparison']);
+        $this->assertStringContainsString('no earlier recorded term to compare with', $r['summary']);
+        $this->assertStringNotContainsString('unchanged', $r['summary']);
+    }
+
+    public function test_assessment_count_change_is_labelled_in_assessments_not_points(): void
+    {
+        $activity = $this->report()['activity'];
+
+        $this->assertMatchesRegularExpression('/^[+−]?\d+ assessments?$/u', $activity['delta_label']);
+        $this->assertStringNotContainsString('pts', $activity['delta_label']);
+    }
 }

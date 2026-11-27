@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NoReportDataException;
-use App\Models\StudySession;
 use App\Services\ParentDashboardService;
 use App\Services\ParentReportService;
 use App\Services\ParentTelemetryService;
 use App\Services\ReportDataSource;
 use App\Support\AcademicTermSelection;
 use App\Support\DemoReportData;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -23,7 +21,8 @@ class ParentDashboardController extends Controller
         ParentTelemetryService $telemetry,
         ReportDataSource $source,
     ): View {
-        $verifiedChildren = $request->user()->linkedChildren()->wherePivot('status', 'verified')->get();
+        $verifiedChildren = $request->user()->linkedChildren()->get();
+        $learner = null;
 
         if ($verifiedChildren->isNotEmpty()) {
             $terms = ['Term 1', 'Term 2', 'Term 3', 'Term 4'];
@@ -33,19 +32,23 @@ class ParentDashboardController extends Controller
             $names = [];
             $childCards = [];
 
+            // Every confirmed child is listed, with or without recorded marks.
             foreach ($verifiedChildren as $student) {
+                $childKey = (string) $student->id;
+                $names[$childKey] = $student->name;
                 $raw = $source->forStudentOrNull($student);
+
                 if ($raw === null) {
+                    $childCards[$childKey] = ['name' => $student->name, 'has_marks' => false];
+
                     continue;
                 }
 
-                $childKey = (string) $student->id;
                 $reportsByChild[$childKey] = $reports->build($raw, null, $termIndex);
-                $names[$childKey] = $student->name;
-
                 $overall = $reportsByChild[$childKey]['overall'];
                 $childCards[$childKey] = [
                     'name' => $student->name,
+                    'has_marks' => true,
                     'grade' => $reportsByChild[$childKey]['student']['grade'],
                     'average' => $overall['current'],
                     'at_target' => $overall['at_target'],
@@ -54,14 +57,17 @@ class ParentDashboardController extends Controller
                 ];
             }
 
-            if ($reportsByChild === []) {
-                throw new NoReportDataException;
+            $key = (string) ($request->query('child') ?? $request->query('child_id') ?? array_key_first($names));
+            if (! isset($names[$key])) {
+                $key = (string) array_key_first($names);
             }
 
-            $key = $request->query('child') ?? $request->query('child_id') ?? array_key_first($reportsByChild);
-            if (! isset($reportsByChild[$key])) {
-                $key = array_key_first($reportsByChild);
-            }
+            $selected = $verifiedChildren->firstWhere('id', (int) $key);
+            $learner = $telemetry->forStudent($selected);
+
+            $dashboardData = isset($reportsByChild[$key])
+                ? $dashboard->build($reportsByChild[$key], $names, $key, $childCards)
+                : $dashboard->buildWithoutMarks($names, $key, $childCards);
         } else {
             if (! $source->demoFallbackEnabled()) {
                 throw new NoReportDataException('no_children');
@@ -74,17 +80,16 @@ class ParentDashboardController extends Controller
             $termIndex = AcademicTermSelection::fromRequest($request, $terms);
 
             $reportsByChild = [];
-            foreach ($linked as $childKey => $raw) {
-                $reportsByChild[$childKey] = $reports->build($raw, null, $termIndex);
-            }
-
             $names = [];
             $childCards = [];
-            foreach ($reportsByChild as $childKey => $report) {
+            foreach ($linked as $childKey => $raw) {
+                $report = $reports->build($raw, null, $termIndex);
+                $reportsByChild[$childKey] = $report;
                 $names[$childKey] = $report['student']['name'];
                 $overall = $report['overall'];
                 $childCards[$childKey] = [
                     'name' => $report['student']['name'],
+                    'has_marks' => true,
                     'grade' => $report['student']['grade'],
                     'average' => $overall['current'],
                     'at_target' => $overall['at_target'],
@@ -92,109 +97,16 @@ class ParentDashboardController extends Controller
                     'term' => $overall['current_term'],
                 ];
             }
+
+            $dashboardData = $dashboard->build($reportsByChild[$key], $names, $key, $childCards);
         }
-
-        $linkedLearners = $telemetry->forParent($request->user());
-        $requestedLearnerId = $request->query('learner') ?? $request->query('child_id');
-        if ($requestedLearnerId !== null) {
-            $learnerId = filter_var($requestedLearnerId, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-            abort_unless($learnerId !== false, 404, 'Invalid learner ID.');
-            $selectedLearner = collect($linkedLearners)->firstWhere('id', $learnerId);
-            abort_if($selectedLearner === null, 404, 'Unauthorized access to child.');
-        } else {
-            $selectedLearner = $linkedLearners[0] ?? null;
-        }
-
-        // Real study time, streak, and goal from study_sessions
-        $today = now()->startOfDay();
-        $weekStart = $today->copy()->startOfWeek();
-        $weekEnd = $today->copy()->endOfWeek();
-        $weeklyGoal = 630;
-
-        foreach ($linkedLearners as &$l) {
-            $lId = (int) $l['id'];
-            $l['real_study_minutes'] = (int) StudySession::where('user_id', $lId)
-                ->where('status', StudySession::STATUS_DONE)
-                ->where('is_counted', true)
-                ->sum('actual_minutes');
-            $l['weekly_study_minutes'] = (int) StudySession::where('user_id', $lId)
-                ->where('status', StudySession::STATUS_DONE)
-                ->where('is_counted', true)
-                ->whereBetween('planned_date', [$weekStart, $weekEnd])
-                ->sum('actual_minutes');
-            $l['streak'] = $this->calculateStreak($lId, $today);
-        }
-        unset($l);
-
-        $realStudyMinutes = 0;
-        $streak = 0;
-        $weeklyMinutes = 0;
-
-        if ($selectedLearner !== null) {
-            $learnerId = (int) $selectedLearner['id'];
-            $realStudyMinutes = (int) StudySession::where('user_id', $learnerId)
-                ->where('status', StudySession::STATUS_DONE)
-                ->where('is_counted', true)
-                ->sum('actual_minutes');
-
-            $weeklyMinutes = (int) StudySession::where('user_id', $learnerId)
-                ->where('status', StudySession::STATUS_DONE)
-                ->where('is_counted', true)
-                ->whereBetween('planned_date', [$weekStart, $weekEnd])
-                ->sum('actual_minutes');
-
-            $streak = $this->calculateStreak($learnerId, $today);
-        }
-
-        $pendingChildren = $request->user()->pendingChildren()->get();
 
         return view('reports.parent-home', [
-            'dashboard' => $dashboard->build($reportsByChild[$key], $names, $key, $childCards),
-            'linkedLearners' => $linkedLearners,
-            'selectedLearner' => $selectedLearner,
-            'pendingChildren' => $pendingChildren,
+            'dashboard' => $dashboardData,
+            'learner' => $learner,
+            'pendingChildren' => $request->user()->pendingChildren()->get(),
             'terms' => $terms,
             'selectedTerm' => AcademicTermSelection::value($termIndex),
-            'realStudyStats' => [
-                'total_minutes' => $realStudyMinutes,
-                'weekly_minutes' => $weeklyMinutes,
-                'weekly_goal' => $weeklyGoal,
-                'streak' => $streak,
-            ],
-            'activeChildId' => $selectedLearner['id'] ?? null,
         ]);
-    }
-
-    private function calculateStreak(int $studentId, Carbon $today): int
-    {
-        $streak = 0;
-        $checkDate = $today->copy();
-
-        $todayHasDone = StudySession::where('user_id', $studentId)
-            ->whereDate('planned_date', $checkDate)
-            ->where('status', StudySession::STATUS_DONE)
-            ->where('is_counted', true)
-            ->exists();
-
-        if (! $todayHasDone) {
-            $checkDate->subDay();
-        }
-
-        while (true) {
-            $hasDone = StudySession::where('user_id', $studentId)
-                ->whereDate('planned_date', $checkDate)
-                ->where('status', StudySession::STATUS_DONE)
-                ->where('is_counted', true)
-                ->exists();
-
-            if (! $hasDone) {
-                break;
-            }
-
-            $streak++;
-            $checkDate->subDay();
-        }
-
-        return $streak;
     }
 }

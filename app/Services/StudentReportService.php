@@ -101,6 +101,7 @@ final class StudentReportService
             'current' => $current,
             'level' => self::level($current),
             'change' => $current - $previous,
+            'has_comparison' => $comparisonIndex !== null,
             'target' => $target,
             'target_status' => $this->targetStatus($current, $target),
             'topics' => $topics,
@@ -152,12 +153,14 @@ final class StudentReportService
         $status = $this->targetStatus(round($current), $target);
 
         $currentIndex = $this->latestRecordedIndex($termAverages, $termIndex);
-        $comparisonIndex = $this->comparisonIndex($termAverages, $currentIndex, $allTermsSelected) ?? $currentIndex;
+        $overallComparison = $this->comparisonIndex($termAverages, $currentIndex, $allTermsSelected);
+        $comparisonIndex = $overallComparison ?? $currentIndex;
 
         return [
             'current' => (int) round($current),
             'level' => self::level(round($current)),
             'change' => $termAverages[$currentIndex] - $termAverages[$comparisonIndex],
+            'has_comparison' => $overallComparison !== null,
             'term_averages' => $termAverages,
             'recorded_term_count' => count(array_filter($termAverages, fn ($v) => $v !== null)),
             'current_term' => $terms[$termIndex],

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 
 final class ParentTelemetryService
 {
+    public function __construct(private readonly StudyStatsService $studyStats) {}
+
     private const ONLINE_WINDOW_MINUTES = 5;
 
     private const RETENTION_DAYS = 90;
@@ -28,9 +30,12 @@ final class ParentTelemetryService
     }
 
     /**
+     * Activity for one learner as the parent may see it. A learner who keeps activity private gets
+     * `sharing => false` and no figures at all; private is not the same as zero activity.
+     *
      * @return array<string, mixed>
      */
-    private function forStudent(User $student): array
+    public function forStudent(User $student): array
     {
         if (! $student->shares_activity) {
             return $this->notShared($student);
@@ -124,6 +129,7 @@ final class ParentTelemetryService
             'recorded_visits' => $recordedVisits,
             'sessions' => $recent,
             'sharing' => true,
+            'study' => $this->studyStats->forStudent($student->id),
         ];
     }
 
@@ -148,6 +154,7 @@ final class ParentTelemetryService
             'recorded_visits' => 0,
             'sessions' => [],
             'sharing' => false,
+            'study' => null,
         ];
     }
 }
